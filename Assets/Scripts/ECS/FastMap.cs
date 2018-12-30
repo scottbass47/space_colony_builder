@@ -43,7 +43,7 @@ namespace ECS
             if (OutOfBounds(index)) return null;
             T item = Get(index);
             Put(index, null);
-            if (item != null) Size--; //@Bug makes later OutOfBounds checks invalid (make OutOfBounds capacity reliant?)
+            if (item != null) Size--; 
             return item;
         }
 

@@ -31,8 +31,6 @@ namespace ECS
             return component;
         }
 
-        // Here we need to recycle the component back to the component pool
-        // Do we want to return the removed component and put in pool or just put in pool?
         public T RemoveComponent<T>() where T : Component
         {
             //if (!(t is Component)) throw new ArgumentException("Type must be a subtype of Component.");
