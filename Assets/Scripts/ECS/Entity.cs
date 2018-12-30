@@ -21,16 +21,18 @@ namespace ECS
             componentBits = new Bits();
         }
 
-        // Change this to be AddComponent<T> where T : Component
-        // Do something like Engine.Pool.ObtainComponent<T>() in here.
-        public void AddComponent(Component component)
+        public T AddComponent<T>() where T : Component
         {
-            int compIndex = ComponentType.GetIndex(component.GetType()); 
-            components[compIndex] = component;
+            var component = Engine.CreateComponent<T>();
+            int compIndex = ComponentType.GetIndex(component.GetType()); //NUll reference exception
+            components.Put(compIndex, component);
             componentBits.Set(compIndex, true);
+
+            return component;
         }
 
         // Here we need to recycle the component back to the component pool
+        // Do we want to return the removed component and put in pool or just put in pool?
         public T RemoveComponent<T>() where T : Component
         {
             //if (!(t is Component)) throw new ArgumentException("Type must be a subtype of Component.");
@@ -39,6 +41,7 @@ namespace ECS
             T ret = (T) components.Remove(compIndex);
             componentBits.Set(compIndex, false);
 
+            Engine.RecycleComponent(ret);
             return ret;
         }
 

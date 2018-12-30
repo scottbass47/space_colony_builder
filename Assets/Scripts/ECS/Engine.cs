@@ -38,11 +38,13 @@ namespace ECS
         private Dictionary<int, Entity> entities;
         private List<AbstractSystem> systems;
         private static int currentID = 0;
+        private ComponentPool componentPool;
 
         public Engine()
         {
             entities = new Dictionary<int, Entity>();
             systems = new List<AbstractSystem>();
+            componentPool = new ComponentPool();
         }
 
         public Entity CreateEntity()
@@ -65,6 +67,16 @@ namespace ECS
         public Entity GetEntity(int id)
         {
             return entities[id]; // Might throw an error if the entity doesn't exist
+        }
+
+        public T CreateComponent<T>() where T : Component
+        {
+            return componentPool.ObtainComponent<T>();
+        }
+
+        public void RecycleComponent<T>(T comp) where T : Component
+        {
+            componentPool.RecycleComponent<T>(comp);
         }
 
         public void AddSystem(AbstractSystem system)

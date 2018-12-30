@@ -23,7 +23,14 @@ namespace ECSTestWorld
     class VelocityComponent : Component
     {
         public float VX { get; set; } 
-        public float VY { get; set; } 
+        public float VY { get; set; }
+
+        public VelocityComponent Set(float x, float y)
+        {
+            VX = x;
+            VY = y;
+            return this;
+        }
     }
 
     class MovementSystem : AbstractSystem
@@ -58,10 +65,23 @@ namespace ECSTestWorld
             engine.AddSystem(new MovementSystem());
 
             Entity e1 = engine.CreateEntity();
-            e1.AddComponent(new PositionComponent { X = 1, Y = 2 });
-            e1.AddComponent(new VelocityComponent { VX = -1, VY = -0.5f });
+            Entity e2 = engine.CreateEntity();
+            
+            e1.AddComponent<PositionComponent>().Set(3,4);
+            e1.AddComponent<VelocityComponent>().Set(1, 5);
+
+            e1.RemoveComponent<PositionComponent>();
+            e1.RemoveComponent<VelocityComponent>();
+
+            e2.AddComponent<PositionComponent>();
+            e2.AddComponent<VelocityComponent>();
+
+            e1.AddComponent<PositionComponent>();
+            e1.AddComponent<VelocityComponent>();
+
             // e1.AddComponent(engine.CreateComponent<PositionComponent>().Set(1, 2))
             engine.AddEntity(e1);
+            engine.AddEntity(e2);
 
             engine.Update(1);
             Console.ReadKey();
