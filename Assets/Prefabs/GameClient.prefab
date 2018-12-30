@@ -43,3 +43,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5347fe7738851da46ab4c7024d530154, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  groundPrefab: {fileID: 6116444259972496196, guid: 6460534c07703d648af19542c5aa40ff,
+    type: 3}
+  tileBase: {fileID: 11400000, guid: 6abff81dce34903498558a7d0399a252, type: 2}
