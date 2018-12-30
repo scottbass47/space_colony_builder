@@ -11,8 +11,10 @@ namespace ECS
         public int ID { get; private set; }
         public Engine Engine => engine; 
         public Bits ComponentBits => componentBits;
-        
 
+        private event Action<ComponentType, Component> componentAdded;
+        private event Action<ComponentType, Component> componentRemoved;
+        
         public Entity(int id, Engine engine)
         {
             ID = id;

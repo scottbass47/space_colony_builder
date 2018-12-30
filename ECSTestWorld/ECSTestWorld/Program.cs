@@ -55,13 +55,13 @@ namespace ECSTestWorld
         {
             Engine engine = new Engine();
 
-            engine.AddSystem(new MovementSystem());
-
             Entity e1 = engine.CreateEntity();
             e1.AddComponent(new PositionComponent { X = 1, Y = 2 });
             e1.AddComponent(new VelocityComponent { VX = -1, VY = -0.5f });
             // e1.AddComponent(engine.CreateComponent<PositionComponent>().Set(1, 2))
             engine.AddEntity(e1);
+
+            engine.AddSystem(new MovementSystem());
 
             engine.Update(1);
             Console.ReadKey();

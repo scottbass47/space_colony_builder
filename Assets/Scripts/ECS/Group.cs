@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ECS
 {
-    public class Group
+    public class Group : IEquatable<Group>
     {
         private Bits all;
         private Bits one;
@@ -68,6 +68,40 @@ namespace ECS
             if (!none.Empty && entity.ComponentBits.Intersects(none)) return false;
             
             return true;
+        }
+
+        public override bool Equals(object obj)
+        {
+            return Equals(obj as Group);
+        }
+
+        public bool Equals(Group other)
+        {
+            return other != null &&
+                   EqualityComparer<Bits>.Default.Equals(all, other.all) &&
+                   EqualityComparer<Bits>.Default.Equals(one, other.one) &&
+                   EqualityComparer<Bits>.Default.Equals(none, other.none) &&
+                   EqualityComparer<Func<Entity, bool>>.Default.Equals(CustomFilter, other.CustomFilter);
+        }
+
+        public override int GetHashCode()
+        {
+            var hashCode = -1979714146;
+            hashCode = hashCode * -1521134295 + EqualityComparer<Bits>.Default.GetHashCode(all);
+            hashCode = hashCode * -1521134295 + EqualityComparer<Bits>.Default.GetHashCode(one);
+            hashCode = hashCode * -1521134295 + EqualityComparer<Bits>.Default.GetHashCode(none);
+            hashCode = hashCode * -1521134295 + EqualityComparer<Func<Entity, bool>>.Default.GetHashCode(CustomFilter);
+            return hashCode;
+        }
+
+        public static bool operator ==(Group group1, Group group2)
+        {
+            return EqualityComparer<Group>.Default.Equals(group1, group2);
+        }
+
+        public static bool operator !=(Group group1, Group group2)
+        {
+            return !(group1 == group2);
         }
     }
 }

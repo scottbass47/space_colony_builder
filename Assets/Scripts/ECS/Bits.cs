@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ECS
 {
-    public class Bits
+    public class Bits : IEquatable<Bits>
     {
         private int[] words = { 0 };
         public int[] Words => words;
@@ -91,6 +91,42 @@ namespace ECS
                 words = newWords;
             }
             Nbits = nbits;
+        }
+
+        public override bool Equals(object obj)
+        {
+            return Equals(obj as Bits);
+        }
+
+        public bool Equals(Bits other)
+        {
+            return other != null &&
+                   EqualityComparer<int[]>.Default.Equals(words, other.words) &&
+                   EqualityComparer<int[]>.Default.Equals(Words, other.Words) &&
+                   wordSize == other.wordSize &&
+                   Nbits == other.Nbits &&
+                   Empty == other.Empty;
+        }
+
+        public override int GetHashCode()
+        {
+            var hashCode = 1152762283;
+            hashCode = hashCode * -1521134295 + EqualityComparer<int[]>.Default.GetHashCode(words);
+            hashCode = hashCode * -1521134295 + EqualityComparer<int[]>.Default.GetHashCode(Words);
+            hashCode = hashCode * -1521134295 + wordSize.GetHashCode();
+            hashCode = hashCode * -1521134295 + Nbits.GetHashCode();
+            hashCode = hashCode * -1521134295 + Empty.GetHashCode();
+            return hashCode;
+        }
+
+        public static bool operator ==(Bits bits1, Bits bits2)
+        {
+            return EqualityComparer<Bits>.Default.Equals(bits1, bits2);
+        }
+
+        public static bool operator !=(Bits bits1, Bits bits2)
+        {
+            return !(bits1 == bits2);
         }
     }
 }
