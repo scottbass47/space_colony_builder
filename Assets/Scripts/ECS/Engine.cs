@@ -17,6 +17,18 @@ namespace ECS
     // Things to consider:
     // 1. Resetting components when they're added back to the pool
     // 2. How can we avoid writing Set boilerplate method for every component
+    
+    // Delayed Operations:
+    //
+    // What can't happen while Engine is updating?
+    // 1. Add/Remove systems (usually you only add systems when first creating engine)
+    //
+    // What can't happen while System is updating?
+    // 1. Add/Remove entities
+    // 2. UpdateGroupMembership 
+    // 
+    // What can happen always?
+    // 1. Add/Remove components 
 
     public class Engine
     {
@@ -164,6 +176,8 @@ namespace ECS
             for(int i = 0; i < systems.Count; i++)
             {
                 systems[i].Update(delta);
+
+                // DO delayed operations
             }
         }
 
