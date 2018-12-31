@@ -32,6 +32,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="netstandard, Version=2.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -50,7 +51,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Assembly-CSharp.csproj">
-      <Project>{f964a312-b70c-ae19-a6b2-a05c50bc3964}</Project>
+      <Project>{f7dd9698-3b76-d78f-1d77-14b5e1d26c22}</Project>
       <Name>Assembly-CSharp</Name>
     </ProjectReference>
   </ItemGroup>

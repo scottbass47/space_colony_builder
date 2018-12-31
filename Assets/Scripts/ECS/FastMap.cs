@@ -11,7 +11,7 @@ namespace ECS
     {
         private T[] data;
 
-        public int Capicity => data.Length; 
+        public int Capacity => data.Length; 
         public int Size { get; private set; } // Number of non-null elements in the map
         public bool Empty => Size == 0;
 
@@ -33,7 +33,7 @@ namespace ECS
 
         public void Put(int index, T item)
         {
-            if (index > Capicity) Grow(index);
+            if (index > Capacity) Grow(index);
             if (data[index] == null && item != null) Size++;
             data[index] = item;
         }
@@ -43,7 +43,7 @@ namespace ECS
             if (OutOfBounds(index)) return null;
             T item = Get(index);
             Put(index, null);
-            if (item != null) Size--;
+            if (item != null) Size--; 
             return item;
         }
 
@@ -51,7 +51,7 @@ namespace ECS
         // remove(index) for O(1) time.
         public bool Remove(T item)
         {
-            for(int i = 0; i < Size; i++)
+            for(int i = 0; i < Capacity; i++)
             {
                 if(data[i] == item)
                 {
@@ -64,18 +64,18 @@ namespace ECS
 
         public bool OutOfBounds(int index)
         {
-            return index < 0 || index >= Size;
+            return index < 0 || index >= Capacity;
         }
 
         private void Grow()
         {
-            Grow(Capicity * 2);
+            Grow(Capacity * 2);
         }
 
         private void Grow(int newCapacity)
         {
             T[] newData = new T[newCapacity];
-            Array.Copy(data, newData, Size);
+            Array.Copy(data, newData, Capacity);
             data = newData;
         }
 

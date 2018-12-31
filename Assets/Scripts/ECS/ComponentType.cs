@@ -12,10 +12,13 @@ namespace ECS
         private static int globalIndex;
 
         public int Index { get; private set; }
+        public Type Type => type;
+        private Type type;
 
-        private ComponentType()
+        private ComponentType(Type type)
         {
             Index = globalIndex++;
+            this.type = type;
         }
 
         public static ComponentType Get(Type compType)  
@@ -25,7 +28,7 @@ namespace ECS
             ComponentType t = compTypeMap.ContainsKey(compType) ? compTypeMap[compType] : null;
             if(t == null)
             {
-                t = new ComponentType();
+                t = new ComponentType(compType);
                 compTypeMap[compType] = t;
             }
             return t;

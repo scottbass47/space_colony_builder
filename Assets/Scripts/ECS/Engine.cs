@@ -9,25 +9,10 @@ namespace ECS
     // ECS Todo list:
     // ---------------
     // * Component Mappers (if necessary)
-    // * Entity add/remove events
-    // * Entity component add/remove events
-    // * Group membership updates
-    // * Pooled components
+    // * Delayed operations (i.e. delay engine operations if engine is in the middle of updating)
     // * Unit tests?
 
     // Class - ComponentPool
-    //
-    // * Dict<T, Stack<T>> componentPool
-    //
-    // * ObtainComponent<T>
-    //      Looks for recycled component first, if none exist create a new one
-    // * RecycleComponent(T comp)
-    //      Adds component to pool
-    //
-    //  e.AddComponent(engine.CreateComponent<PositionComponent>().Set(1, 2))
-    //  e.AddComponent<PositionComponent>().Set(1, 2);
-    //
-    //  Entity AddComponent method needs to be able to access component pool in Engine
     //
     // Things to consider:
     // 1. Resetting components when they're added back to the pool
@@ -38,11 +23,12 @@ namespace ECS
         private Dictionary<int, Entity> entities;
         private List<AbstractSystem> systems;
         private static int currentID = 0;
+        private ComponentPool componentPool;
 
-        private event Action<Entity> EntityAdded;
-        private event Action<Entity> EntityRemoved;
-        private event Action<AbstractSystem> SystemAdded;
-        private event Action<AbstractSystem> SystemRemoved;
+        public event Action<Entity> EntityAdded;
+        public event Action<Entity> EntityRemoved;
+        public event Action<AbstractSystem> SystemAdded;
+        public event Action<AbstractSystem> SystemRemoved;
 
         private Dictionary<Group, List<Entity>> groupMembership;
 
@@ -50,12 +36,19 @@ namespace ECS
         {
             entities = new Dictionary<int, Entity>();
             systems = new List<AbstractSystem>();
+
             groupMembership = new Dictionary<Group, List<Entity>>();
 
             EntityAdded += UpdateGroupMembership;
+
+            // @Bug When an entity is removed we don't want to call UpdateGroupMembership
+            // (as it is currently) because it might add the entity to groups even though
+            // the entity is being removed from the engine.
             EntityRemoved += UpdateGroupMembership;
             SystemAdded += UpdateEntityMembership;
             SystemRemoved += UpdateEntityMembership;
+
+            componentPool = new ComponentPool();
         }
 
         public Entity CreateEntity()
@@ -68,12 +61,21 @@ namespace ECS
         {
             entities.Add(entity.ID, entity);
             EntityAdded(entity);
+
+            Action<ComponentType, Component> ev = (type, comp) =>
+            {
+                UpdateGroupMembership(entity);
+            };
+
+            entity.ComponentAdded += ev;
+            entity.ComponentRemoved += ev;
         }
 
         public void RemoveEntity(Entity entity)
         {
             EntityRemoved(entity);
             entities.Remove(entity.ID);
+
         }
 
         // Returns the entity if it exists, null otherwise
@@ -82,6 +84,16 @@ namespace ECS
             Entity entity;
             entities.TryGetValue(id, out entity);
             return entity;
+        }
+
+        public T CreateComponent<T>() where T : Component
+        {
+            return componentPool.ObtainComponent<T>();
+        }
+
+        public void RecycleComponent<T>(T comp) where T : Component
+        {
+            componentPool.RecycleComponent<T>(comp);
         }
 
         public void AddSystem(AbstractSystem system)
