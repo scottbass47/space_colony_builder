@@ -30,12 +30,14 @@ namespace ECS
     // What can happen always?
     // 1. Add/Remove components 
 
-    public class Engine
+    public partial class Engine
     {
         private Dictionary<int, Entity> entities;
         private List<AbstractSystem> systems;
         private static int currentID = 0;
-        private ComponentPool componentPool;
+        private Pool<Component> componentPool;
+        private Pool<Operation> operationPool;
+        private bool updating = false;
 
         public event Action<Entity> EntityAdded;
         public event Action<Entity> EntityRemoved;
@@ -47,7 +49,7 @@ namespace ECS
         public Engine()
         {
             entities = new Dictionary<int, Entity>();
-            systems = new List<AbstractSystem>();
+            systems = new List<AbstractSystem>();         
 
             groupMembership = new Dictionary<Group, List<Entity>>();
 
@@ -60,7 +62,10 @@ namespace ECS
             SystemAdded += UpdateEntityMembership;
             SystemRemoved += UpdateEntityMembership;
 
-            componentPool = new ComponentPool();
+            componentPool = new Pool<Component>();
+            operationPool = new Pool<Operation>();
+
+            pendingOps = new Queue<Operation>();
         }
 
         public Entity CreateEntity()
@@ -71,23 +76,31 @@ namespace ECS
 
         public void AddEntity(Entity entity)
         {
-            entities.Add(entity.ID, entity);
-            EntityAdded(entity);
-
-            Action<ComponentType, Component> ev = (type, comp) =>
+            if (updating) pendingOps.Enqueue(CreateOperation().Set(OpType.Add, entity));
+            else
             {
-                UpdateGroupMembership(entity);
-            };
+                entities.Add(entity.ID, entity);
+                EntityAdded(entity);
 
-            entity.ComponentAdded += ev;
-            entity.ComponentRemoved += ev;
+                Action<ComponentType, Component> ev = (type, comp) =>
+                {
+                    UpdateGroupMembership(entity);
+                };
+
+                entity.ComponentAdded += ev;
+                entity.ComponentRemoved += ev;
+            }
         }
 
+        //@Memory: recycle all of the entity's components before removing it
         public void RemoveEntity(Entity entity)
         {
-            EntityRemoved(entity);
-            entities.Remove(entity.ID);
-
+            if (updating) pendingOps.Enqueue(CreateOperation().Set(OpType.Remove, entity));
+            else
+            {
+                EntityRemoved(entity);
+                entities.Remove(entity.ID);
+            }
         }
 
         // Returns the entity if it exists, null otherwise
@@ -100,12 +113,12 @@ namespace ECS
 
         public T CreateComponent<T>() where T : Component
         {
-            return componentPool.ObtainComponent<T>();
+            return componentPool.Obtain<T>();
         }
 
         public void RecycleComponent<T>(T comp) where T : Component
         {
-            componentPool.RecycleComponent<T>(comp);
+            componentPool.Recycle<T>(comp);
         }
 
         public void AddSystem(AbstractSystem system)
@@ -139,15 +152,19 @@ namespace ECS
             // @Performance I think we can get a performance boost if Entities keep track
             // of what groups they are in using a Set. This would give us O(1) contains
             // instead of the current O(n) contains that a List<> provides.
-            foreach(Group group in groupMembership.Keys)
+            if (updating) pendingOps.Enqueue(CreateOperation().Set(OpType.UpdateGroup, entity));
+            else
             {
-                if(group.Matches(entity) && !groupMembership[group].Contains(entity))
+                foreach (Group group in groupMembership.Keys)
                 {
-                    groupMembership[group].Add(entity);
-                }
-                else if(!group.Matches(entity) && groupMembership[group].Contains(entity))
-                {
-                    groupMembership[group].Remove(entity);
+                    if (group.Matches(entity) && !groupMembership[group].Contains(entity))
+                    {
+                        groupMembership[group].Add(entity);
+                    }
+                    else if (!group.Matches(entity) && groupMembership[group].Contains(entity))
+                    {
+                        groupMembership[group].Remove(entity);
+                    }
                 }
             }
         }
@@ -173,12 +190,16 @@ namespace ECS
 
         public void Update(float delta)
         {
+            
             for(int i = 0; i < systems.Count; i++)
             {
+                updating = true;
                 systems[i].Update(delta);
+                updating = false;
 
-                // DO delayed operations
+                if(hasOps()) ProcessOps();
             }
+            
         }
 
     }

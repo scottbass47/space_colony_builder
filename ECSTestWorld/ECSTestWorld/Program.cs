@@ -50,11 +50,20 @@ namespace ECSTestWorld
 
                 pos.X += vel.VX * delta;
                 pos.Y += vel.VY * delta;
+                
+                //Set to creat entity mid system update as a proof of concept for delayed operations
+                var e = Engine.CreateEntity();
+                e.AddComponent<PositionComponent>().Set(9, 9);
+                e.AddComponent<VelocityComponent>().Set(1, 1);
+
+                entity.Engine.AddEntity(e);
+                entity.Engine.RemoveEntity(e);
 
                 Console.WriteLine($"Entity[{entity.ID}]: Position - {pos.X}, {pos.Y}");
             } 
         }
     }
+
 
     class Program
     {
@@ -88,7 +97,9 @@ namespace ECSTestWorld
             engine.AddSystem(new MovementSystem());
 
             engine.Update(1);
+            engine.Update(1);
             Console.ReadKey();
+            
         }
     }
 }
