@@ -25,8 +25,6 @@ namespace Shared
             }
         }
 
-        public static SCClient Client;
-
         void Awake()
         {
             if (IsHost)
@@ -36,7 +34,7 @@ namespace Shared
             }
             Debug.Log("SCNetworkManager.Awake - initializing client game object.");
             var clientObject = Instantiate(clientPrefab);
-            Client = clientObject.GetComponent<SCClient>();
+            Game.Instance.Client = clientObject.GetComponent<SCClient>(); 
         }
 
         // Update is called once per frame

@@ -106,11 +106,6 @@ namespace Shared
             public SCTileData[] TileData { get; set; }
         }
 
-        public class DeleteTilePacket
-        {
-            public Vector3Int Pos { get; set; }
-        }
-
         public class UpdatePacket
         {
             public int ClientID { get; set; }

@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1035483358648761508}
   - component: {fileID: 5766742661558833932}
+  - component: {fileID: 411764687059813932}
   m_Layer: 0
   m_Name: Rock
   m_TagString: Untagged
@@ -44,3 +45,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Tile: {fileID: 11400000, guid: 71a47a6e20ea71342970a075fe228835, type: 2}
+--- !u!114 &411764687059813932
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8428974769952096574}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 46aae29467cabf741ab50577084e27d0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
