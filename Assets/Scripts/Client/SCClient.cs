@@ -18,7 +18,9 @@ namespace Client
         private NetPeer peer; // this should be the server
         private float elapsed;
         private NetPacketProcessor processor;
-        private int MyVersion;
+        private int clientID;
+        private bool clientIDSet = false;
+        private int MyVersion = 0;
 
         private bool loadingWorld = true;
         private int chunksReceived = 0;
@@ -29,6 +31,8 @@ namespace Client
         public GameObject ground;
         public TileBase tileBase;
 
+        private Dictionary<int, List<StateChangePacket>> stateChangeBuffer;
+
         void Start()
         {
             client = new NetManager(this);
@@ -36,10 +40,19 @@ namespace Client
 
             processor = PacketUtils.CreateProcessor();
 
+            processor.SubscribeReusable<ClientID>(
+                (packet) => 
+                {
+                    clientID = packet.ID;
+                    clientIDSet = true;
+                }
+            );
             processor.SubscribeReusable<DeleteTilePacket>(DeleteTile);
-            processor.SubscribeReusable<StateChangesPacket>(StateChanges);
             processor.SubscribeReusable<WorldInitPacket>(WorldInit);
             processor.SubscribeReusable<WorldChunkPacket>(WorldChunk);
+            processor.Subscribe<StateChangePacket>(StateChanges, () => new StateChangePacket());
+
+            stateChangeBuffer = new Dictionary<int, List<StateChangePacket>>();
         }
 
         // Update is called once per frame
@@ -52,12 +65,11 @@ namespace Client
             {
                 client.SendDiscoveryRequest(new byte[] { 1 }, 5000);
             }
-            else if (!loadingWorld)
+            else if (!loadingWorld && clientIDSet)
             {
                 // Request updates
-                SendPacket(new UpdatePacket { Version = MyVersion });
+                SendPacket(new UpdatePacket { ClientID = clientID });
             }
-
         }
 
         void DeleteTile(DeleteTilePacket packet)
@@ -67,21 +79,64 @@ namespace Client
             tileMap.SetTile(packet.Pos, null);
         }
 
-        void StateChanges(StateChangesPacket packet)
+        void StateChanges(StateChangePacket packet)
         {
-            if (MyVersion == packet.Version) return;
+            Debug.Log($"[Client] received state changes for version {packet.Version}. Change {packet.ChangeNumber}/{packet.TotalChanges}");
 
-            Debug.Log($"[Client] received state changes");
-            MyVersion = packet.Version;
-
-            foreach(IStateChange change in packet.Changes)
+            if (!stateChangeBuffer.ContainsKey(packet.Version))
             {
-                SCTileData data = (SCTileData)change;
+                stateChangeBuffer[packet.Version] = new List<StateChangePacket>();
+            }
 
-                Tilemap tilemap = ground.GetComponentInChildren<Tilemap>();
-                TileStore tileStore = GameObject.Find("Tile Registry").GetComponent<TileStore>();
+            stateChangeBuffer[packet.Version].Add(packet);
 
-                tilemap.SetTile(new Vector3Int { x = data.X, y = data.Y, z = data.Z }, tileStore.Get(data.TileID));
+            // Try and apply changes to the oldest version we don't have
+            TryApplyChanges(MyVersion + 1); 
+        }
+
+        // Checks if all the changes for a given version number have arrived,
+        // and if so, applies the changes and increments the version.
+        private void TryApplyChanges(int version)
+        {
+            if (!stateChangeBuffer.ContainsKey(version)) return;
+
+            if (stateChangeBuffer[version].Count == stateChangeBuffer[version][0].TotalChanges)
+            {
+                Debug.Log($"[Client] - applying changes for version {version}");
+                foreach (var packet in stateChangeBuffer[version])
+                {
+                    IStateChange change = packet.Change;
+
+                    if (change is EntitySpawn)
+                    {
+                        EntitySpawn spawn = (EntitySpawn)change;
+                        EntityManager.Instance.SpawnEntity(spawn);
+                    }
+                    else if(change is EntityRemove)
+                    {
+                        EntityRemove remove = (EntityRemove)change;
+
+                        Debug.Log($"[Client] - removing entity with ID {remove.ID}");
+                        var manager = EntityManager.Instance;
+                        Debug.Log($"[Client] -  pos {manager.GetEntity(remove.ID).GetComponent<TilemapObject>().Pos}");
+                        manager.RemoveEntity(remove);
+                    }
+                    else if (change is SCTileData)
+                    {
+                        SCTileData data = (SCTileData)change;
+
+                        Tilemap tilemap = ground.GetComponentInChildren<Tilemap>();
+                        TileStore tileStore = GameObject.Find("Tile Registry").GetComponent<TileStore>();
+
+                        tilemap.SetTile(new Vector3Int { x = data.X, y = data.Y, z = data.Z }, tileStore.Get(data.TileID));
+                    }
+                }
+
+                // After applying all the changes, we can safely increment our version of
+                // the world and try to apply the next version's changes.
+                MyVersion = version;
+                stateChangeBuffer.Remove(version);
+                TryApplyChanges(version + 1);
             }
         }
 
@@ -136,7 +191,7 @@ namespace Client
 
             loadingWorld = false;
 
-            GameObject.Find("Loading Screen").SetActive(false);
+            //GameObject.Find("Loading Screen").SetActive(false);
         }
 
         public void SendPacket<T>(T packet) where T : class, new()

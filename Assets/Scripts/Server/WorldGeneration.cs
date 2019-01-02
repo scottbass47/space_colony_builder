@@ -8,9 +8,10 @@ namespace Server
 {
     public class WorldGeneration
     {
-        public static TileID[][] GenerateWorld(int size, float stonePercentage)
+        public static TileID[][] GenerateWorld(int size, float stonePercentage, out List<Vector3Int> rockSpawns)
         {
             TileID[][] map = new TileID[size][];
+            rockSpawns = new List<Vector3Int>();
 
             for (int x = 0; x < size; x++)
             {
@@ -20,7 +21,7 @@ namespace Server
                     map[x][y] = TileID.GROUND;
 
                     if (Random.Range(0, 100) < stonePercentage)
-                        map[x][y] = TileID.TOWER;
+                        rockSpawns.Add(new Vector3Int { x = x, y = y, z = 0 });
                 }
             }
             return map;

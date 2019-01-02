@@ -36,6 +36,23 @@ namespace Shared
                         };
                     }
                 );
+                processor.RegisterNestedType<Vector3>(
+                    (writer, vec) =>
+                    {
+                        writer.Put(vec.x);
+                        writer.Put(vec.y);
+                        writer.Put(vec.z);
+                    },
+                    reader =>
+                    {
+                        return new Vector3
+                        {
+                            x = reader.GetFloat(),
+                            y = reader.GetFloat(),
+                            z = reader.GetFloat()
+                        };
+                    }
+                );
                 processor.RegisterNestedType<IStateChange>(
                     (writer, change) =>
                     {
@@ -69,6 +86,11 @@ namespace Shared
             DELETE_TILE
         }
 
+        public class ClientID
+        {
+            public int ID { get; set; }
+        }
+
         public class WorldInitPacket
         {
             public int Size { get; set; }
@@ -91,13 +113,15 @@ namespace Shared
 
         public class UpdatePacket
         {
-            public int Version { get; set; }
+            public int ClientID { get; set; }
         }
 
-        public class StateChangesPacket
+        public class StateChangePacket
         {
             public int Version { get; set; }
-            public IStateChange[] Changes { get; set; }
+            public byte TotalChanges { get; set; }
+            public byte ChangeNumber { get; set; }
+            public IStateChange Change { get; set; }
         }
 
     }

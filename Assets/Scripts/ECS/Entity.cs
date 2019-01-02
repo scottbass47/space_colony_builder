@@ -15,6 +15,13 @@ namespace ECS
         public event Action<ComponentType, Component> ComponentAdded;
         public event Action<ComponentType, Component> ComponentRemoved;
 
+        private bool removing;
+        public bool Removing
+        {
+            get => removing;
+            set => removing = value;
+        }
+
         public Entity(int id, Engine engine)
         {
             ID = id;
