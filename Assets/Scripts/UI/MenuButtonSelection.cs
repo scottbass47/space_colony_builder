@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class MenuButtonSelection : MonoBehaviour
 {
-    public Button thisButton;
+    private Button thisButton;
     public Button houseButton;
     public Button hospitalButton;
 
@@ -19,6 +19,7 @@ public class MenuButtonSelection : MonoBehaviour
     {
         enabled = false;
         houseScript = GetComponent<PlaceHouse>();
+        thisButton = GetComponent<Button>();
 
         children = new ArrayList();
         for(int i = 1; i < transform.childCount; i++)
@@ -52,6 +53,7 @@ public class MenuButtonSelection : MonoBehaviour
     void BuildHouse()
     {
         houseScript.enabled = true;
+        Toggle();
     }
     void BuildHospital()
     {
