@@ -12,5 +12,11 @@ namespace Shared
             ROCK,
             TOWER
         }
+
+        public enum EntityType
+        {
+            ROCK
+        }
+
     }
 }

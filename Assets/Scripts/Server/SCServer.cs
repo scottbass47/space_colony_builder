@@ -16,10 +16,13 @@ namespace Server
     {
         public int WorldSize = 20;
         private float elapsed;
+        private float startTime;
+        private int nextClientID = 0;
 
         private NetManager server;
         private NetDataWriter writer;
-        private List<NetPeer> connectedClients;
+        private Dictionary<int, NetPeer> connectedClients;
+        private Dictionary<int, int> clientVersions;
         private NetPacketProcessor processor;
         private WorldStateManager stateManager;
 
@@ -33,7 +36,8 @@ namespace Server
             server.DiscoveryEnabled = true;
             server.UpdateTime = 15;
 
-            connectedClients = new List<NetPeer>();
+            connectedClients = new Dictionary<int, NetPeer>();
+            clientVersions = new Dictionary<int, int>();
 
             stateManager = new WorldStateManager(WorldSize);
 
@@ -45,7 +49,7 @@ namespace Server
                 {
                     Debug.Log($"[Server] received delete tile packet at position {packet.Pos}");
 
-                    foreach (NetPeer peer in connectedClients)
+                    foreach (NetPeer peer in connectedClients.Values)
                     {
                         Debug.Log($"[Server] sending packet to peer {peer.EndPoint}");
                         processor.Send(peer, packet, DeliveryMethod.ReliableOrdered);
@@ -63,18 +67,8 @@ namespace Server
 
             if (elapsed > SCNetworkManager.UPS_INV)
             {
-                // Lets modify tiles ever 1/2 updates 
-                var num = Random.Range(0, 2);
-                if (num == 0)
-                {
-                    int x = Random.Range(0, WorldSize);
-                    int y = Random.Range(0, WorldSize);
-                    int z = 0;
-
-                    Debug.Log($"[Server] changing tile at ({x}, {y}) to GROUND tile.");
-                    stateManager.ApplyChange(new SCTileData { X = x, Y = y, Z = z, TileID = TileID.GROUND, Type = TileChangeType.CHANGE });
-                }
-                stateManager.Update();
+                // @Todo Fix this
+                stateManager.Update(elapsed);
                 elapsed -= SCNetworkManager.UPS_INV;
             }
         }
@@ -87,10 +81,20 @@ namespace Server
         void OnUpdatePacket(UpdatePacket packet, NetPeer peer)
         {
             //Debug.Log($"[Server] received update packet with version {packet.Version}");
-            StateChangesPacket changes = stateManager.GetDiff(packet.Version);
+            StateChangePacket[] changes = stateManager.GetDiff(clientVersions[packet.ClientID]);
+            clientVersions[packet.ClientID] = stateManager.Version - 1;
+
             if (changes == null) return;
 
-            processor.Send(peer, changes, DeliveryMethod.Unreliable);
+
+            foreach(StateChangePacket change in changes)
+            {
+                if (change.Change is EntityRemove)
+                {
+                    Debug.Log($"[Server] - deleting entity with ID {(change.Change as EntityRemove).ID}");
+                }
+                processor.Send(peer, change, DeliveryMethod.ReliableUnordered);
+            }
         }
 
         public void OnNetworkLatencyUpdate(NetPeer peer, int latency)
@@ -105,8 +109,16 @@ namespace Server
         public void OnPeerConnected(NetPeer peer)
         {
             Debug.Log($"[Server] peer connected: {peer.EndPoint}");
-            connectedClients.Add(peer);
+            int clientID = nextClientID++;
+            connectedClients.Add(clientID, peer);
+            clientVersions.Add(clientID, 0);
+            SendClientID(clientID);
             SendWorldData(peer);
+        }
+
+        private void SendClientID(int clientID)
+        {
+            processor.Send(connectedClients[clientID], new ClientID { ID = clientID }, DeliveryMethod.ReliableOrdered);
         }
 
         private void SendWorldData(NetPeer peer)
@@ -170,10 +182,11 @@ namespace Server
                 }, DeliveryMethod.ReliableUnordered);
         }
 
+        // @Todo We need to figure out what the client ID is when a client disconnects
         public void OnPeerDisconnected(NetPeer peer, DisconnectInfo disconnectInfo)
         {
             Debug.Log($"[Server] peer disconnected: {peer.EndPoint}");
-            connectedClients.Remove(peer);
+            //connectedClients.Remove(peer);
         }
 
         public void OnNetworkError(IPEndPoint endPoint, SocketError socketError)
@@ -185,7 +198,7 @@ namespace Server
             if (messageType == UnconnectedMessageType.DiscoveryRequest)
             {
                 Debug.Log($"[Server] received discovery request from {remoteEndPoint}");
-                server.SendDiscoveryResponse(new byte[] { 1 }, remoteEndPoint);
+                server.SendDiscoveryResponse(new byte[] { 0 }, remoteEndPoint);
             }
         }
 

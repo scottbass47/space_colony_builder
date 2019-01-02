@@ -9,7 +9,6 @@ namespace ECS
     // ECS Todo list:
     // ---------------
     // * Component Mappers (if necessary)
-    // * Delayed operations (i.e. delay engine operations if engine is in the middle of updating)
     // * Unit tests?
 
     // Class - ComponentPool
@@ -54,10 +53,6 @@ namespace ECS
             groupMembership = new Dictionary<Group, List<Entity>>();
 
             EntityAdded += UpdateGroupMembership;
-
-            // @Bug When an entity is removed we don't want to call UpdateGroupMembership
-            // (as it is currently) because it might add the entity to groups even though
-            // the entity is being removed from the engine.
             EntityRemoved += UpdateGroupMembership;
             SystemAdded += UpdateEntityMembership;
             SystemRemoved += UpdateEntityMembership;
@@ -95,6 +90,7 @@ namespace ECS
         //@Memory: recycle all of the entity's components before removing it
         public void RemoveEntity(Entity entity)
         {
+            entity.Removing = true;
             if (updating) pendingOps.Enqueue(CreateOperation().Set(OpType.Remove, entity));
             else
             {
@@ -157,13 +153,23 @@ namespace ECS
             {
                 foreach (Group group in groupMembership.Keys)
                 {
-                    if (group.Matches(entity) && !groupMembership[group].Contains(entity))
+                    if(entity.Removing)
                     {
-                        groupMembership[group].Add(entity);
+                        if (groupMembership[group].Contains(entity))
+                        {
+                            groupMembership[group].Remove(entity);
+                        }
                     }
-                    else if (!group.Matches(entity) && groupMembership[group].Contains(entity))
+                    else
                     {
-                        groupMembership[group].Remove(entity);
+                        if (group.Matches(entity) && !groupMembership[group].Contains(entity))
+                        {
+                            groupMembership[group].Add(entity);
+                        }
+                        else if (!group.Matches(entity) && groupMembership[group].Contains(entity))
+                        {
+                            groupMembership[group].Remove(entity);
+                        }
                     }
                 }
             }
@@ -200,6 +206,11 @@ namespace ECS
                 if(hasOps()) ProcessOps();
             }
             
+        }
+
+        public int GetEntityCount()
+        {
+            return entities.Count;
         }
 
     }

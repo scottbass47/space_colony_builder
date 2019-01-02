@@ -5,6 +5,7 @@ TextureImporter:
     21300000: test_tile_0
     21300002: test_tile_1
     21300004: test_tile_2
+    21300006: test_tile_3
   externalObjects: {}
   serializedVersion: 7
   mipmaps:
@@ -101,7 +102,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: e4bc40bfab361fe46aabbed61fef946a
+      spriteID: 68ad4a4559116fe40b862abcf01ef774
       vertices: []
       indices: 
       edges: []
@@ -121,7 +122,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 58267113236f8d248b16ce9cb3614e73
+      spriteID: fc4afe7ba985b1e4482787d341554db7
       vertices: []
       indices: 
       edges: []
@@ -141,7 +142,27 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 44f8a50316714d54887b733e16c8960c
+      spriteID: 5ca96d75c2bc52c40861c70bee452f68
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: test_tile_3
+      rect:
+        serializedVersion: 2
+        x: 222
+        y: 0
+        width: 74
+        height: 74
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4070b9a1cdcbdd440a13021baa87b894
       vertices: []
       indices: 
       edges: []
