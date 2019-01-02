@@ -525,7 +525,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 519420028}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -10}
+  m_LocalPosition: {x: 0, y: 0, z: -5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -749,6 +749,8 @@ GameObject:
   - component: {fileID: 1245088059}
   - component: {fileID: 1245088058}
   - component: {fileID: 1245088061}
+  - component: {fileID: 1245088062}
+  - component: {fileID: 1245088063}
   m_Layer: 5
   m_Name: BuildingsButton
   m_TagString: Untagged
@@ -872,6 +874,32 @@ MonoBehaviour:
   thisButton: {fileID: 1245088058}
   houseButton: {fileID: 1533409642}
   hospitalButton: {fileID: 1926377297}
+--- !u!114 &1245088062
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1245088056}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: de5a7acfe8712bc449d63eb8bdbfb5c7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  thisButton: {fileID: 1245088058}
+--- !u!114 &1245088063
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1245088056}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d3c853a5f73a36442b306982deb9d2b4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  house: {fileID: 11400000, guid: 07f22137ccc0b494bbb3b3e641bdf509, type: 2}
 --- !u!1 &1357024777
 GameObject:
   m_ObjectHideFlags: 0
