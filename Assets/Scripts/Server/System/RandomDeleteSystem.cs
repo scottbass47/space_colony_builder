@@ -23,7 +23,7 @@ namespace Server
         {
             foreach(Entity entity in Entities)
             {
-                if(random.Next(100) == 0)
+                if(random.Next(1000) == 0)
                 {
                     worldState.ApplyChange(new EntityRemove { ID = entity.ID });
                     Engine.RemoveEntity(entity);

@@ -6,6 +6,7 @@ TextureImporter:
     21300002: test_tile_1
     21300004: test_tile_2
     21300006: test_tile_3
+    21300008: test_tile_4
   externalObjects: {}
   serializedVersion: 7
   mipmaps:
@@ -102,7 +103,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 68ad4a4559116fe40b862abcf01ef774
+      spriteID: 63e29bbd3a9c60845addde1a4235c592
       vertices: []
       indices: 
       edges: []
@@ -122,7 +123,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: fc4afe7ba985b1e4482787d341554db7
+      spriteID: 0d19b431d9dd0914891af87a71142a00
       vertices: []
       indices: 
       edges: []
@@ -142,7 +143,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 5ca96d75c2bc52c40861c70bee452f68
+      spriteID: d345ded11fe4e424886e37a1f0b5f919
       vertices: []
       indices: 
       edges: []
@@ -162,7 +163,27 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 4070b9a1cdcbdd440a13021baa87b894
+      spriteID: f9fc65acc23ff474f9deadb6a97c9c50
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: test_tile_4
+      rect:
+        serializedVersion: 2
+        x: 296
+        y: 0
+        width: 74
+        height: 74
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 96d7bb0553b09a44ebca0859195ef77d
       vertices: []
       indices: 
       edges: []
