@@ -8,7 +8,6 @@ public class MenuButtonSelection : MonoBehaviour
 {
     private Button thisButton;
     public Button houseButton;
-    public Button hospitalButton;
 
     private PlaceHouse houseScript;
     private ArrayList children;
@@ -30,7 +29,6 @@ public class MenuButtonSelection : MonoBehaviour
         }
         thisButton.onClick.AddListener(Toggle);
         houseButton.onClick.AddListener(BuildHouse);
-        hospitalButton.onClick.AddListener(BuildHospital);
     }
 
     void Toggle()
@@ -54,9 +52,5 @@ public class MenuButtonSelection : MonoBehaviour
     {
         houseScript.enabled = true;
         Toggle();
-    }
-    void BuildHospital()
-    {
-        
     }
 }

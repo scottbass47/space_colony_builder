@@ -5,49 +5,62 @@ using UnityEngine.Tilemaps;
 
 public class PlaceHouse : MonoBehaviour
 {
-    public TileBase house;
+    public TileBase houseTile;
+    public Sprite houseSprite;
+    public Transform ghostPrefab;
 
     private Tilemap tilemap;
-    private Vector3Int prevBuildingPos;
-
+    private GameObject ghost;
     void Start()
-    { 
+    {
+        ghost = Instantiate(ghostPrefab).gameObject;
+        ghost.SetActive(false);
         tilemap = FindObjectOfType<Tilemap>();
-        prevBuildingPos = new Vector3Int(-10, -10, 10);
+        ghost.GetComponent<SpriteRenderer>().sprite = houseSprite;
     }
 
     void Update()
     {
-        if (tilemap.HasTile(prevBuildingPos)) tilemap.SetTile(prevBuildingPos, null);
-
+        ghost.SetActive(true);
         var old = Camera.main.transform.position;
         Camera.main.transform.position = old + new Vector3(0, 0, 11);
 
-        Vector3 mousePos = tilemap.WorldToCell((Camera.main.ScreenToWorldPoint(Input.mousePosition)));
+        Vector3Int mousePos = tilemap.WorldToCell((Camera.main.ScreenToWorldPoint(Input.mousePosition)));
+        Vector3Int buildingPos = new Vector3Int(mousePos.x, mousePos.y, 1);
 
-        Vector3Int buildingPos = new Vector3Int((int)mousePos.x, (int)mousePos.y, 1);
-        tilemap.SetTile(buildingPos, house);
-        tilemap.SetColor(buildingPos, new Color(1f, 1f, 1f, 0.3f));
+        Vector3 ghostPos = tilemap.CellToWorld(buildingPos);
 
-        if (Input.GetMouseButtonDown(0))
-        {  
-            if (tilemap.HasTile(new Vector3Int((int)mousePos.x, (int)mousePos.y, 0)) && !tilemap.HasTile(buildingPos))
-            { 
-                tilemap.SetColor(buildingPos, new Color(1f, 1f, 1f, 1f));
-                enabled = false;
-            }
-            else
-            {
-                tilemap.SetTile(buildingPos, null);
-                enabled = false;
-            }
-        }
-        if (Input.GetMouseButtonDown(1))
+        ghostPos.y += .25f;
+
+        ghost.transform.SetPositionAndRotation(ghostPos, Quaternion.identity);
+
+        if (tilemap.HasTile(buildingPos))
         {
-            tilemap.SetTile(buildingPos, null);
-            enabled = false;
+            ghost.SetActive(false);
+        }
+        else
+        {
+            if (Input.GetMouseButtonDown(0))
+            {
+                if (tilemap.HasTile(new Vector3Int(mousePos.x, mousePos.y, 0)))
+                {
+                    tilemap.SetTile(buildingPos, houseTile);
+                    ghost.SetActive(false);
+                    enabled = false;
+                }
+                else
+                {
+                    ghost.SetActive(false);
+                    enabled = false;
+                }
+            }
+            if (Input.GetKeyDown(KeyCode.E))
+            {
+                ghost.SetActive(false);
+                enabled = false;
+            }
         }
         Camera.main.transform.position = old;
-        prevBuildingPos = buildingPos;
+        
     }
 }

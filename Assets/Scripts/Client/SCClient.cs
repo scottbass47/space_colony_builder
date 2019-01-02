@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using LiteNetLib;
@@ -9,6 +10,7 @@ using System.Net.Sockets;
 using Shared.SCPacket;
 using Shared.SCData;
 using Shared.StateChanges;
+using Utils;
 
 namespace Client
 {
@@ -33,6 +35,12 @@ namespace Client
 
         private Dictionary<int, List<StateChangePacket>> stateChangeBuffer;
 
+        // @ Hack Once again, C# generics let us down but this time it's even worse.
+        // Instead of being able to use Action<T> where T : IStateChange to have generic
+        // listeners for different types of events, we have to use object and cast. Lets
+        // hope this doesn't cause problems.
+        private Dictionary<Type, List<Action<IStateChange>>> eventTable;
+
         void Start()
         {
             client = new NetManager(this);
@@ -47,12 +55,24 @@ namespace Client
                     clientIDSet = true;
                 }
             );
-            processor.SubscribeReusable<DeleteTilePacket>(DeleteTile);
             processor.SubscribeReusable<WorldInitPacket>(WorldInit);
             processor.SubscribeReusable<WorldChunkPacket>(WorldChunk);
             processor.Subscribe<StateChangePacket>(StateChanges, () => new StateChangePacket());
 
             stateChangeBuffer = new Dictionary<int, List<StateChangePacket>>();
+            eventTable = new Dictionary<Type, List<Action<IStateChange>>>();
+
+            AddStateChangeListener<EntitySpawn>((spawn) =>
+            {
+                var go = Game.Instance.EntityObjectFactory.CreateEntityObject(spawn.EntityType, spawn);
+                //Instantiate(go);
+            });
+            
+            AddStateChangeListener<EntityRemove>((remove) =>
+            {
+                var go = Game.Instance.EntityManager.GetEntity(remove.ID);
+                Destroy(go); 
+            });
         }
 
         // Update is called once per frame
@@ -72,11 +92,46 @@ namespace Client
             }
         }
 
-        void DeleteTile(DeleteTilePacket packet)
+        public void AddStateChangeListener<T>(Action<T> listener) where T : IStateChange
         {
-            Debug.Log($"[Client] recieved from server request to delete tile at {packet.Pos}");
-            Tilemap tileMap = GameObject.Find("Ground").GetComponentInChildren<Tilemap>();
-            tileMap.SetTile(packet.Pos, null);
+            Type t = typeof(T);
+            if(!eventTable.ContainsKey(t))
+            {
+                eventTable.Add(t, new List<Action<IStateChange>>());
+            }
+
+            // Why C#? 
+            Action<IStateChange> action = (change) =>
+            {
+                var cast = (T)Convert.ChangeType(change, t);
+                listener(cast);
+            };
+            eventTable[t].Add(action);
+        }
+
+        // @Test this needs to be tested, I doubt it works.
+        public void RemoveStateChangeListener<T>(Action<T> listener) where T : IStateChange
+        {
+            Type t = typeof(T);
+            DebugUtils.Assert(eventTable.ContainsKey(t));
+
+            Action<IStateChange> action = (change) =>
+            {
+                var cast = (T)Convert.ChangeType(change, t);
+                listener(cast);
+            };
+            eventTable[t].Remove(action);
+        }
+
+        private void NotifyStateChange<T>(T change) where T : IStateChange
+        {
+            Type t = change.GetType();
+            if (!eventTable.ContainsKey(t)) return;
+
+            foreach(var listener in eventTable[t])
+            {
+                listener(change);
+            }
         }
 
         void StateChanges(StateChangePacket packet)
@@ -106,30 +161,7 @@ namespace Client
                 foreach (var packet in stateChangeBuffer[version])
                 {
                     IStateChange change = packet.Change;
-
-                    if (change is EntitySpawn)
-                    {
-                        EntitySpawn spawn = (EntitySpawn)change;
-                        EntityManager.Instance.SpawnEntity(spawn);
-                    }
-                    else if(change is EntityRemove)
-                    {
-                        EntityRemove remove = (EntityRemove)change;
-
-                        Debug.Log($"[Client] - removing entity with ID {remove.ID}");
-                        var manager = EntityManager.Instance;
-                        Debug.Log($"[Client] -  pos {manager.GetEntity(remove.ID).GetComponent<TilemapObject>().Pos}");
-                        manager.RemoveEntity(remove);
-                    }
-                    else if (change is SCTileData)
-                    {
-                        SCTileData data = (SCTileData)change;
-
-                        Tilemap tilemap = ground.GetComponentInChildren<Tilemap>();
-                        TileStore tileStore = GameObject.Find("Tile Registry").GetComponent<TileStore>();
-
-                        tilemap.SetTile(new Vector3Int { x = data.X, y = data.Y, z = data.Z }, tileStore.Get(data.TileID));
-                    }
+                    NotifyStateChange(change);
                 }
 
                 // After applying all the changes, we can safely increment our version of

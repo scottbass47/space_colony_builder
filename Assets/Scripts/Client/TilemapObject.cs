@@ -28,6 +28,15 @@ namespace Client
 
         public event Action<GameObject, Vector3Int, Vector3Int> PosChanged;
 
+        private void Start()
+        {
+            Game.Instance.Client.ground.GetComponent<MapObjectRenderer>().AddMapObject(this.gameObject);
+        }
+
+        private void OnDestroy()
+        {
+            Game.Instance.Client.ground.GetComponent<MapObjectRenderer>().RemoveMapObject(this.gameObject);
+        }
     }
 
 }

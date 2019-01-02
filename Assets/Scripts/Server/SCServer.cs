@@ -43,19 +43,6 @@ namespace Server
 
             processor = PacketUtils.CreateProcessor();
             processor.SubscribeReusable<UpdatePacket, NetPeer>(OnUpdatePacket);
-
-            processor.SubscribeReusable<DeleteTilePacket>(
-                packet =>
-                {
-                    Debug.Log($"[Server] received delete tile packet at position {packet.Pos}");
-
-                    foreach (NetPeer peer in connectedClients.Values)
-                    {
-                        Debug.Log($"[Server] sending packet to peer {peer.EndPoint}");
-                        processor.Send(peer, packet, DeliveryMethod.ReliableOrdered);
-                    }
-                }
-            );
         }
 
         // Update is called once per frame
