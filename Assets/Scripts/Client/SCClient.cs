@@ -191,7 +191,7 @@ namespace Client
 
             loadingWorld = false;
 
-            GameObject.Find("Loading Screen").SetActive(false);
+            //GameObject.Find("Loading Screen").SetActive(false);
         }
 
         public void SendPacket<T>(T packet) where T : class, new()
