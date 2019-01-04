@@ -1,35 +1,34 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 using UnityEngine.UI;
 
 public class MenuButtonSelection : MonoBehaviour
 {
-    public Button thisButton;
+    private Button thisButton;
     public Button houseButton;
-    public Button hospitalButton;
 
+    private PlaceHouse houseScript;
     private ArrayList children;
     private bool enabled;
 
-    // Start is called before the first frame update
+
     void Start()
     {
         enabled = false;
+        houseScript = GetComponent<PlaceHouse>();
+        thisButton = GetComponent<Button>();
+
         children = new ArrayList();
         for(int i = 1; i < transform.childCount; i++)
         {
-            children.Add(transform.GetChild(i).gameObject);
+            var child = transform.GetChild(i).gameObject;
+            children.Add(child);
+
         }
         thisButton.onClick.AddListener(Toggle);
-        houseButton.onClick.AddListener(Build);
-        hospitalButton.onClick.AddListener(Toggle);
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-       
+        houseButton.onClick.AddListener(BuildHouse);
     }
 
     void Toggle()
@@ -48,8 +47,10 @@ public class MenuButtonSelection : MonoBehaviour
         }
     }
 
-    void Build()
+
+    void BuildHouse()
     {
+        houseScript.enabled = true;
         Toggle();
     }
 }
