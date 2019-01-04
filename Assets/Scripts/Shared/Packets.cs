@@ -13,6 +13,7 @@ namespace Shared
     {
         public class PacketUtils
         {
+            private static Dictionary<string, Type> typeCache = new Dictionary<string, Type>();
 
             // We use singleton here so we don't have to keep creating new instances of
             // the serializer every time we want to send and receive packets
@@ -62,12 +63,16 @@ namespace Shared
                     },
                     reader =>
                     {
-                        // @Performance Using reflection here might be slow considering how often this
-                        // code is going to be run and how fast using reflection is to instantiate objects
-                        // based on runtime types.
-
                         int version = reader.GetInt();
-                        Type type = Type.GetType($"{reader.GetString()}, Assembly-CSharp");
+                        string str = reader.GetString();
+
+                        Type type = null;
+                        if(!typeCache.TryGetValue(str, out type))
+                        {
+                            type = Type.GetType($"{str}, Assembly-CSharp");
+                            typeCache.Add(str, type);
+                        }
+
                         var obj = Activator.CreateInstance(type);
                         IStateChange change = (IStateChange)obj;
                         change.Version = version;
