@@ -32,15 +32,16 @@ namespace Client
 
             processor = PacketUtils.CreateProcessor();
 
-            processor.SubscribeReusable<ClientID>(
-                (packet) => 
+            processor.Subscribe<ClientID>(
+                (packet) =>
                 {
                     clientID = packet.ID;
                     clientIDSet = true;
-                }
+                },
+                () => new ClientID()
             );
-            processor.SubscribeReusable<WorldInitPacket>(NotifyPacketListeners<WorldInitPacket>);
-            processor.SubscribeReusable<WorldChunkPacket>(NotifyPacketListeners<WorldChunkPacket>);
+            processor.Subscribe<WorldInitPacket>(NotifyPacketListeners<WorldInitPacket>, () => new WorldInitPacket());
+            processor.Subscribe<WorldChunkPacket>(NotifyPacketListeners<WorldChunkPacket>, () => new WorldChunkPacket());
             processor.Subscribe<StateChangePacket>(NotifyPacketListeners<StateChangePacket>, () => new StateChangePacket());
 
             eventTable = new Dictionary<Type, List<Action<object>>>();
@@ -134,7 +135,15 @@ namespace Client
 
         public void OnNetworkReceive(NetPeer peer, NetPacketReader reader, DeliveryMethod deliveryMethod)
         {
-            processor.ReadAllPackets(reader);
+            try
+            {
+                processor.ReadAllPackets(reader);
+
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
         }
 
         public void OnNetworkReceiveUnconnected(IPEndPoint remoteEndPoint, NetPacketReader reader, UnconnectedMessageType messageType)

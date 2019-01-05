@@ -9,6 +9,7 @@ using Shared.SCPacket;
 using Shared.SCData;
 using Shared.StateChanges;
 using Shared;
+using Utils;
 
 namespace Server
 {
@@ -26,6 +27,8 @@ namespace Server
         private NetPacketProcessor processor;
         private WorldStateManager stateManager;
 
+        //private ProtoSerializer serializer;
+
         void Start()
         {
             writer = new NetDataWriter();
@@ -42,7 +45,10 @@ namespace Server
             stateManager = new WorldStateManager(WorldSize);
 
             processor = PacketUtils.CreateProcessor();
-            processor.SubscribeReusable<UpdatePacket, NetPeer>(OnUpdatePacket);
+            processor.Subscribe<UpdatePacket, NetPeer>(OnUpdatePacket, () => new UpdatePacket());
+
+            //serializer = new ProtoSerializer();
+            //serializer.Subscribe<UpdatePacket>(OnUpdatePacket, () = new Upd);
         }
 
         // Update is called once per frame
@@ -80,7 +86,9 @@ namespace Server
                 {
                     Debug.Log($"[Server] - deleting entity with ID {(change.Change as EntityRemove).ID}");
                 }
+                //serializer.Send(peer, change, DeliveryMethod.ReliableUnordered);
                 processor.Send(peer, change, DeliveryMethod.ReliableUnordered);
+                //peer.Send(data, 0, data.Length, DeliveryMethod.ReliableUnordered);
             }
         }
 
@@ -161,12 +169,12 @@ namespace Server
                 }
             }
             processor.Send(peer,
-                new WorldChunkPacket
-                {
-                    ChunkNumber = packetIndex,
-                    TileData = tileArr,
-                    DataCount = tileCount
-                }, DeliveryMethod.ReliableUnordered);
+            new WorldChunkPacket
+            {
+                ChunkNumber = packetIndex,
+                TileData = tileArr,
+                DataCount = tileCount
+            }, DeliveryMethod.ReliableUnordered);
         }
 
         // @Todo We need to figure out what the client ID is when a client disconnects
