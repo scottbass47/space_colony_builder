@@ -19,12 +19,14 @@ namespace Client
         public GameObject Ground;
         public TileBase tileBase;
 
-        // Start is called before the first frame update
+        private Dictionary<Vector3Int, GameObject> map;
+        
         void Start()
         {
             var client = Game.Instance.Client;
             client.AddPacketListener<WorldInitPacket>(WorldInit);
             client.AddPacketListener<WorldChunkPacket>(WorldChunk);
+            map = new Dictionary<Vector3Int, GameObject>();
         }
 
         void WorldInit(WorldInitPacket packet)
@@ -79,6 +81,24 @@ namespace Client
             loadingWorld = false;
 
             //GameObject.Find("Loading Screen").SetActive(false);
+        }
+
+        public void AddMapObject(GameObject obj)
+        {
+            map.Add(obj.GetComponent<TilemapObject>().Pos, obj);
+            Ground.GetComponent<MapObjectRenderer>().AddMapObject(obj);          
+        }
+
+        public void RemoveMapObject(GameObject obj)
+        {
+            map.Remove(obj.GetComponent<TilemapObject>().Pos);
+            Ground.GetComponent<MapObjectRenderer>().RemoveMapObject(obj);     
+        }
+
+        public GameObject GetMapObject(Vector3Int pos)
+        {
+            map.TryGetValue(pos, out GameObject obj);
+            return obj;
         }
     }
 
