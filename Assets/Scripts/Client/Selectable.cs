@@ -11,7 +11,7 @@ namespace Client
 
         private Tilemap tilemap;
 
-        public void DisplayWindow(GameObject window)
+        public void DisplayPopUpWindow(GameObject window)
         {
             //Set Text (Name and Info)
             //Set Collider to width and height of rect transform
@@ -25,13 +25,18 @@ namespace Client
 
             RectTransform rt = window.GetComponent<RectTransform>();
 
-            float widthOffset = rt.rect.width * rt.lossyScale.x / 2 + 0.5f;
+            float widthOffset = rt.rect.width * rt.lossyScale.x / 2 + 0.3f;
             float heightOffset = rt.rect.height * rt.lossyScale.y / 2;
 
             Vector3 WindowPos = new Vector3(worldMousePos.x + widthOffset, worldMousePos.y + heightOffset, 1);
 
             window.SetActive(true);
             window.transform.SetPositionAndRotation(WindowPos, Quaternion.identity);
+        }
+
+        public void DisplayWindow(GameObject window)
+        {
+            window.SetActive(true);
         }
     }
 }
