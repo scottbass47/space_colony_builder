@@ -6,44 +6,37 @@ using LiteNetLib.Utils;
 using Server;
 using Shared.SCData;
 using Shared.SCPacket;
+using ProtoBuf;
 
 namespace Shared
 {
     namespace StateChanges
     {
-        public abstract class IStateChange : INetSerializable
+        [ProtoContract]
+        [ProtoInclude(10, typeof(SCTileData))]
+        [ProtoInclude(11, typeof(EntitySpawn))]
+        [ProtoInclude(12, typeof(EntityRemove))]
+        [ProtoInclude(13, typeof(EntityUpdate))]
+        [ProtoInclude(14, typeof(NoChange))]
+        public class IStateChange 
         {
+            [ProtoMember(1)]
             public int Version { get; set; }
-
-            public abstract void Deserialize(NetDataReader reader);
-            public abstract void Serialize(NetDataWriter writer);
         }
 
+        [ProtoContract]
         public class SCTileData : IStateChange
         {
+            [ProtoMember(1)]
             public TileChangeType Type { get; set; }
+            [ProtoMember(2)]
             public TileID TileID { get; set; } // Used for tile CREATE and CHANGE
+            [ProtoMember(3)]
             public int X { get; set; }
+            [ProtoMember(4)]
             public int Y { get; set; }
+            [ProtoMember(5)]
             public int Z { get; set; }
-
-            public override void Deserialize(NetDataReader reader)
-            {
-                Type = (TileChangeType)reader.GetInt();
-                TileID = (TileID) reader.GetInt();
-                X = reader.GetInt();
-                Y = reader.GetInt();
-                Z = reader.GetInt();
-            }
-
-            public override void Serialize(NetDataWriter writer)
-            {
-                writer.Put((int)Type);
-                writer.Put((int)TileID);
-                writer.Put(X);
-                writer.Put(Y);
-                writer.Put(Z);
-            }
         }
 
         public enum TileChangeType
@@ -54,81 +47,44 @@ namespace Shared
         }
 
         // @Hack We should be able to serialize Vector3 and other nested types automatically
+        [ProtoContract]
         public class EntitySpawn : IStateChange
         {
+            [ProtoMember(1)]
             public int ID { get; set; }
+            [ProtoMember(2)]
             public EntityType EntityType { get; set; }
+            [ProtoMember(3)]
             public Vector3 Pos { get; set; }
-
-            public override void Deserialize(NetDataReader reader)
-            {
-                ID = reader.GetInt();
-                EntityType = (EntityType)reader.GetInt();
-                Pos = new Vector3
-                {
-                    x = reader.GetFloat(),
-                    y = reader.GetFloat(),
-                    z = reader.GetFloat()
-                };
-            }
-
-            public override void Serialize(NetDataWriter writer)
-            {
-                writer.Put(ID);
-                writer.Put((int)EntityType);
-                writer.Put(Pos.x);
-                writer.Put(Pos.y);
-                writer.Put(Pos.z);
-            }
         }
 
+        [ProtoContract]
         public class EntityRemove : IStateChange
         {
+            [ProtoMember(1)]
             public int ID { get; set; }
-
-            public override void Deserialize(NetDataReader reader)
-            {
-                ID = reader.GetInt();
-            }
-
-            public override void Serialize(NetDataWriter writer)
-            {
-                writer.Put(ID);
-            }
         }
 
+        [ProtoContract]
         public class EntityUpdate : IStateChange
         {
+            [ProtoMember(1)]
             public int ID { get; set; }
-
-            public override void Deserialize(NetDataReader reader)
-            {
-                ID = reader.GetInt();
-            }
-
-            public override void Serialize(NetDataWriter writer)
-            {
-                writer.Put(ID);
-            }
         } 
 
+        [ProtoContract]
         public class HealthUpdate : EntityUpdate
         {
+            [ProtoMember(1)]
             public int Health { get; set; }
         }
 
         // @Hack We need to signal to the client that no changes occurred if no changes
         // occurred in a version of the world. This probably won't be used often, so it's 
         // not a big deal, but there's also probably a better way to do this. 
+        [ProtoContract]
         public class NoChange : IStateChange
         {
-            public override void Deserialize(NetDataReader reader)
-            {
-            }
-
-            public override void Serialize(NetDataWriter writer)
-            {
-            }
         }
     }
 }
