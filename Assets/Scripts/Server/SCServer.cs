@@ -46,9 +46,6 @@ namespace Server
 
             processor = PacketUtils.CreateProcessor();
             processor.Subscribe<UpdatePacket, NetPeer>(OnUpdatePacket, () => new UpdatePacket());
-
-            //serializer = new ProtoSerializer();
-            //serializer.Subscribe<UpdatePacket>(OnUpdatePacket, () = new Upd);
         }
 
         // Update is called once per frame

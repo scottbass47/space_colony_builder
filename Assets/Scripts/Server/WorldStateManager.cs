@@ -19,11 +19,14 @@ namespace Server
 
         public int Version { get; private set; }
         public int Size { get; private set; }
+        public Engine Engine => engine;
 
         // Creates a new world state with the specified tile map size
         public WorldStateManager(int size)
         {
             engine = new Engine();
+            EntityFactory.Engine = engine;
+
             engine.AddSystem(new RandomDeleteSystem(this));
             engine.AddSystem(new RandomHealthSystem(this));
             engine.AddSystem(new StateChangeEmitterSystem(this));
@@ -38,12 +41,8 @@ namespace Server
 
             foreach (Vector3Int spawn in rockSpawns)
             {
-                Entity rock = engine.CreateEntity();
-                rock.AddComponent<MapObjectComponent>();
-                rock.AddComponent<HealthComponent>();
-                rock.AddComponent<StateUpdateComponent>();
+                var rock = EntityFactory.CreateRock();
                 engine.AddEntity(rock);
-
                 ApplyChange(new EntitySpawn { ID = rock.ID, EntityType = EntityType.ROCK, Pos = spawn });
             }
         }

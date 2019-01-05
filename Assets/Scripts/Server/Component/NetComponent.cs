@@ -15,6 +15,19 @@ namespace Server
 
         public abstract EntityUpdate CreateChange();
 
+        //public NetComponent()
+        //{
+        //    Type t = GetType();
+
+        //    foreach(var field in t.GetFields())
+        //    {
+        //        if(field.GetType() == typeof(NetValue<>))
+        //        {
+        //            NetValue<> v = field.GetValue(this) as NetValue<>;
+        //        }
+        //    }
+        //}
+
         protected void AddNetValue<T>(NetValue<T> val)
         {
             val.OnChange += OnChange;
