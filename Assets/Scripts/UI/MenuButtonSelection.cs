@@ -11,12 +11,12 @@ public class MenuButtonSelection : MonoBehaviour
 
     private PlaceHouse houseScript;
     private ArrayList children;
-    private bool enabled;
+    private bool buttonsEnabled;
 
 
     void Start()
     {
-        enabled = false;
+        buttonsEnabled = false;
         houseScript = GetComponent<PlaceHouse>();
         thisButton = GetComponent<Button>();
 
@@ -33,17 +33,17 @@ public class MenuButtonSelection : MonoBehaviour
 
     void Toggle()
     {
-        if (enabled)
+        if (buttonsEnabled)
         {
             foreach (GameObject child in children)
                 child.SetActive(false);
-            enabled = false;
+            buttonsEnabled = false;
         }
         else
         {
             foreach (GameObject child in children)
                 child.SetActive(true);
-            enabled = true;
+            buttonsEnabled = true;
         }
     }
 
