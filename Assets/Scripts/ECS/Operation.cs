@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ECS
 {
-    public class Operation
+    public class Operation : Poolable
     {
         public OpType type;
         public Entity entity;
@@ -17,6 +17,11 @@ namespace ECS
             this.entity = entity;
 
             return this;
+        }
+
+        public void Reset()
+        {
+            entity = null;
         }
     }
 

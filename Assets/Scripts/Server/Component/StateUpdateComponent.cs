@@ -10,5 +10,8 @@ namespace Server
     // Marker component for entities that need to send changes over the network
     public class StateUpdateComponent : Component
     {
+        public void Reset()
+        {
+        }
     }
 }

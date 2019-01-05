@@ -20,5 +20,11 @@ namespace Server
         {
             return new HealthUpdate { Health = health };
         }
+
+        public override void Reset()
+        {
+            base.Reset();
+            health = new NetValue<int>();
+        }
     }
 }

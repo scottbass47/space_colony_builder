@@ -10,7 +10,7 @@ namespace Client
     public class EntityObject : MonoBehaviour
     {
         public int ID;
-        private Dictionary<Type, List<Action<EntityUpdate>>> listeners = new Dictionary<Type, List<Action<EntityUpdate>>>();
+        private EventTable<EntityUpdate> listeners = new EventTable<EntityUpdate>();
 
         // This should be called ASAP (once the ID has been assigned, but not before)
         public void OnCreate()
@@ -29,43 +29,17 @@ namespace Client
 
         public void AddUpdateListener<T>(Action<T> listener) where T : EntityUpdate
         {
-            Type t = typeof(T);
-            if(!listeners.ContainsKey(t))
-            {
-                listeners.Add(t, new List<Action<EntityUpdate>>());
-            }
-
-            // Very fancy
-            Action<EntityUpdate> action = (change) =>
-            {
-                var cast = (T)Convert.ChangeType(change, t);
-                listener(cast);
-            };
-            listeners[t].Add(action);
+            listeners.AddListener(listener);
         }
 
-        // @Test this needs to be tested, I doubt it works.
-        public void RemoveUpdateListener<T>(Action<T> listener) where T : IStateChange
+        public void RemoveUpdateListener<T>(Action<T> listener) where T : EntityUpdate
         {
-            Type t = typeof(T);
-            DebugUtils.Assert(listeners.ContainsKey(t));
-
-            Action<IStateChange> action = (change) =>
-            {
-                var cast = (T)Convert.ChangeType(change, t);
-                listener(cast);
-            };
-            listeners[t].Remove(action);
+            listeners.RemoveListener(listener);
         }
 
         public void OnEntityUpdate<T>(T update) where T : EntityUpdate
         {
-            Type t = update.GetType();
-            if (!listeners.ContainsKey(t)) return;
-            foreach(var listener in listeners[t])
-            {
-                listener(update);
-            }
+            listeners.NotifyListeners(update);
         }
     }
 }

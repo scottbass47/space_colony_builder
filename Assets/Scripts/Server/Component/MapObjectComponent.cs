@@ -6,6 +6,9 @@ namespace Server
 {
     public class MapObjectComponent : Component
     {
+        public void Reset()
+        {
+        }
     }
 
 }

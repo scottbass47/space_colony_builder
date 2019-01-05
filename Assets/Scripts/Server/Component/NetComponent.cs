@@ -29,5 +29,10 @@ namespace Server
         {
             hasChanges = false;
         }
+
+        public virtual void Reset()
+        {
+            hasChanges = false;
+        }
     }
 }

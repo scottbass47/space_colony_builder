@@ -12,12 +12,7 @@ namespace Client
     {
         private int MyVersion = 0;
         private Dictionary<int, List<StateChangePacket>> stateChangeBuffer;
-
-        // @ Hack Once again, C# generics let us down but this time it's even worse.
-        // Instead of being able to use Action<T> where T : IStateChange to have generic
-        // listeners for different types of events, we have to use object and cast. Lets
-        // hope this doesn't cause problems.
-        private Dictionary<Type, List<Action<IStateChange>>> eventTable;
+        private EventTable<IStateChange> eventTable;
         private Dictionary<int, EntityObject> entityUpdateTable;
 
         // Start is called before the first frame update
@@ -25,12 +20,11 @@ namespace Client
         {
             stateChangeBuffer = new Dictionary<int, List<StateChangePacket>>();
             entityUpdateTable = new Dictionary<int, EntityObject>();
-            eventTable = new Dictionary<Type, List<Action<IStateChange>>>();
+            eventTable = new EventTable<IStateChange>();
 
             AddStateChangeListener<EntitySpawn>((spawn) =>
             {
                 var go = Game.Instance.EntityObjectFactory.CreateEntityObject(spawn.EntityType, spawn);
-                //Instantiate(go);
             });
             
             AddStateChangeListener<EntityRemove>((remove) =>
@@ -44,33 +38,12 @@ namespace Client
 
         public void AddStateChangeListener<T>(Action<T> listener) where T : IStateChange
         {
-            Type t = typeof(T);
-            if(!eventTable.ContainsKey(t))
-            {
-                eventTable.Add(t, new List<Action<IStateChange>>());
-            }
-
-            // Very fancy
-            Action<IStateChange> action = (change) =>
-            {
-                var cast = (T)Convert.ChangeType(change, t);
-                listener(cast);
-            };
-            eventTable[t].Add(action);
+            eventTable.AddListener(listener);
         }
 
-        // @Test this needs to be tested, I doubt it works.
         public void RemoveStateChangeListener<T>(Action<T> listener) where T : IStateChange
         {
-            Type t = typeof(T);
-            DebugUtils.Assert(eventTable.ContainsKey(t));
-
-            Action<IStateChange> action = (change) =>
-            {
-                var cast = (T)Convert.ChangeType(change, t);
-                listener(cast);
-            };
-            eventTable[t].Remove(action);
+            eventTable.RemoveListener(listener);
         }
 
         private void NotifyStateChange<T>(T change) where T : IStateChange
@@ -80,12 +53,7 @@ namespace Client
             {
                 NotifyEntityUpdate(change as EntityUpdate);
             }
-            if (!eventTable.ContainsKey(t)) return;
-
-            foreach(var listener in eventTable[t])
-            {
-                listener(change);
-            }
+            eventTable.NotifyListeners(change);
         }
 
         private void NotifyEntityUpdate<T>(T update) where T : EntityUpdate
