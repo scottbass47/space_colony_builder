@@ -25,6 +25,8 @@ namespace Server
         {
             engine = new Engine();
             engine.AddSystem(new RandomDeleteSystem(this));
+            engine.AddSystem(new RandomHealthSystem(this));
+            engine.AddSystem(new StateChangeEmitterSystem(this));
 
             Version = 1;
             Size = size;
@@ -38,6 +40,8 @@ namespace Server
             {
                 Entity rock = engine.CreateEntity();
                 rock.AddComponent<MapObjectComponent>();
+                rock.AddComponent<HealthComponent>();
+                rock.AddComponent<StateUpdateComponent>();
                 engine.AddEntity(rock);
 
                 ApplyChange(new EntitySpawn { ID = rock.ID, EntityType = EntityType.ROCK, Pos = spawn });
