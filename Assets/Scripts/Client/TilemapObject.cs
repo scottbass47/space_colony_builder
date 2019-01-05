@@ -30,12 +30,13 @@ namespace Client
 
         private void Start()
         {
-            Game.Instance.Client.ground.GetComponent<MapObjectRenderer>().AddMapObject(this.gameObject);
+            Game.Instance.World.Ground.GetComponent<MapObjectRenderer>().AddMapObject(this.gameObject);
+            //Game.Instance.World.AddMapObject(this.gameObject);
         }
 
         private void OnDestroy()
         {
-            Game.Instance.Client.ground.GetComponent<MapObjectRenderer>().RemoveMapObject(this.gameObject);
+            Game.Instance.World.Ground.GetComponent<MapObjectRenderer>().RemoveMapObject(this.gameObject);
         }
     }
 

@@ -43,5 +43,24 @@ namespace ECSTests
             Assert.IsFalse(bits.Get(10));
             Assert.IsFalse(bits.Get(0));
         }
+
+        [TestMethod]
+        public void TestForeach()
+        {
+            Bits bits = new Bits(10);
+            bits.Set(4, true);
+            bits.Set(5, true);
+            bits.Set(9, true);
+            bits.Set(10, false);
+
+            int idx = 0;
+            foreach(bool bit in bits)
+            {
+                if (idx == 4 || idx == 5 || idx == 9) Assert.IsTrue(bit);
+                else Assert.IsFalse(bit);
+                idx++;
+            }
+            Assert.AreEqual(idx, 10);
+        }
     }
 }

@@ -22,26 +22,10 @@ namespace Client
         private NetPacketProcessor processor;
         private int clientID;
         private bool clientIDSet = false;
-        private int MyVersion = 0;
 
-        private bool loadingWorld = true;
-        private int chunksReceived = 0;
-        private int totalChunks = 0;
-        private SCTileData[] tileDataBuffer;
-        private int tileBufferIdx;
-        public GameObject groundPrefab;
-        public GameObject ground;
-        public TileBase tileBase;
+        private Dictionary<Type, List<Action<object>>> eventTable;
 
-        private Dictionary<int, List<StateChangePacket>> stateChangeBuffer;
-
-        // @ Hack Once again, C# generics let us down but this time it's even worse.
-        // Instead of being able to use Action<T> where T : IStateChange to have generic
-        // listeners for different types of events, we have to use object and cast. Lets
-        // hope this doesn't cause problems.
-        private Dictionary<Type, List<Action<IStateChange>>> eventTable;
-
-        void Start()
+        void Awake()
         {
             client = new NetManager(this);
             client.Start();
@@ -55,24 +39,12 @@ namespace Client
                     clientIDSet = true;
                 }
             );
-            processor.SubscribeReusable<WorldInitPacket>(WorldInit);
-            processor.SubscribeReusable<WorldChunkPacket>(WorldChunk);
-            processor.Subscribe<StateChangePacket>(StateChanges, () => new StateChangePacket());
+            processor.SubscribeReusable<WorldInitPacket>(NotifyPacketListeners<WorldInitPacket>);
+            processor.SubscribeReusable<WorldChunkPacket>(NotifyPacketListeners<WorldChunkPacket>);
+            processor.Subscribe<StateChangePacket>(NotifyPacketListeners<StateChangePacket>, () => new StateChangePacket());
 
-            stateChangeBuffer = new Dictionary<int, List<StateChangePacket>>();
-            eventTable = new Dictionary<Type, List<Action<IStateChange>>>();
+            eventTable = new Dictionary<Type, List<Action<object>>>();
 
-            AddStateChangeListener<EntitySpawn>((spawn) =>
-            {
-                var go = Game.Instance.EntityObjectFactory.CreateEntityObject(spawn.EntityType, spawn);
-                //Instantiate(go);
-            });
-            
-            AddStateChangeListener<EntityRemove>((remove) =>
-            {
-                var go = Game.Instance.EntityManager.GetEntity(remove.ID);
-                Destroy(go); 
-            });
         }
 
         // Update is called once per frame
@@ -85,146 +57,55 @@ namespace Client
             {
                 client.SendDiscoveryRequest(new byte[] { 1 }, 5000);
             }
-            else if (!loadingWorld && clientIDSet)
+            else if (!Game.Instance.World.loadingWorld && clientIDSet)
             {
                 // Request updates
                 SendPacket(new UpdatePacket { ClientID = clientID });
             }
         }
 
-        public void AddStateChangeListener<T>(Action<T> listener) where T : IStateChange
+        public void AddPacketListener<T>(Action<T> listener) 
         {
             Type t = typeof(T);
             if(!eventTable.ContainsKey(t))
             {
-                eventTable.Add(t, new List<Action<IStateChange>>());
+                eventTable.Add(t, new List<Action<object>>());
             }
 
-            // Why C#? 
-            Action<IStateChange> action = (change) =>
+            // Very fancy
+            Action<object> action = (packet) =>
             {
-                var cast = (T)Convert.ChangeType(change, t);
+                var cast = (T)Convert.ChangeType(packet, t);
                 listener(cast);
             };
             eventTable[t].Add(action);
         }
 
         // @Test this needs to be tested, I doubt it works.
-        public void RemoveStateChangeListener<T>(Action<T> listener) where T : IStateChange
+        public void RemoveStateChangeListener<T>(Action<T> listener) 
         {
             Type t = typeof(T);
             DebugUtils.Assert(eventTable.ContainsKey(t));
 
-            Action<IStateChange> action = (change) =>
+            Action<object> action = (packet) =>
             {
-                var cast = (T)Convert.ChangeType(change, t);
+                var cast = (T)Convert.ChangeType(packet, t);
                 listener(cast);
             };
             eventTable[t].Remove(action);
         }
 
-        private void NotifyStateChange<T>(T change) where T : IStateChange
+        private void NotifyPacketListeners<T>(T packet) 
         {
-            Type t = change.GetType();
+            Type t = packet.GetType();
             if (!eventTable.ContainsKey(t)) return;
 
             foreach(var listener in eventTable[t])
             {
-                listener(change);
+                listener(packet);
             }
         }
 
-        void StateChanges(StateChangePacket packet)
-        {
-            Debug.Log($"[Client] received state changes for version {packet.Version}. Change {packet.ChangeNumber}/{packet.TotalChanges}");
-
-            if (!stateChangeBuffer.ContainsKey(packet.Version))
-            {
-                stateChangeBuffer[packet.Version] = new List<StateChangePacket>();
-            }
-
-            stateChangeBuffer[packet.Version].Add(packet);
-
-            // Try and apply changes to the oldest version we don't have
-            TryApplyChanges(MyVersion + 1); 
-        }
-
-        // Checks if all the changes for a given version number have arrived,
-        // and if so, applies the changes and increments the version.
-        private void TryApplyChanges(int version)
-        {
-            if (!stateChangeBuffer.ContainsKey(version)) return;
-
-            if (stateChangeBuffer[version].Count == stateChangeBuffer[version][0].TotalChanges)
-            {
-                Debug.Log($"[Client] - applying changes for version {version}");
-                foreach (var packet in stateChangeBuffer[version])
-                {
-                    IStateChange change = packet.Change;
-                    NotifyStateChange(change);
-                }
-
-                // After applying all the changes, we can safely increment our version of
-                // the world and try to apply the next version's changes.
-                MyVersion = version;
-                stateChangeBuffer.Remove(version);
-                TryApplyChanges(version + 1);
-            }
-        }
-
-        void WorldInit(WorldInitPacket packet)
-        {
-            Debug.Log($"SCClient.WorldChunk - Received world init packet. Expecting {packet.Chunks} chunks of data.");
-            tileDataBuffer = new SCTileData[packet.Size * packet.Size];
-            tileBufferIdx = 0;
-            totalChunks = packet.Chunks;
-        }
-
-        // @Bug NullPointer if the Init packet is dropped (TileChange arr doesn't get created)
-        void WorldChunk(WorldChunkPacket packet)
-        {
-            chunksReceived++;
-            Debug.Log($"SCClient.WorldChunk - Received chunk {packet.ChunkNumber}.");
-
-            for (int i = 0; i < packet.DataCount; i++)
-            {
-                tileDataBuffer[tileBufferIdx++] = packet.TileData[i];
-            }
-
-            // We have all the data, create the world
-            if (chunksReceived == totalChunks)
-            {
-                CreateWorld();
-            }
-        }
-
-        void CreateWorld()
-        {
-            Debug.Log("SCClient.CreateWorld - All data received! Creating world.");
-
-            ground = Instantiate(groundPrefab);
-
-            Tilemap tilemap = ground.GetComponentInChildren<Tilemap>();
-            tilemap.ClearAllTiles();
-
-            TileStore tileStore = GameObject.Find("Tile Registry").GetComponent<TileStore>();
-
-            foreach (SCTileData data in tileDataBuffer)
-            {
-                tilemap.SetTile(new Vector3Int { x = data.X, y = data.Y, z = data.Z }, tileStore.Get(data.TileID));
-            }
-
-            tilemap.CompressBounds();
-            Vector3 center = tilemap.cellBounds.center;
-            Vector3 camPos = tilemap.CellToWorld(new Vector3Int((int)center.x, (int)center.y, 0));
-            camPos.z = -10;
-
-            Camera.main.transform.position = camPos;
-
-            loadingWorld = false;
-
-            //GameObject.Find("Loading Screen").SetActive(false);
-        }
 
         public void SendPacket<T>(T packet) where T : class, new()
         {

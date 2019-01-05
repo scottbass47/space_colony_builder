@@ -1,12 +1,15 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using LiteNetLib.Utils;
 
 namespace ECS
 {
-    public class Bits : IEquatable<Bits>
+    // @Todo Make serialization smaller
+    public class Bits : IEquatable<Bits>, INetSerializable, IEnumerable, IEnumerator
     {
         private int[] words = { 0 };
         public int[] Words => words;
@@ -17,13 +20,32 @@ namespace ECS
         {
             get
             {
-                foreach(var word in words)
+                foreach (var word in words)
                 {
                     if (word != 0) return false;
                 }
                 return true;
             }
         }
+
+        private int position = -1;
+
+        public bool Current 
+        {
+            get
+            {
+                try
+                {
+                    return Get(position);
+                }
+                catch(IndexOutOfRangeException)
+                {
+                    throw new InvalidOperationException();
+                }
+            }
+        }
+
+        object IEnumerator.Current => Current;
 
         public Bits(int nbits)
         {
@@ -117,6 +139,34 @@ namespace ECS
             hashCode = hashCode * -1521134295 + Nbits.GetHashCode();
             hashCode = hashCode * -1521134295 + Empty.GetHashCode();
             return hashCode;
+        }
+
+        public void Serialize(NetDataWriter writer)
+        {
+            writer.Put(Nbits);
+            writer.PutArray(words);
+        }
+
+        public void Deserialize(NetDataReader reader)
+        {
+            Nbits = reader.GetInt();
+            words = reader.GetIntArray();
+        }
+
+        public IEnumerator GetEnumerator()
+        {
+            return this;
+        }
+
+        public bool MoveNext()
+        {
+            position++;
+            return position < Nbits;
+        }
+
+        public void Reset()
+        {
+            position = -1;
         }
 
         public static bool operator ==(Bits bits1, Bits bits2)

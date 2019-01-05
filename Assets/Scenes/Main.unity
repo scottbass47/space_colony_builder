@@ -655,11 +655,17 @@ MonoBehaviour:
     type: 3}
   EntityManagerPrefab: {fileID: 2854225870459345708, guid: bc9a201a2fc21fb42b3c5f0d1da1848e,
     type: 3}
+  WorldPrefab: {fileID: 8967269070523467069, guid: 22a765b7e7118be4c96f7b742187646f,
+    type: 3}
+  StateChangeManagerPrefab: {fileID: 5632385207552228468, guid: 85f489319e6cb944393553acf8de343a,
+    type: 3}
   NetManager: {fileID: 0}
   Client: {fileID: 0}
   EntityObjectFactory: {fileID: 0}
   EntityManager: {fileID: 0}
   PrefabTable: {fileID: 0}
+  World: {fileID: 0}
+  StateChangeManager: {fileID: 0}
 --- !u!4 &952919329
 Transform:
   m_ObjectHideFlags: 0

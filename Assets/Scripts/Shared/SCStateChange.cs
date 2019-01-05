@@ -97,6 +97,26 @@ namespace Shared
             }
         }
 
+        public class EntityUpdate : IStateChange
+        {
+            public int ID { get; set; }
+
+            public override void Deserialize(NetDataReader reader)
+            {
+                ID = reader.GetInt();
+            }
+
+            public override void Serialize(NetDataWriter writer)
+            {
+                writer.Put(ID);
+            }
+        } 
+
+        public class HealthUpdate : EntityUpdate
+        {
+            public int Health { get; set; }
+        }
+
         // @Hack We need to signal to the client that no changes occurred if no changes
         // occurred in a version of the world. This probably won't be used often, so it's 
         // not a big deal, but there's also probably a better way to do this. 
