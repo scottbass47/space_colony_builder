@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace ECS
 {
     // ComponentPool manages unused components to allow for later reassignment.
-    public class Pool<T>
+    public class Pool<T> where T : Poolable
     {
         public Dictionary<int, Stack<T>> pool; 
             
@@ -48,7 +48,7 @@ namespace ECS
                 specificPool = new Stack<T>();
                 pool.Add(index, specificPool);
             }
-
+            item.Reset();
             specificPool.Push(item);
         }
     }

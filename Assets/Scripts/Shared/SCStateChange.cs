@@ -66,6 +66,7 @@ namespace Shared
         }
 
         [ProtoContract]
+        [ProtoInclude(10, typeof(HealthUpdate))]
         public class EntityUpdate : IStateChange
         {
             [ProtoMember(1)]

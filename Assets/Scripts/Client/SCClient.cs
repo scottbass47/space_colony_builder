@@ -23,7 +23,8 @@ namespace Client
         private int clientID;
         private bool clientIDSet = false;
 
-        private Dictionary<Type, List<Action<object>>> eventTable;
+        //private Dictionary<Type, List<Action<object>>> eventTable;
+        private EventTable<object> eventTable;
 
         void Awake()
         {
@@ -44,7 +45,8 @@ namespace Client
             processor.Subscribe<WorldChunkPacket>(NotifyPacketListeners<WorldChunkPacket>, () => new WorldChunkPacket());
             processor.Subscribe<StateChangePacket>(NotifyPacketListeners<StateChangePacket>, () => new StateChangePacket());
 
-            eventTable = new Dictionary<Type, List<Action<object>>>();
+            //eventTable = new Dictionary<Type, List<Action<object>>>();
+            eventTable = new EventTable<object>();
 
         }
 
@@ -67,51 +69,21 @@ namespace Client
 
         public void AddPacketListener<T>(Action<T> listener) 
         {
-            Type t = typeof(T);
-            if(!eventTable.ContainsKey(t))
-            {
-                eventTable.Add(t, new List<Action<object>>());
-            }
-
-            // Very fancy
-            Action<object> action = (packet) =>
-            {
-                var cast = (T)Convert.ChangeType(packet, t);
-                listener(cast);
-            };
-            eventTable[t].Add(action);
+            eventTable.AddListener(listener);
         }
 
-        // @Test this needs to be tested, I doubt it works.
         public void RemoveStateChangeListener<T>(Action<T> listener) 
         {
-            Type t = typeof(T);
-            DebugUtils.Assert(eventTable.ContainsKey(t));
-
-            Action<object> action = (packet) =>
-            {
-                var cast = (T)Convert.ChangeType(packet, t);
-                listener(cast);
-            };
-            eventTable[t].Remove(action);
+            eventTable.RemoveListener(listener);
         }
 
         private void NotifyPacketListeners<T>(T packet) 
         {
-            Type t = packet.GetType();
-            if (!eventTable.ContainsKey(t)) return;
-
-            foreach(var listener in eventTable[t])
-            {
-                listener(packet);
-            }
+            eventTable.NotifyListeners(packet);
         }
-
 
         public void SendPacket<T>(T packet) where T : class, new()
         {
-            //Debug.Log($"[Client] sending packet of type {packet.GetType()} to server");
-
             processor.Send(peer, packet, DeliveryMethod.ReliableOrdered);
         }
 
@@ -135,15 +107,7 @@ namespace Client
 
         public void OnNetworkReceive(NetPeer peer, NetPacketReader reader, DeliveryMethod deliveryMethod)
         {
-            try
-            {
-                processor.ReadAllPackets(reader);
-
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
+            processor.ReadAllPackets(reader);
         }
 
         public void OnNetworkReceiveUnconnected(IPEndPoint remoteEndPoint, NetPacketReader reader, UnconnectedMessageType messageType)

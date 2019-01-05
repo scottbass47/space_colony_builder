@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace ECS
 {
-    public interface Component : Poolable
+    public interface Poolable
     {
+        void Reset();
     }
 }

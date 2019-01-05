@@ -26,14 +26,21 @@ namespace Server
             this.value = value;
         }
 
-        public static implicit operator NetValue<T>(T val)
-        {
-            return new NetValue<T>(val);
-        }
+        public NetValue() { }
+
+        //public static implicit operator NetValue<T>(T val)
+        //{
+        //    return new NetValue<T>(val);
+        //}
 
         public static implicit operator T(NetValue<T> val)
         {
             return val.Value;
+        }
+
+        public override string ToString()
+        {
+            return value == null ? "null" : value.ToString();
         }
     }
 }

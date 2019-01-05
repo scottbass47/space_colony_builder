@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace ECS
 {
@@ -22,19 +23,25 @@ namespace ECS
             set => removing = value;
         }
 
+        private List<Component> compArr;
+        public List<Component> Components => compArr;
+
         public Entity(int id, Engine engine)
         {
             ID = id;
             this.engine = engine;
             components = new FastMap<Component>();
             componentBits = new Bits();
+            compArr = new List<Component>();
         }
 
+        // @Todo What happens when you add a component of a type that already exists?
         public T AddComponent<T>() where T : Component
         {
             var component = Engine.CreateComponent<T>();
             int compIndex = ComponentType.GetIndex(component.GetType()); 
             components.Put(compIndex, component);
+            compArr.Add(component);
             componentBits.Set(compIndex, true);
 
             // Fire event
@@ -47,6 +54,7 @@ namespace ECS
         {
             int compIndex = ComponentType.GetIndex(typeof(T));
             T ret = (T) components.Remove(compIndex);
+            compArr.Remove(ret);
             componentBits.Set(compIndex, false);
 
             Engine.RecycleComponent(ret);

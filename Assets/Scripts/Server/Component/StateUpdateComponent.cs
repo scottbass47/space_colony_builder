@@ -7,13 +7,11 @@ using System.Threading.Tasks;
 
 namespace Server
 {
-    public class StateChangeComponent : Component
+    // Marker component for entities that need to send changes over the network
+    public class StateUpdateComponent : Component
     {
-        public bool HasChanges { get; set; }
-
-        public void RegisterNetValue<T>(NetValue<T> value)
+        public void Reset()
         {
-
         }
     }
 }

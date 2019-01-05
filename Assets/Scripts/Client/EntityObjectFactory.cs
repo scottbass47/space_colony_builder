@@ -22,7 +22,7 @@ namespace Client
             }
             var eo = go.GetComponent<EntityObject>();
             eo.ID = spawn.ID;
-            eo.AddToEntityManager();
+            eo.OnCreate();
             return go;
         }
 
