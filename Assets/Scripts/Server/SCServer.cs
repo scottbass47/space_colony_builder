@@ -46,6 +46,7 @@ namespace Server
 
             processor = PacketUtils.CreateProcessor();
             processor.Subscribe<UpdatePacket, NetPeer>(OnUpdatePacket, () => new UpdatePacket());
+            processor.Subscribe<PlaceBuildingPacket, NetPeer>(OnPlaceBuildingPacket, () => new PlaceBuildingPacket());
         }
 
         // Update is called once per frame
@@ -87,6 +88,13 @@ namespace Server
                 processor.Send(peer, change, DeliveryMethod.ReliableUnordered);
                 //peer.Send(data, 0, data.Length, DeliveryMethod.ReliableUnordered);
             }
+        }
+
+        void OnPlaceBuildingPacket(PlaceBuildingPacket packet, NetPeer peer)
+        {
+            var house = EntityFactory.CreateHouse();
+            stateManager.Engine.AddEntity(house);
+            stateManager.ApplyChange(new EntitySpawn { ID = house.ID, EntityType = EntityType.HOUSE, Pos = packet.Pos });
         }
 
         public void OnNetworkLatencyUpdate(NetPeer peer, int latency)

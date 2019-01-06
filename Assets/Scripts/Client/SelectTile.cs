@@ -11,12 +11,14 @@ namespace Client
         public Transform windowPrefab;
 
         private Tilemap tilemap;
-        private GameObject window;
+        private GameObject popUpWindow;
+
+        public GameObject window;
 
         private void Start()
         {
-            window = Instantiate(windowPrefab).gameObject;
-            window.SetActive(false);
+            popUpWindow = Instantiate(windowPrefab).gameObject;
+            popUpWindow.SetActive(false);
             tilemap = null;
         }
 
@@ -24,7 +26,7 @@ namespace Client
         {
             if (tilemap == null) tilemap = FindObjectOfType<Tilemap>();
 
-            else if (Input.GetMouseButtonDown(0))
+            else 
             {
                 //Raycast hit checks whether or not user is clicking on UI window
                 RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
@@ -36,12 +38,23 @@ namespace Client
 
                 GameObject obj = Game.Instance.World.GetMapObject(new Vector3Int(mousePos.x, mousePos.y, 0));
 
-                if (window.activeSelf && !hit) window.SetActive(false);
+                if (popUpWindow.activeSelf && !hit) popUpWindow.SetActive(false);
 
                 if (obj != null && !hit)
                 {
                     var selectable = obj.GetComponent<Selectable>();
-                    if(selectable != null) selectable.DisplayWindow(window);
+                    if(selectable != null) selectable.DisplayPopUpWindow(popUpWindow);
+                }
+
+                if (Input.GetMouseButtonDown(0))
+                {
+                    if (obj != null && !hit)
+                    {
+                        var selectable = obj.GetComponent<Selectable>();
+                        if (selectable != null) selectable.DisplayWindow(window);
+                    }
+                    else if (!hit) window.SetActive(false);
+                    
                 }
                 Camera.main.transform.position = old;
             }

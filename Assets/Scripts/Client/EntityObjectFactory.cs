@@ -19,6 +19,9 @@ namespace Client
                 case EntityType.ROCK:
                     go = CreateRock(spawn);
                     break;
+                case EntityType.HOUSE:
+                    go = CreateHouse(spawn);
+                    break;
             }
             var eo = go.GetComponent<EntityObject>();
             eo.ID = spawn.ID;
@@ -31,6 +34,17 @@ namespace Client
             // Create the rock from prefab    
             var prefabTable = Game.Instance.PrefabTable;
             var go = Instantiate(prefabTable.GetPrefab(EntityType.ROCK));
+
+            Vector3 pos = spawn.Pos;
+            go.GetComponent<TilemapObject>().Pos = new Vector3Int((int)pos.x, (int)pos.y, (int)pos.z);
+
+            return go;
+        }
+
+        private GameObject CreateHouse(EntitySpawn spawn)
+        {  
+            var prefabTable = Game.Instance.PrefabTable;
+            var go = Instantiate(prefabTable.GetPrefab(EntityType.HOUSE));
 
             Vector3 pos = spawn.Pos;
             go.GetComponent<TilemapObject>().Pos = new Vector3Int((int)pos.x, (int)pos.y, (int)pos.z);
