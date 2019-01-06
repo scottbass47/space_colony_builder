@@ -87,6 +87,11 @@ namespace Client
             processor.Send(peer, packet, DeliveryMethod.ReliableOrdered);
         }
 
+        public void SendPlaceBuildingPacket(Vector3Int pos)
+        {
+            SendPacket(new PlaceBuildingPacket { ClientID = clientID, Pos = pos });
+        }
+
         public void OnNetworkLatencyUpdate(NetPeer peer, int latency)
         {
         }

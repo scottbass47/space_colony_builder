@@ -22,7 +22,10 @@ namespace Server
 
         public static Entity CreateHouse()
         {
-            return null;
+            Entity house = Engine.CreateEntity();
+            house.AddComponent<MapObjectComponent>();
+            house.AddComponent<HealthComponent>();
+            return house;
         }
     }
 }
