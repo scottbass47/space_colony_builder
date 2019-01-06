@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ECS;
+using UnityEngine;
 
 namespace Server
 {
@@ -11,10 +12,10 @@ namespace Server
     {
         public static Engine Engine;
 
-        public static Entity CreateRock()
+        public static Entity CreateRock(Vector3Int pos)
         {
             Entity rock = Engine.CreateEntity();
-            rock.AddComponent<MapObjectComponent>();
+            rock.AddComponent<MapObjectComponent>().Pos = pos;
             rock.AddComponent<HealthComponent>();
             rock.AddComponent<StateUpdateComponent>();
             return rock;

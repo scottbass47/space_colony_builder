@@ -26,7 +26,7 @@ namespace Server
                 if(random.Next(1000) == 0)
                 {
                     health.health.Value = random.Next(100);
-                    //Debug.Log($"[Server] health for entity {entity.ID} is {health.health} in Version {m.Version}");
+                    Debug.Log($"[Server] health for entity {entity.ID} is {health.health} in Version {m.Version}");
                 }
             }
         }

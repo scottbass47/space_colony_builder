@@ -16,10 +16,13 @@ namespace Server
         //private List<Entity> entities;
         private Dictionary<int, List<IStateChange>> worldStateChanges;
         private Engine engine;
+        private Level level;
 
         public int Version { get; private set; }
         public int Size { get; private set; }
         public Engine Engine => engine;
+        public Level Level => level;
+
 
         // Creates a new world state with the specified tile map size
         public WorldStateManager(int size)
@@ -27,12 +30,14 @@ namespace Server
             engine = new Engine();
             EntityFactory.Engine = engine;
 
-            engine.AddSystem(new RandomDeleteSystem(this));
-            engine.AddSystem(new RandomHealthSystem(this));
+            //engine.AddSystem(new RandomDeleteSystem(this));
+            //engine.AddSystem(new RandomHealthSystem(this));
             engine.AddSystem(new StateChangeEmitterSystem(this));
 
             Version = 1;
             Size = size;
+
+            level = new Level(this);
 
             worldStateChanges = new Dictionary<int, List<IStateChange>>();
 
@@ -41,10 +46,37 @@ namespace Server
 
             foreach (Vector3Int spawn in rockSpawns)
             {
-                var rock = EntityFactory.CreateRock();
+                var rock = EntityFactory.CreateRock(spawn);
                 engine.AddEntity(rock);
                 ApplyChange(new EntitySpawn { ID = rock.ID, EntityType = EntityType.ROCK, Pos = spawn });
             }
+
+            //List<PathNode> path = level.PathFinder.GetPath(new Vector3Int(0, 0, 0), new Vector3Int(Size - 1, Size - 1, 0));
+
+            //string output = "";
+            //for (int y = Size - 1; y >= 0; y--)
+            //{
+            //    string row = "";
+            //    for (int x = 0; x < Size; x++)
+            //    {
+            //        if (path.Contains(new PathNode { x = x, y = y }))
+            //        {
+            //            row += " * ";
+            //        }
+            //        else
+            //        {
+            //            row += " - ";
+            //        }
+            //    }
+            //    output += row + "\n";
+            //}
+            //Debug.Log(output);
+
+            //foreach (var node in path)
+            //{
+            //    tiles[node.x][node.y] = TileID.TOWER;
+            //    Debug.Log(node);
+            //}
         }
 
         // Call this every SERVER update so the version numbers get

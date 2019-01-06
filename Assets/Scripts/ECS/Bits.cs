@@ -122,22 +122,26 @@ namespace ECS
 
         public bool Equals(Bits other)
         {
-            return other != null &&
-                   EqualityComparer<int[]>.Default.Equals(words, other.words) &&
-                   EqualityComparer<int[]>.Default.Equals(Words, other.Words) &&
-                   wordSize == other.wordSize &&
-                   Nbits == other.Nbits &&
-                   Empty == other.Empty;
+            if (other == null) return false;
+
+            if (words.Length != other.words.Length) return false;
+
+            for(int i = 0; i < words.Length; i++)
+            {
+                if (words[i] != other.words[i]) return false;
+            }
+
+            return true; 
         }
 
         public override int GetHashCode()
         {
             var hashCode = 1152762283;
-            hashCode = hashCode * -1521134295 + EqualityComparer<int[]>.Default.GetHashCode(words);
-            hashCode = hashCode * -1521134295 + EqualityComparer<int[]>.Default.GetHashCode(Words);
-            hashCode = hashCode * -1521134295 + wordSize.GetHashCode();
-            hashCode = hashCode * -1521134295 + Nbits.GetHashCode();
-            hashCode = hashCode * -1521134295 + Empty.GetHashCode();
+
+            for (int i = 0; i < words.Length; ++i)
+            {
+                hashCode = unchecked(hashCode * 314159 + words[i]);
+            }
             return hashCode;
         }
 
