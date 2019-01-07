@@ -1,4 +1,5 @@
-﻿using Shared.StateChanges;
+﻿using Shared;
+using Shared.StateChanges;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;

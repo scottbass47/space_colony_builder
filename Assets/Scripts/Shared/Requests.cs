@@ -10,6 +10,7 @@ namespace Shared
 {
     [ProtoContract]
     [ProtoInclude(10, typeof(PlaceBuildingRequest))]
+    [ProtoInclude(11, typeof(AddWorkerRequest))]
     public class ClientRequest
     {
     }
@@ -19,6 +20,15 @@ namespace Shared
     {
         [ProtoMember(1)]
         public Vector3 Pos { get; set; }
+    }
+
+    [ProtoContract]
+    public class AddWorkerRequest : ClientRequest
+    {
+        [ProtoMember(1)]
+        public int EntityID { get; set; } // What is the worker being added to
+        [ProtoMember(2)]
+        public int Slot { get; set; }
     }
 
 }

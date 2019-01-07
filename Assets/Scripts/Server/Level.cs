@@ -34,39 +34,6 @@ namespace Server
                 {
                     mapObjects.Add(entity.ID, entity.GetComponent<MapObjectComponent>());
                     objectPositions.Add(entity.GetComponent<MapObjectComponent>().Pos, entity);
-
-                    if (entity.GetComponent<EntityTypeComponent>().Type == EntityType.HOUSE)
-                    {
-                        Debug.Log("Calculating path.");
-                        List<PathNode> path = PathFinder.GetPath(new Vector3Int(0, 0, 0), new Vector3Int(Size - 1, Size - 1, 0));
-                        Debug.Log("Found path.");
-
-                        if (path == null)
-                        {
-                            Debug.Log("No path exists!");
-                        }
-                        else
-                        {
-                            string output = "";
-                            for (int y = Size - 1; y >= 0; y--)
-                            {
-                                string row = "";
-                                for (int x = 0; x < Size; x++)
-                                {
-                                    if (path.Contains(new PathNode { x = x, y = y }))
-                                    {
-                                        row += " * ";
-                                    }
-                                    else
-                                    {
-                                        row += " - ";
-                                    }
-                                }
-                                output += row + "\n";
-                            }
-                            Debug.Log(output);
-                        }
-                    }
                 },
                 (entity) => 
                 {
@@ -84,6 +51,11 @@ namespace Server
         public bool IsOutOfBounds(Vector3Int pos)
         {
             return pos.x < 0 || pos.y < 0 || pos.x >= size || pos.y >= size;
+        }
+
+        public Dictionary<Vector3Int, Entity> GetObjects()
+        {
+            return objectPositions;
         }
     }
 

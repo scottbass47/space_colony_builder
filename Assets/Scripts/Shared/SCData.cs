@@ -22,5 +22,12 @@ namespace Shared
             PLAYER,
             COLONIST
         }
+
+        public enum EntityState
+        {
+            IDLE,
+            MINING,
+            WALKING
+        }
     }
 }

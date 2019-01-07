@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ECS;
+using Shared.StateChanges;
 using UnityEngine;
 
 namespace Server 
@@ -30,9 +31,10 @@ namespace Server
                         if(net.HasChanges)
                         {
                             var update = net.CreateChange();
-                            update.ID = entity.ID;
+                            var id = entity.ID;
+
                             //Debug.Log($"[Server] sending update of type {update.GetType()}");
-                            worldState.ApplyChange(update);
+                            worldState.ApplyChange(new EntityUpdate { ID = id, Update = update });
                             net.ResetChanges();
                         }
                     }

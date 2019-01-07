@@ -22,9 +22,13 @@ namespace Client
                 case EntityType.HOUSE:
                     go = CreateHouse(spawn);
                     break;
+                case EntityType.COLONIST:
+                    go = CreateColonist(spawn);
+                    break;
             }
             var eo = go.GetComponent<EntityObject>();
             eo.ID = spawn.ID;
+            eo.Type = type; 
             eo.OnCreate();
             return go;
         }
@@ -50,6 +54,18 @@ namespace Client
             go.GetComponent<TilemapObject>().Pos = new Vector3Int((int)pos.x, (int)pos.y, (int)pos.z);
 
             return go;
+        }
+
+        private GameObject CreateColonist(EntitySpawn spawn)
+        {
+            var prefabTable = Game.Instance.PrefabTable;
+            var go = Instantiate(prefabTable.GetPrefab(EntityType.COLONIST));
+
+            Vector3 pos = spawn.Pos;
+            go.transform.position = pos;
+
+            return go;
+
         }
     }
 }

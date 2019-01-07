@@ -37,13 +37,18 @@ namespace Server
             house.AddComponent<EntityTypeComponent>().Type = EntityType.HOUSE;
             house.AddComponent<MapObjectComponent>().Pos = pos;
             house.AddComponent<HealthComponent>();
+            house.AddComponent<StateUpdateComponent>();
             return house;
         }
 
-        public static Entity CreateColonist()
+        public static Entity CreateColonist(Level level)
         {
             Entity colonist = Engine.CreateEntity();
             colonist.AddComponent<EntityTypeComponent>().Type = EntityType.COLONIST;
+            colonist.AddComponent<PositionComponent>().Pos.Value = Vector3.zero;
+            colonist.AddComponent<WorkerComponent>();
+            colonist.AddComponent<LevelComponent>().Level = level;
+            colonist.AddComponent<StateUpdateComponent>();
             return colonist;
         }
     }

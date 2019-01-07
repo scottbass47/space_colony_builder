@@ -1,4 +1,6 @@
-﻿using Shared.StateChanges;
+﻿using Shared;
+using Shared.SCData;
+using Shared.StateChanges;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -10,7 +12,8 @@ namespace Client
     public class EntityObject : MonoBehaviour
     {
         public int ID;
-        private EventTable<EntityUpdate> listeners = new EventTable<EntityUpdate>();
+        public EntityType Type;
+        private EventTable<SCUpdate> listeners = new EventTable<SCUpdate>();
 
         // This should be called ASAP (once the ID has been assigned, but not before)
         public void OnCreate()
@@ -27,17 +30,17 @@ namespace Client
             Game.Instance.StateChangeManager.RemoveEntityUpdateListener(this);
         }
 
-        public void AddUpdateListener<T>(Action<T> listener) where T : EntityUpdate
+        public void AddUpdateListener<T>(Action<T> listener) where T : SCUpdate
         {
             listeners.AddListener(listener);
         }
 
-        public void RemoveUpdateListener<T>(Action<T> listener) where T : EntityUpdate
+        public void RemoveUpdateListener<T>(Action<T> listener) where T : SCUpdate
         {
             listeners.RemoveListener(listener);
         }
 
-        public void OnEntityUpdate<T>(T update) where T : EntityUpdate
+        public void OnEntityUpdate<T>(T update) where T : SCUpdate
         {
             listeners.NotifyListeners(update);
         }
