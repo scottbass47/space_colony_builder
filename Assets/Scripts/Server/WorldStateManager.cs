@@ -7,13 +7,13 @@ using Shared.StateChanges;
 using Shared.SCData;
 using ECS;
 using Utils;
+using Shared;
 
 namespace Server
 {
     public class WorldStateManager
     {
         private TileID[][] tiles;
-        //private List<Entity> entities;
         private Dictionary<int, List<IStateChange>> worldStateChanges;
         private Engine engine;
         private Level level;
@@ -23,23 +23,26 @@ namespace Server
         public Engine Engine => engine;
         public Level Level => level;
 
+        private Dictionary<int, Entity> players;
 
         // Creates a new world state with the specified tile map size
         public WorldStateManager(int size)
         {
+            Version = 1;
+            Size = size;
+
+            worldStateChanges = new Dictionary<int, List<IStateChange>>();
+            players = new Dictionary<int, Entity>();
+
             engine = new Engine();
             EntityFactory.Engine = engine;
 
             //engine.AddSystem(new RandomDeleteSystem(this));
             //engine.AddSystem(new RandomHealthSystem(this));
+            engine.AddSystem(new RequestProcessingSystem(this));    
             engine.AddSystem(new StateChangeEmitterSystem(this));
 
-            Version = 1;
-            Size = size;
-
             level = new Level(this);
-
-            worldStateChanges = new Dictionary<int, List<IStateChange>>();
 
             List<Vector3Int> rockSpawns;
             tiles = WorldGeneration.GenerateWorld(size, 10, out rockSpawns);
@@ -50,33 +53,6 @@ namespace Server
                 engine.AddEntity(rock);
                 ApplyChange(new EntitySpawn { ID = rock.ID, EntityType = EntityType.ROCK, Pos = spawn });
             }
-
-            //List<PathNode> path = level.PathFinder.GetPath(new Vector3Int(0, 0, 0), new Vector3Int(Size - 1, Size - 1, 0));
-
-            //string output = "";
-            //for (int y = Size - 1; y >= 0; y--)
-            //{
-            //    string row = "";
-            //    for (int x = 0; x < Size; x++)
-            //    {
-            //        if (path.Contains(new PathNode { x = x, y = y }))
-            //        {
-            //            row += " * ";
-            //        }
-            //        else
-            //        {
-            //            row += " - ";
-            //        }
-            //    }
-            //    output += row + "\n";
-            //}
-            //Debug.Log(output);
-
-            //foreach (var node in path)
-            //{
-            //    tiles[node.x][node.y] = TileID.TOWER;
-            //    Debug.Log(node);
-            //}
         }
 
         // Call this every SERVER update so the version numbers get
@@ -165,6 +141,25 @@ namespace Server
             }
 
             return changes;
+        }
+
+        public void AddRequest(int clientID, ClientRequest request)
+        {
+            var player = GetPlayer(clientID);
+            var client = player.GetComponent<ClientComponent>();
+            client.Requests.Enqueue(request);
+        }
+
+        public void AddPlayer(int clientID)
+        {
+            var player = EntityFactory.CreatePlayer(clientID);
+            players.Add(clientID, player);
+            Engine.AddEntity(player);
+        }
+
+        public Entity GetPlayer(int clientID)
+        {
+            return players[clientID];
         }
 
         public TileID[][] GetTiles()

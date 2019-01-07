@@ -18,7 +18,9 @@ namespace Shared
         public enum EntityType
         {
             ROCK,
-            HOUSE
+            HOUSE,
+            PLAYER,
+            COLONIST
         }
     }
 }

@@ -43,7 +43,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1a7a7ed18a030f24694d6b366fdf05c6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  IsHost: 1
+  IsHost: 0
   serverPrefab: {fileID: 9215533961370369456, guid: 77c713a77f52ae74587f5082e5f720ed,
     type: 3}
   clientPrefab: {fileID: 7725342886655832899, guid: f1ae6fedf6edb0e478af7108a8ed4111,

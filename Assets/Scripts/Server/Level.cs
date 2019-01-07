@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 using Priority_Queue;
+using Shared.SCData;
 
 namespace Server
 {
@@ -33,6 +34,39 @@ namespace Server
                 {
                     mapObjects.Add(entity.ID, entity.GetComponent<MapObjectComponent>());
                     objectPositions.Add(entity.GetComponent<MapObjectComponent>().Pos, entity);
+
+                    if (entity.GetComponent<EntityTypeComponent>().Type == EntityType.HOUSE)
+                    {
+                        Debug.Log("Calculating path.");
+                        List<PathNode> path = PathFinder.GetPath(new Vector3Int(0, 0, 0), new Vector3Int(Size - 1, Size - 1, 0));
+                        Debug.Log("Found path.");
+
+                        if (path == null)
+                        {
+                            Debug.Log("No path exists!");
+                        }
+                        else
+                        {
+                            string output = "";
+                            for (int y = Size - 1; y >= 0; y--)
+                            {
+                                string row = "";
+                                for (int x = 0; x < Size; x++)
+                                {
+                                    if (path.Contains(new PathNode { x = x, y = y }))
+                                    {
+                                        row += " * ";
+                                    }
+                                    else
+                                    {
+                                        row += " - ";
+                                    }
+                                }
+                                output += row + "\n";
+                            }
+                            Debug.Log(output);
+                        }
+                    }
                 },
                 (entity) => 
                 {
@@ -104,9 +138,10 @@ namespace Server
 
                         PathNode next = new PathNode { x = x, y = y, prev = current, cost = current.cost + 1 };
 
-                        if (level.IsMapObject(next)) continue;
-                        if (level.IsOutOfBounds(next)) continue;
+                        if (level.IsMapObject(next) && !(next.x == to.x && next.y == to.y)) continue; // Skip map objects unless it's the goal
+                        if (level.IsOutOfBounds(next)) continue; // Skip out of bounds locations
 
+                        // Gray node - in the middle of processing
                         if(queue.Contains(next))
                         {
                             if(queue.GetPriority(next) > next.cost)
@@ -115,7 +150,8 @@ namespace Server
                                 queue.Enqueue(next, next.cost);
                             }
                         }
-                        else
+                        // White node - never seen before
+                        else if(!visited.Contains(next))
                         {
                             queue.Enqueue(next, next.cost);
                         }

@@ -59,12 +59,12 @@ namespace Shared
         }
 
         [ProtoContract]
-        public class PlaceBuildingPacket
+        public class ClientRequestPacket
         {
             [ProtoMember(1)]
             public int ClientID { get; set; }
             [ProtoMember(2)]
-            public Vector3 Pos { get; set; }
+            public ClientRequest Request { get; set; }
         }
 
         [ProtoContract]

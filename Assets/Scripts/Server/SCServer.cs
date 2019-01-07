@@ -46,7 +46,7 @@ namespace Server
 
             processor = PacketUtils.CreateProcessor();
             processor.Subscribe<UpdatePacket, NetPeer>(OnUpdatePacket, () => new UpdatePacket());
-            processor.Subscribe<PlaceBuildingPacket, NetPeer>(OnPlaceBuildingPacket, () => new PlaceBuildingPacket());
+            processor.Subscribe<ClientRequestPacket, NetPeer>(OnClientRequest, () => new ClientRequestPacket());
         }
 
         // Update is called once per frame
@@ -90,11 +90,9 @@ namespace Server
             }
         }
 
-        void OnPlaceBuildingPacket(PlaceBuildingPacket packet, NetPeer peer)
+        void OnClientRequest(ClientRequestPacket packet, NetPeer peer) 
         {
-            var house = EntityFactory.CreateHouse();
-            stateManager.Engine.AddEntity(house);
-            stateManager.ApplyChange(new EntitySpawn { ID = house.ID, EntityType = EntityType.HOUSE, Pos = packet.Pos });
+            stateManager.AddRequest(packet.ClientID, packet.Request);
         }
 
         public void OnNetworkLatencyUpdate(NetPeer peer, int latency)
@@ -109,9 +107,15 @@ namespace Server
         public void OnPeerConnected(NetPeer peer)
         {
             Debug.Log($"[Server] peer connected: {peer.EndPoint}");
+
             int clientID = nextClientID++;
             connectedClients.Add(clientID, peer);
             clientVersions.Add(clientID, 0);
+
+            // Create player entity
+            stateManager.AddPlayer(clientID);
+            stateManager.Engine.AddEntity(EntityFactory.CreatePlayer(clientID));
+
             SendClientID(clientID);
             SendWorldData(peer);
         }
