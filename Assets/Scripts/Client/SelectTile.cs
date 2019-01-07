@@ -53,7 +53,7 @@ namespace Client
                         var selectable = obj.GetComponent<Selectable>();
                         if (selectable != null) selectable.DisplayWindow(window);
                     }
-                    else if (!hit) window.SetActive(false);
+                   // else if (!hit) window.SetActive(false);
                     
                 }
                 Camera.main.transform.position = old;
