@@ -1,4 +1,5 @@
-﻿using Shared.StateChanges;
+﻿using Shared;
+using Shared.StateChanges;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,7 +17,7 @@ namespace Server
             AddNetValue(health);
         }
 
-        public override EntityUpdate CreateChange()
+        public override SCUpdate CreateChange()
         {
             return new HealthUpdate { Health = health };
         }

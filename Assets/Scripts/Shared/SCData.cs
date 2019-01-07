@@ -18,7 +18,16 @@ namespace Shared
         public enum EntityType
         {
             ROCK,
-            HOUSE
+            HOUSE,
+            PLAYER,
+            COLONIST
+        }
+
+        public enum EntityState
+        {
+            IDLE,
+            MINING,
+            WALKING
         }
     }
 }

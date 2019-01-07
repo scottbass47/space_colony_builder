@@ -11,6 +11,7 @@ using Shared.SCPacket;
 using Shared.SCData;
 using Shared.StateChanges;
 using Utils;
+using Shared;
 
 namespace Client
 {
@@ -89,7 +90,7 @@ namespace Client
 
         public void SendPlaceBuildingPacket(Vector3Int pos)
         {
-            SendPacket(new PlaceBuildingPacket { ClientID = clientID, Pos = pos });
+            SendPacket(new ClientRequestPacket { ClientID = clientID, Request = new PlaceBuildingRequest { Pos = pos } });
         }
 
         public void OnNetworkLatencyUpdate(NetPeer peer, int latency)

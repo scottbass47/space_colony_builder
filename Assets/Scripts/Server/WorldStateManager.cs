@@ -7,44 +7,69 @@ using Shared.StateChanges;
 using Shared.SCData;
 using ECS;
 using Utils;
+using Shared;
+using Server.Job;
+using Random = UnityEngine.Random;
 
 namespace Server
 {
     public class WorldStateManager
     {
         private TileID[][] tiles;
-        //private List<Entity> entities;
         private Dictionary<int, List<IStateChange>> worldStateChanges;
         private Engine engine;
+        private Level level;
 
         public int Version { get; private set; }
         public int Size { get; private set; }
         public Engine Engine => engine;
+        public Level Level => level;
+
+        private Dictionary<int, Entity> players;
 
         // Creates a new world state with the specified tile map size
         public WorldStateManager(int size)
         {
-            engine = new Engine();
-            EntityFactory.Engine = engine;
-
-            engine.AddSystem(new RandomDeleteSystem(this));
-            engine.AddSystem(new RandomHealthSystem(this));
-            engine.AddSystem(new StateChangeEmitterSystem(this));
-
             Version = 1;
             Size = size;
 
             worldStateChanges = new Dictionary<int, List<IStateChange>>();
+            players = new Dictionary<int, Entity>();
+
+            engine = new Engine();
+            EntityFactory.Engine = engine;
+
+            //engine.AddSystem(new RandomDeleteSystem(this));
+            //engine.AddSystem(new RandomHealthSystem(this));
+            engine.AddSystem(new RequestProcessingSystem(this));    
+            engine.AddSystem(new WorkerSystem());    
+            engine.AddSystem(new StateChangeEmitterSystem(this));
+
+            level = new Level(this);
 
             List<Vector3Int> rockSpawns;
             tiles = WorldGeneration.GenerateWorld(size, 10, out rockSpawns);
 
             foreach (Vector3Int spawn in rockSpawns)
             {
-                var rock = EntityFactory.CreateRock();
+                var rock = EntityFactory.CreateRock(spawn);
                 engine.AddEntity(rock);
                 ApplyChange(new EntitySpawn { ID = rock.ID, EntityType = EntityType.ROCK, Pos = spawn });
             }
+
+            //// Add 10 colonists
+            //for (int i = 0; i < 10; i++)
+            //{
+            //    var dest = rockSpawns[Random.Range(0, rockSpawns.Count)];
+
+            //    var colonist = EntityFactory.CreateColonist(level);
+            //    colonist.GetComponent<WorkerComponent>().AssignJob(
+            //        new JobMove(level, dest),
+            //        colonist);
+            //    engine.AddEntity(colonist);
+            //    ApplyChange(new EntitySpawn { ID = colonist.ID, EntityType = EntityType.COLONIST, Pos = Vector3.zero });
+
+            //}
         }
 
         // Call this every SERVER update so the version numbers get
@@ -133,6 +158,25 @@ namespace Server
             }
 
             return changes;
+        }
+
+        public void AddRequest(int clientID, ClientRequest request)
+        {
+            var player = GetPlayer(clientID);
+            var client = player.GetComponent<ClientComponent>();
+            client.Requests.Enqueue(request);
+        }
+
+        public void AddPlayer(int clientID)
+        {
+            var player = EntityFactory.CreatePlayer(clientID);
+            players.Add(clientID, player);
+            Engine.AddEntity(player);
+        }
+
+        public Entity GetPlayer(int clientID)
+        {
+            return players[clientID];
         }
 
         public TileID[][] GetTiles()

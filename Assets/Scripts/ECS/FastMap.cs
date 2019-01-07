@@ -33,7 +33,7 @@ namespace ECS
 
         public void Put(int index, T item)
         {
-            if (index > Capacity) Grow(index);
+            if (index >= Capacity) Grow(index + 1);
             if (data[index] == null && item != null) Size++;
             data[index] = item;
         }

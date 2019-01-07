@@ -44,6 +44,7 @@ namespace ECS
         public event Action<AbstractSystem> SystemRemoved;
 
         private Dictionary<Group, List<Entity>> groupMembership;
+        private Dictionary<Group, List<Action<Entity>[]>> groupListeners;
 
         public Engine()
         {
@@ -51,6 +52,7 @@ namespace ECS
             systems = new List<AbstractSystem>();         
 
             groupMembership = new Dictionary<Group, List<Entity>>();
+            groupListeners = new Dictionary<Group, List<Action<Entity>[]>>();
 
             EntityAdded += UpdateGroupMembership;
             EntityRemoved += UpdateGroupMembership;
@@ -125,7 +127,11 @@ namespace ECS
             // This will throw an error if a group already exists but thats OK
             // because we don't want people adding multiple systems with the same
             // group. It doesn't make sense and it adds unnecessary complications.
-            groupMembership.Add(system.Group, new List<Entity>());
+            if (!groupMembership.ContainsKey(system.Group))
+            {
+                groupMembership.Add(system.Group, new List<Entity>());
+            }
+            //groupMembership.Add(system.Group, new List<Entity>());
             SystemAdded(system);
         }
 
@@ -133,7 +139,23 @@ namespace ECS
         {
             SystemRemoved(system);
             systems.Remove(system);
-            groupMembership.Remove(system.Group);
+
+            // @Hack If a system is created with the same group as a group listener there's going to be problems
+            //groupMembership.Remove(system.Group);
+        }
+
+        public void AddGroupListener(Group group, Action<Entity> onAdd, Action<Entity> onRemove)
+        {
+            if (!groupMembership.ContainsKey(group))
+            {
+                groupMembership.Add(group, new List<Entity>()); 
+            }
+
+            if(!groupListeners.ContainsKey(group))
+            {
+                groupListeners.Add(group, new List<Action<Entity>[]>());
+            }
+            groupListeners[group].Add(new Action<Entity>[]{ onAdd, onRemove });
         }
 
         public List<Entity> GetEntitiesInGroup(Group group)
@@ -157,20 +179,46 @@ namespace ECS
                     {
                         if (groupMembership[group].Contains(entity))
                         {
-                            groupMembership[group].Remove(entity);
+                            RemoveEntityFromGroup(group, entity);
                         }
                     }
                     else
                     {
                         if (group.Matches(entity) && !groupMembership[group].Contains(entity))
                         {
-                            groupMembership[group].Add(entity);
+                            AddEntityToGroup(group, entity);
                         }
                         else if (!group.Matches(entity) && groupMembership[group].Contains(entity))
                         {
-                            groupMembership[group].Remove(entity);
+                            RemoveEntityFromGroup(group, entity);
                         }
                     }
+                }
+            }
+        }
+
+        private void AddEntityToGroup(Group group, Entity entity)
+        {
+            groupMembership[group].Add(entity);
+            if(groupListeners.ContainsKey(group))
+            {
+                foreach(var listener in groupListeners[group])
+                {
+                    // 0 is add
+                    listener[0](entity);
+                }
+            }
+        }
+
+        private void RemoveEntityFromGroup(Group group, Entity entity)
+        {
+            groupMembership[group].Remove(entity);
+            if(groupListeners.ContainsKey(group))
+            {
+                foreach(var listener in groupListeners[group])
+                {
+                    // 1 is remove
+                    listener[1](entity);
                 }
             }
         }

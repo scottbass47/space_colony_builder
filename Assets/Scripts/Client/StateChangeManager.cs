@@ -5,6 +5,7 @@ using UnityEngine;
 using Shared.SCPacket;
 using Shared.StateChanges;
 using Utils;
+using Shared;
 
 namespace Client
 {
@@ -33,6 +34,11 @@ namespace Client
                 Destroy(go); 
             });
 
+            AddStateChangeListener<EntityUpdate>((update) =>
+            {
+                NotifyEntityUpdate(update.ID, update.Update);
+            });
+
             Game.Instance.Client.AddPacketListener<StateChangePacket>(StateChanges);
         }
 
@@ -49,18 +55,14 @@ namespace Client
         private void NotifyStateChange<T>(T change) where T : IStateChange
         {
             Type t = change.GetType();
-            if(change is EntityUpdate)
-            {
-                NotifyEntityUpdate(change as EntityUpdate);
-            }
             eventTable.NotifyListeners(change);
         }
 
-        private void NotifyEntityUpdate<T>(T update) where T : EntityUpdate
+        private void NotifyEntityUpdate<T>(int entityID, T update) where T : SCUpdate
         {
-            if (!entityUpdateTable.ContainsKey(update.ID)) return;
+            if (!entityUpdateTable.ContainsKey(entityID)) return;
 
-            entityUpdateTable[update.ID].OnEntityUpdate<T>(update);
+            entityUpdateTable[entityID].OnEntityUpdate<T>(update);
         }
 
         public void AddEntityUpdateListener(EntityObject eo)
@@ -77,7 +79,7 @@ namespace Client
         {
             if(!(packet.Change is NoChange))
             {
-                Debug.Log($"[Client] received {packet.Change.GetType()} change for version {packet.Version}. Change {packet.ChangeNumber}/{packet.TotalChanges}");
+                //Debug.Log($"[Client] received {packet.Change.GetType()} change for version {packet.Version}. Change {packet.ChangeNumber}/{packet.TotalChanges}");
             }
 
             if (!stateChangeBuffer.ContainsKey(packet.Version))
@@ -101,7 +103,7 @@ namespace Client
             {
                 if(!(stateChangeBuffer[version][0].Change is NoChange))
                 {
-                    Debug.Log($"[Client] - applying changes for version {version}");
+                    //Debug.Log($"[Client] - applying changes for version {version}");
                 }
                 foreach (var packet in stateChangeBuffer[version])
                 {

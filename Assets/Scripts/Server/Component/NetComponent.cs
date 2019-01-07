@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ECS;
+using Shared;
 using Shared.StateChanges;
 
 namespace Server 
@@ -13,7 +14,7 @@ namespace Server
         private bool hasChanges;
         public bool HasChanges => hasChanges;
 
-        public abstract EntityUpdate CreateChange();
+        public abstract SCUpdate CreateChange();
 
         //public NetComponent()
         //{
