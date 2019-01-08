@@ -109,6 +109,12 @@ namespace ECS
             return entity;
         }
 
+        // Returns true if the entity is not being removed and still exists
+        public bool IsValid(Entity entity)
+        {
+            return entities.ContainsKey(entity.ID);
+        }
+
         public T CreateComponent<T>() where T : Component
         {
             return componentPool.Obtain<T>();

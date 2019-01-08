@@ -25,6 +25,9 @@ namespace Client
                 case EntityType.COLONIST:
                     go = CreateColonist(spawn);
                     break;
+                case EntityType.PLAYER:
+                    go = CreatePlayer(spawn);
+                    break;
             }
             var eo = go.GetComponent<EntityObject>();
             eo.ID = spawn.ID;
@@ -65,7 +68,13 @@ namespace Client
             go.transform.position = pos;
 
             return go;
+        }
 
+        private GameObject CreatePlayer(EntitySpawn spawn)
+        {
+            var prefabTable = Game.Instance.PrefabTable;
+            var go = Instantiate(prefabTable.GetPrefab(EntityType.PLAYER));
+            return go;
         }
     }
 }

@@ -13,11 +13,9 @@ namespace Server
 {
     public class RequestProcessingSystem : AbstractSystem
     {
-        private WorldStateManager wsm;
 
-        public RequestProcessingSystem(WorldStateManager wsm) : base(Group.createGroup().All(typeof(ClientComponent)))
+        public RequestProcessingSystem() : base(Group.createGroup().All(typeof(ClientComponent)))
         {
-            this.wsm = wsm;
         }
 
         public override void Update(float delta)
@@ -36,6 +34,8 @@ namespace Server
 
         private void Handle(ClientRequest request)
         {
+            WorldStateManager wsm = EntityFactory.World;
+
             if(request.GetType() == typeof(PlaceBuildingRequest))
             {
                 var packet = (PlaceBuildingRequest)request;

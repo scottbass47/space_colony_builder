@@ -11,8 +11,12 @@ namespace Client
 {
     public class EntityObject : MonoBehaviour
     {
+        [HideInInspector]
         public int ID;
+
+        [HideInInspector]
         public EntityType Type;
+
         private EventTable<SCUpdate> listeners = new EventTable<SCUpdate>();
 
         // This should be called ASAP (once the ID has been assigned, but not before)

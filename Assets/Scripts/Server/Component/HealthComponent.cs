@@ -10,22 +10,23 @@ namespace Server
 {
     public class HealthComponent : NetComponent
     {
-        public NetValue<int> health = new NetValue<int>();
+        public NetValue<int> Health = new NetValue<int>();
 
         public HealthComponent()
         {
-            AddNetValue(health);
+            AddNetValue(Health);
         }
 
         public override SCUpdate CreateChange()
         {
-            return new HealthUpdate { Health = health };
+            return new HealthUpdate { Health = Health };
         }
 
-        public override void Reset()
+        public override void OnReset()
         {
-            base.Reset();
-            health = new NetValue<int>();
+            Health = new NetValue<int>();
+
+            AddNetValue(Health);
         }
     }
 }

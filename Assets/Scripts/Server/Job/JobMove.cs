@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ECS;
+using Shared.SCData;
 using UnityEngine;
 using Utils;
 
@@ -29,6 +30,12 @@ namespace Server.Job
             Vector3 myPos = pos.Pos;
 
             path = level.PathFinder.GetPath(worldPosToGrid(myPos), worldPosToGrid(dest));
+
+            if(entity.HasComponent<StateComponent>())
+            {
+                var state = entity.GetComponent<StateComponent>();
+                state.State.Value = (int)EntityState.MINING;
+            }
         }
 
         public bool IsFinished()
@@ -70,7 +77,7 @@ namespace Server.Job
 
         private void moveAlongDir(Vector3 dir, float delta)
         {
-            var speed = 2.0f;
+            var speed = entity.GetComponent<StatsComponent>().WalkSpeed;
             var pos = entity.GetComponent<PositionComponent>();
             pos.Pos.Value += dir * speed * delta;
             //Debug.Log($"Moving colonist. New pos: {pos.Pos}");

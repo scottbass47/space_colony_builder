@@ -37,13 +37,13 @@ namespace Server
             players = new Dictionary<int, Entity>();
 
             engine = new Engine();
+            EntityFactory.World = this;
             EntityFactory.Engine = engine;
 
-            //engine.AddSystem(new RandomDeleteSystem(this));
-            //engine.AddSystem(new RandomHealthSystem(this));
-            engine.AddSystem(new RequestProcessingSystem(this));    
+            engine.AddSystem(new RequestProcessingSystem());    
             engine.AddSystem(new WorkerSystem());    
-            engine.AddSystem(new StateChangeEmitterSystem(this));
+            engine.AddSystem(new DeathSystem());    
+            engine.AddSystem(new StateChangeEmitterSystem());
 
             level = new Level(this);
 
@@ -57,18 +57,15 @@ namespace Server
                 ApplyChange(new EntitySpawn { ID = rock.ID, EntityType = EntityType.ROCK, Pos = spawn });
             }
 
-            //// Add 10 colonists
-            //for (int i = 0; i < 10; i++)
+            //for (int i = 0; i < 3; i++)
             //{
-            //    var dest = rockSpawns[Random.Range(0, rockSpawns.Count)];
+            //    //var dest = rockSpawns[Random.Range(0, rockSpawns.Count)];
 
             //    var colonist = EntityFactory.CreateColonist(level);
-            //    colonist.GetComponent<WorkerComponent>().AssignJob(
-            //        new JobMove(level, dest),
-            //        colonist);
+            //    var spawnPoint = new Vector3(Random.Range(0, Size), Random.Range(0, Size));
+            //    colonist.GetComponent<PositionComponent>().Pos.Value = spawnPoint;
             //    engine.AddEntity(colonist);
-            //    ApplyChange(new EntitySpawn { ID = colonist.ID, EntityType = EntityType.COLONIST, Pos = Vector3.zero });
-
+            //    ApplyChange(new EntitySpawn { ID = colonist.ID, EntityType = EntityType.COLONIST, Pos = spawnPoint });
             //}
         }
 
@@ -172,6 +169,7 @@ namespace Server
             var player = EntityFactory.CreatePlayer(clientID);
             players.Add(clientID, player);
             Engine.AddEntity(player);
+            ApplyChange(new EntitySpawn { EntityType = EntityType.PLAYER, ID = player.ID, Pos = Vector3.zero });
         }
 
         public Entity GetPlayer(int clientID)

@@ -13,6 +13,7 @@ namespace Shared
     [ProtoInclude(11, typeof(PositionUpdate))]
     [ProtoInclude(12, typeof(PathUpdate))]
     [ProtoInclude(13, typeof(StateUpdate))]
+    [ProtoInclude(14, typeof(OreUpdate))]
     public class SCUpdate
     {
     }
@@ -43,5 +44,12 @@ namespace Shared
     {
         [ProtoMember(1)]
         public int State { get; set; }
+    }
+
+    [ProtoContract]
+    public class OreUpdate : SCUpdate
+    {
+        [ProtoMember(1)]
+        public int Amount { get; set; }
     }
 }

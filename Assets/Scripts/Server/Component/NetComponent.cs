@@ -15,6 +15,7 @@ namespace Server
         public bool HasChanges => hasChanges;
 
         public abstract SCUpdate CreateChange();
+        public abstract void OnReset();
 
         //public NetComponent()
         //{
@@ -44,9 +45,10 @@ namespace Server
             hasChanges = false;
         }
 
-        public virtual void Reset()
+        public void Reset()
         {
             hasChanges = false;
+            OnReset();
         }
     }
 }

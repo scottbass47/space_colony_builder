@@ -70,5 +70,21 @@ namespace ECS
             int compIndex = ComponentType.GetIndex(typeof(T));
             return (T) components[compIndex];
         }
+
+        // @Hack Checking the component bits can through ArrayOutOfBounds exception so
+        // the temporary workaround is to just surround it in a try catch and pray.
+        public bool HasComponent<T>() where T : Component
+        {
+            int compIndex = ComponentType.GetIndex(typeof(T));
+            try
+            {
+                bool hasComp = componentBits.Get(compIndex);
+                return hasComp;
+            }
+            catch (Exception)
+            {
+                return false;                
+            }
+        }
     } 
 }

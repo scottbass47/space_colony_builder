@@ -11,45 +11,75 @@ namespace Server
 {
     public sealed class EntityFactory
     {
+        public static WorldStateManager World;
         public static Engine Engine;
 
         public static Entity CreatePlayer(int clientID)
         {
-            Entity player = Engine.CreateEntity();
-            player.AddComponent<EntityTypeComponent>().Type = EntityType.PLAYER;
+            var player = new EntityBuilder(World, Engine, EntityType.PLAYER)
+                .build();
+
             player.AddComponent<ClientComponent>().ID = clientID;
-            return player; 
+            player.AddComponent<ResourceComponent>().OreAmount.Value = 0;
+            return player;
         }
 
         public static Entity CreateRock(Vector3Int pos)
         {
-            Entity rock = Engine.CreateEntity();
-            rock.AddComponent<EntityTypeComponent>().Type = EntityType.ROCK;
+            var rock = new EntityBuilder(World, Engine, EntityType.ROCK)
+                .build();
+
             rock.AddComponent<MapObjectComponent>().Pos = pos;
             rock.AddComponent<HealthComponent>();
-            rock.AddComponent<StateUpdateComponent>();
+            rock.AddComponent<OreComponent>().Amount.Value = 200;
             return rock;
         }
 
         public static Entity CreateHouse(Vector3Int pos)
         {
-            Entity house = Engine.CreateEntity();
-            house.AddComponent<EntityTypeComponent>().Type = EntityType.HOUSE;
+            var house = new EntityBuilder(World, Engine, EntityType.HOUSE)
+                .build();
+
             house.AddComponent<MapObjectComponent>().Pos = pos;
-            house.AddComponent<HealthComponent>();
-            house.AddComponent<StateUpdateComponent>();
+            house.AddComponent<HealthComponent>().Health.Value = 100;
             return house;
         }
 
         public static Entity CreateColonist(Level level)
         {
-            Entity colonist = Engine.CreateEntity();
-            colonist.AddComponent<EntityTypeComponent>().Type = EntityType.COLONIST;
+            var colonist = new EntityBuilder(World, Engine, EntityType.COLONIST)
+                .build();
+
             colonist.AddComponent<PositionComponent>().Pos.Value = Vector3.zero;
             colonist.AddComponent<WorkerComponent>();
             colonist.AddComponent<LevelComponent>().Level = level;
-            colonist.AddComponent<StateUpdateComponent>();
+            colonist.AddComponent<StateComponent>().State.Value = (int)EntityState.IDLE;
+            colonist.AddComponent<StatsComponent>().Set(1000, 5);
             return colonist;
         }
+
+        public class EntityBuilder
+        {
+            private Entity entity;
+
+            public EntityBuilder(WorldStateManager world, Engine engine, EntityType type)
+            {
+                entity = engine.CreateEntity();
+                entity.AddComponent<EntityTypeComponent>().Type = type;
+                entity.AddComponent<StateUpdateComponent>();
+                entity.AddComponent<GlobalComponent>().Set(world, engine);
+            }
+
+            public EntityBuilder NetSpawn()
+            {
+                return this;
+            }
+
+            public Entity build()
+            {
+                return entity;
+            }
+        }
     }
+    
 }

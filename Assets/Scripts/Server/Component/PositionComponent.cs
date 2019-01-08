@@ -25,10 +25,12 @@ namespace Server
             return new PositionUpdate { Pos = Pos };
         }
 
-        public override void Reset()
+        public override void OnReset()
         {
-            base.Reset();
+            Pos = new NetValue<Vector3>();
             Pos.Value = Vector3.zero;
+
+            AddNetValue(Pos);
         }
     }
 }

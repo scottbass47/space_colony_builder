@@ -48,6 +48,13 @@ namespace Server
             return objectPositions.ContainsKey(pos);
         }
 
+        public Entity ObjectAt(Vector3Int pos)
+        {
+            Entity entity;
+            objectPositions.TryGetValue(pos, out entity);
+            return entity;
+        }
+
         public bool IsOutOfBounds(Vector3Int pos)
         {
             return pos.x < 0 || pos.y < 0 || pos.x >= size || pos.y >= size;

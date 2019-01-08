@@ -11,12 +11,9 @@ namespace Server
 {
     public class StateChangeEmitterSystem : AbstractSystem
     {
-        private WorldStateManager worldState;
-
-        public StateChangeEmitterSystem(WorldStateManager worldState) 
+        public StateChangeEmitterSystem() 
             : base(Group.createGroup().All(typeof(StateUpdateComponent)))
         {
-            this.worldState = worldState;
         }
 
         public override void Update(float delta)
@@ -34,7 +31,7 @@ namespace Server
                             var id = entity.ID;
 
                             //Debug.Log($"[Server] sending update of type {update.GetType()}");
-                            worldState.ApplyChange(new EntityUpdate { ID = id, Update = update });
+                            entity.GetComponent<GlobalComponent>().World.ApplyChange(new EntityUpdate { ID = id, Update = update });
                             net.ResetChanges();
                         }
                     }
