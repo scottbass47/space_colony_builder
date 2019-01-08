@@ -35,7 +35,7 @@ public class AddWorkers : MonoBehaviour
         var eo = rock.GetComponent<EntityObject>();
         var rockProps = rock.GetComponent<RockProperties>();
 
-        client.SendPacket(new AddWorkerRequest { EntityID = eo.ID, Slot = rockProps.workers});
+        client.SendRequestPacket(new AddWorkerRequest { EntityID = eo.ID, Slot = rockProps.workers});
 
         rockProps.workers++;
         GetComponentInChildren<Text>().text = "Workers: " + rockProps.workers;

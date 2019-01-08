@@ -34,7 +34,7 @@ namespace Server.Job
             if(entity.HasComponent<StateComponent>())
             {
                 var state = entity.GetComponent<StateComponent>();
-                state.State.Value = (int)EntityState.MINING;
+                state.State.Value = (int)EntityState.WALKING;
             }
         }
 

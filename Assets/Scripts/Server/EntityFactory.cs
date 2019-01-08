@@ -17,6 +17,7 @@ namespace Server
         public static Entity CreatePlayer(int clientID)
         {
             var player = new EntityBuilder(World, Engine, EntityType.PLAYER)
+                .Net()
                 .build();
 
             player.AddComponent<ClientComponent>().ID = clientID;
@@ -27,17 +28,19 @@ namespace Server
         public static Entity CreateRock(Vector3Int pos)
         {
             var rock = new EntityBuilder(World, Engine, EntityType.ROCK)
+                .Net()
                 .build();
 
             rock.AddComponent<MapObjectComponent>().Pos = pos;
             rock.AddComponent<HealthComponent>();
-            rock.AddComponent<OreComponent>().Amount.Value = 200;
+            rock.AddComponent<OreComponent>().Amount.Value = 1000;
             return rock;
         }
 
         public static Entity CreateHouse(Vector3Int pos)
         {
             var house = new EntityBuilder(World, Engine, EntityType.HOUSE)
+                .Net()
                 .build();
 
             house.AddComponent<MapObjectComponent>().Pos = pos;
@@ -48,13 +51,14 @@ namespace Server
         public static Entity CreateColonist(Level level)
         {
             var colonist = new EntityBuilder(World, Engine, EntityType.COLONIST)
+                .Net()
                 .build();
 
             colonist.AddComponent<PositionComponent>().Pos.Value = Vector3.zero;
             colonist.AddComponent<WorkerComponent>();
             colonist.AddComponent<LevelComponent>().Level = level;
             colonist.AddComponent<StateComponent>().State.Value = (int)EntityState.IDLE;
-            colonist.AddComponent<StatsComponent>().Set(1000, 5);
+            colonist.AddComponent<StatsComponent>().Set(40, 2);
             return colonist;
         }
 
@@ -66,12 +70,14 @@ namespace Server
             {
                 entity = engine.CreateEntity();
                 entity.AddComponent<EntityTypeComponent>().Type = type;
-                entity.AddComponent<StateUpdateComponent>();
                 entity.AddComponent<GlobalComponent>().Set(world, engine);
             }
 
-            public EntityBuilder NetSpawn()
+            // Networked entities
+            public EntityBuilder Net()
             {
+                entity.AddComponent<NetSpawnComponent>();
+                entity.AddComponent<StateUpdateComponent>();
                 return this;
             }
 

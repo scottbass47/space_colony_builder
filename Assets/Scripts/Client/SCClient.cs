@@ -88,7 +88,7 @@ namespace Client
             processor.Send(peer, packet, DeliveryMethod.ReliableOrdered);
         }
 
-        public void SendPacket(ClientRequest request)
+        public void SendRequestPacket(ClientRequest request)
         {
             SendPacket(new ClientRequestPacket { ClientID = clientID, Request = request });
         }

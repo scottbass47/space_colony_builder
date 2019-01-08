@@ -41,12 +41,14 @@ namespace Server
                 var packet = (PlaceBuildingRequest)request;
                 var house = EntityFactory.CreateHouse(new Vector3Int { x = (int)packet.Pos.x, y = (int)packet.Pos.y, z = 0 });
                 wsm.Engine.AddEntity(house);
-                wsm.ApplyChange(new EntitySpawn { ID = house.ID, EntityType = EntityType.HOUSE, Pos = packet.Pos });
 
                 var colonist = EntityFactory.CreateColonist(wsm.Level);
                 colonist.GetComponent<PositionComponent>().Pos.Value = packet.Pos;
                 Engine.AddEntity(colonist);
-                wsm.ApplyChange(new EntitySpawn { ID = colonist.ID, EntityType = EntityType.COLONIST, Pos = packet.Pos });
+            }
+            else if(request.GetType() == typeof(AddWorkerRequest))
+            {
+                // do stuff
             }
         }
     }

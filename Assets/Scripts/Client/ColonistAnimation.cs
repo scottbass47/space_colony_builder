@@ -47,7 +47,7 @@ public class ColonistAnimation : MonoBehaviour
 
         if (State == (int)EntityState.WALKING)
         {
-            anim.SetBool("isWalking", true);
+            anim.SetBool("isRunning", true);
             anim.SetBool("isMining", false);
 
             if (actualPos.x > transform.position.x && !FacingRight)
@@ -65,8 +65,8 @@ public class ColonistAnimation : MonoBehaviour
         }
         else if(State == (int)EntityState.MINING)
         {
-            anim.SetBool("IsWalking", false);
-            anim.SetBool("IsMining", true);
+            anim.SetBool("isRunning", false);
+            anim.SetBool("isMining", true);
         }
     }
 }

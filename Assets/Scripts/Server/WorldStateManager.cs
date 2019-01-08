@@ -40,6 +40,7 @@ namespace Server
             EntityFactory.World = this;
             EntityFactory.Engine = engine;
 
+            engine.AddSystem(new NetSpawnSystem());
             engine.AddSystem(new RequestProcessingSystem());    
             engine.AddSystem(new WorkerSystem());    
             engine.AddSystem(new DeathSystem());    
@@ -54,19 +55,17 @@ namespace Server
             {
                 var rock = EntityFactory.CreateRock(spawn);
                 engine.AddEntity(rock);
-                ApplyChange(new EntitySpawn { ID = rock.ID, EntityType = EntityType.ROCK, Pos = spawn });
             }
 
-            //for (int i = 0; i < 3; i++)
-            //{
-            //    //var dest = rockSpawns[Random.Range(0, rockSpawns.Count)];
+            for (int i = 0; i < 10; i++)
+            {
+                //var dest = rockSpawns[Random.Range(0, rockSpawns.Count)];
 
-            //    var colonist = EntityFactory.CreateColonist(level);
-            //    var spawnPoint = new Vector3(Random.Range(0, Size), Random.Range(0, Size));
-            //    colonist.GetComponent<PositionComponent>().Pos.Value = spawnPoint;
-            //    engine.AddEntity(colonist);
-            //    ApplyChange(new EntitySpawn { ID = colonist.ID, EntityType = EntityType.COLONIST, Pos = spawnPoint });
-            //}
+                var colonist = EntityFactory.CreateColonist(level);
+                var spawnPoint = new Vector3(Random.Range(0, Size), Random.Range(0, Size));
+                colonist.GetComponent<PositionComponent>().Pos.Value = spawnPoint;
+                engine.AddEntity(colonist);
+            }
         }
 
         // Call this every SERVER update so the version numbers get
@@ -169,7 +168,6 @@ namespace Server
             var player = EntityFactory.CreatePlayer(clientID);
             players.Add(clientID, player);
             Engine.AddEntity(player);
-            ApplyChange(new EntitySpawn { EntityType = EntityType.PLAYER, ID = player.ID, Pos = Vector3.zero });
         }
 
         public Entity GetPlayer(int clientID)

@@ -58,7 +58,7 @@ namespace Client
                         //tilemap.SetTile(buildingPos, houseTile);
 
                         var client = Game.Instance.Client;
-                        client.SendPacket((ClientRequest)(new PlaceBuildingRequest { Pos = buildingPos }));
+                        client.SendRequestPacket(new PlaceBuildingRequest { Pos = buildingPos });
 
                         ghost.SetActive(false);
                         selectTile.enabled = true;
