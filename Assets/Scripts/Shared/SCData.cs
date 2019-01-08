@@ -25,9 +25,9 @@ namespace Shared
 
         public enum EntityState
         {
-            IDLE,
-            MINING,
-            WALKING
+            IDLE = 0,
+            MINING = 1,
+            WALKING = 2
         }
     }
 }

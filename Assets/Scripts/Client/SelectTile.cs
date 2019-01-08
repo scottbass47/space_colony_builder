@@ -8,17 +8,23 @@ namespace Client
 {
     public class SelectTile : MonoBehaviour
     {
+        public Transform popUpWindowPrefab;
         public Transform windowPrefab;
 
         private Tilemap tilemap;
         private GameObject popUpWindow;
 
-        public GameObject window;
+        private GameObject window;
 
         private void Start()
         {
-            popUpWindow = Instantiate(windowPrefab).gameObject;
+            popUpWindow = Instantiate(popUpWindowPrefab).gameObject;
             popUpWindow.SetActive(false);
+        
+            window = Instantiate(windowPrefab, FindObjectOfType<Canvas>().transform).gameObject;
+            var rt = window.GetComponent<RectTransform>();
+            rt.transform.position = new Vector3(650, 30, 0);
+
             tilemap = null;
         }
 
@@ -48,6 +54,7 @@ namespace Client
 
                 if (Input.GetMouseButtonDown(0))
                 {
+                   
                     if (obj != null && !hit)
                     {
                         var selectable = obj.GetComponent<Selectable>();
