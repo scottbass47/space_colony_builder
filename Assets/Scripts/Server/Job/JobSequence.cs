@@ -22,6 +22,11 @@ namespace Server.Job
             jobs[currentJob].Init();
         }
 
+        public void Done()
+        {
+            // The last job's Done will be handled in OnUpdate
+        }
+
         public bool IsFinished()
         {
             return currentJob == jobs.Length;
@@ -33,6 +38,7 @@ namespace Server.Job
 
             if (jobs[currentJob].IsFinished())
             {
+                jobs[currentJob].Done();
                 currentJob++;
                 if (currentJob < jobs.Length) jobs[currentJob].Init();
             }

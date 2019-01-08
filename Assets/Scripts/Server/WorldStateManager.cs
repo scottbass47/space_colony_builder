@@ -26,6 +26,7 @@ namespace Server
         public Level Level => level;
 
         private Dictionary<int, Entity> players;
+        private List<Entity> workerPool;
 
         // Creates a new world state with the specified tile map size
         public WorldStateManager(int size)
@@ -40,16 +41,29 @@ namespace Server
             EntityFactory.World = this;
             EntityFactory.Engine = engine;
 
+            workerPool = new List<Entity>();
+            engine.AddGroupListener(Group.createGroup().All(typeof(WorkerComponent)),
+                (entity) => 
+                {
+                    workerPool.Add(entity);
+                },
+                (entity) => 
+                {
+                    workerPool.Remove(entity);
+                }
+            );
+
             engine.AddSystem(new NetSpawnSystem());
             engine.AddSystem(new RequestProcessingSystem());    
-            engine.AddSystem(new WorkerSystem());    
+            engine.AddSystem(new HiringSystem(workerPool));    
+            engine.AddSystem(new WorkerSystem(workerPool));    
             engine.AddSystem(new DeathSystem());    
             engine.AddSystem(new StateChangeEmitterSystem());
 
             level = new Level(this);
 
             List<Vector3Int> rockSpawns;
-            tiles = WorldGeneration.GenerateWorld(size, 10, out rockSpawns);
+            tiles = WorldGeneration.GenerateWorld(size, 5, out rockSpawns);
 
             foreach (Vector3Int spawn in rockSpawns)
             {

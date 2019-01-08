@@ -38,6 +38,15 @@ namespace Server.Job
             }
         }
 
+        public void Done()
+        {
+            if(entity.HasComponent<StateComponent>())
+            {
+                var state = entity.GetComponent<StateComponent>();
+                state.State.Value = (int)EntityState.IDLE;
+            }
+        }
+
         public bool IsFinished()
         {
             if (path == null) return true;

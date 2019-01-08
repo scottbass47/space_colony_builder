@@ -20,6 +20,12 @@ namespace Server
             this.job = job;
         }
 
+        public void FinishJob()
+        {
+            job.Done();
+            job = null;
+        }
+
         public void Reset()
         {
             job = null;

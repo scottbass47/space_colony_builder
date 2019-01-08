@@ -1,4 +1,5 @@
 ﻿using ECS;
+using Server.Job;
 using Shared;
 using Shared.SCData;
 using Shared.StateChanges;
@@ -27,12 +28,12 @@ namespace Server
                 while(client.Requests.Count > 0)
                 {
                     var request = client.Requests.Dequeue();
-                    Handle(request);
+                    Handle(entity, request);
                 }
             }
         }
 
-        private void Handle(ClientRequest request)
+        private void Handle(Entity client, ClientRequest request)
         {
             WorldStateManager wsm = EntityFactory.World;
 
@@ -48,7 +49,19 @@ namespace Server
             }
             else if(request.GetType() == typeof(AddWorkerRequest))
             {
-                // do stuff
+                AddWorkerRequest workRequest = (AddWorkerRequest)request;
+
+                var hire = client.AddComponent<HiringComponent>();
+                hire.OnHire = (worker) => 
+                {
+                    var rock = Engine.GetEntity(workRequest.EntityID);
+                    var pos = rock.GetComponent<MapObjectComponent>().Pos;
+
+                    var move = new JobMove(worker.GetComponent<LevelComponent>().Level, new Vector3(pos.x, pos.y, 0));
+                    var mine = new JobMine(rock, client);
+
+                    return new JobSequence(move, mine);
+                }; 
             }
         }
     }
