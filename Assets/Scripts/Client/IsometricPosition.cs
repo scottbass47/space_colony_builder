@@ -29,11 +29,17 @@ namespace Client
 
         private void Update()
         {
+            var actual = IsoConversion();
+            transform.position = actual;
+        }
+
+        public Vector3 IsoConversion()
+        {
             Vector3 actual = new Vector3();
             actual.x = (Position.x - Position.y) * 0.5f;
             actual.y = (Position.x + Position.y) * 0.25f + Position.z * 0.5f;
             actual.z = Position.z;
-            transform.position = actual;
+            return actual;
         }
     }
 }

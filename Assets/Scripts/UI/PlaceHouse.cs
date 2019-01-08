@@ -1,4 +1,5 @@
-﻿using Shared.SCPacket;
+﻿using Shared;
+using Shared.SCPacket;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -57,7 +58,7 @@ namespace Client
                         //tilemap.SetTile(buildingPos, houseTile);
 
                         var client = Game.Instance.Client;
-                        client.SendPlaceBuildingPacket(buildingPos);
+                        client.SendPacket((ClientRequest)(new PlaceBuildingRequest { Pos = buildingPos }));
 
                         ghost.SetActive(false);
                         selectTile.enabled = true;

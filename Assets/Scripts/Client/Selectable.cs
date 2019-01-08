@@ -1,42 +1,68 @@
-﻿using System.Collections;
+﻿using Client;
+using Shared.SCData;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using UnityEngine.UI;
 
-namespace Client
+public class Selectable : MonoBehaviour
 {
-    public class Selectable : MonoBehaviour
+    //Some sort of data/type field
+
+    private Tilemap tilemap;
+    private EntityObject eo;
+
+    private GameObject RockInfo;
+
+    public void DisplayPopUpWindow(GameObject window)
     {
-        //Some sort of data/type field
+        //Set Text (Name and Info)
+        //Set Collider to width and height of rect transform
+        //Set Background Image
 
-        private Tilemap tilemap;
+        if (tilemap == null) tilemap = FindObjectOfType<Tilemap>();
 
-        public void DisplayPopUpWindow(GameObject window)
+        var tilemapObj = gameObject.GetComponent<TilemapObject>();
+
+        Vector3 worldMousePos = tilemap.CellToWorld(tilemapObj.Pos);
+
+        RectTransform rt = window.GetComponent<RectTransform>();
+
+        float widthOffset = rt.rect.width * rt.lossyScale.x / 2 + 0.3f;
+        float heightOffset = rt.rect.height * rt.lossyScale.y / 2;
+
+        Vector3 WindowPos = new Vector3(worldMousePos.x + widthOffset, worldMousePos.y + heightOffset, 1);
+
+        window.SetActive(true);
+        window.transform.SetPositionAndRotation(WindowPos, Quaternion.identity);
+    }
+
+    public void DisplayWindow(GameObject window)
+    {
+        if(RockInfo == null) RockInfo = window.transform.GetChild(3).gameObject;
+
+        eo = gameObject.GetComponent<EntityObject>();
+        EntityType type = eo.Type;
+
+        var rt = window.GetComponent<RectTransform>();
+
+        switch (type)
         {
-            //Set Text (Name and Info)
-            //Set Collider to width and height of rect transform
-            //Set Background Image
-
-            if (tilemap == null) tilemap = FindObjectOfType<Tilemap>();
-
-            var tilemapObj = this.gameObject.GetComponent<TilemapObject>();
-            
-            Vector3 worldMousePos = tilemap.CellToWorld(tilemapObj.Pos);
-
-            RectTransform rt = window.GetComponent<RectTransform>();
-
-            float widthOffset = rt.rect.width * rt.lossyScale.x / 2 + 0.3f;
-            float heightOffset = rt.rect.height * rt.lossyScale.y / 2;
-
-            Vector3 WindowPos = new Vector3(worldMousePos.x + widthOffset, worldMousePos.y + heightOffset, 1);
-
-            window.SetActive(true);
-            window.transform.SetPositionAndRotation(WindowPos, Quaternion.identity);
+            //@Gross
+            case EntityType.ROCK:
+                window.GetComponentInChildren<Text>().text = "Rock " + eo.ID;
+                RockInfo.SetActive(true);
+                var addWorkers = RockInfo.GetComponent<AddWorkers>();
+                addWorkers.rock = gameObject;
+                addWorkers.Refresh();
+                break;
+            case EntityType.HOUSE:
+                window.GetComponentInChildren<Text>().text = "House " + eo.ID;
+                RockInfo.SetActive(false);
+                break;
         }
-
-        public void DisplayWindow(GameObject window)
-        {
-            window.SetActive(true);
-        }
+        
+        window.SetActive(true);
     }
 }
