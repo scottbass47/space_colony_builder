@@ -138,6 +138,7 @@ namespace ECS
                 groupMembership.Add(system.Group, new List<Entity>());
             }
             //groupMembership.Add(system.Group, new List<Entity>());
+            system.AddedToEngine();
             SystemAdded(system);
         }
 

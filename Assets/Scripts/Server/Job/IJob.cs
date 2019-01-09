@@ -12,6 +12,9 @@ namespace Server.Job
         // Called once after SetEntity but before Update
         void Init();
 
+        // Called once after first frame that IsFinished is true
+        void Done();
+
         void OnUpdate(float delta);
         bool IsFinished();
     }

@@ -27,6 +27,7 @@ namespace ECS
             this.group = group;
         }
 
+        public virtual void AddedToEngine() { }
         public abstract void Update(float delta);
     }
 }

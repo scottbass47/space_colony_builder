@@ -64,8 +64,9 @@ namespace Client
             var prefabTable = Game.Instance.PrefabTable;
             var go = Instantiate(prefabTable.GetPrefab(EntityType.COLONIST));
 
-            Vector3 pos = spawn.Pos;
-            go.transform.position = pos;
+            var iso = go.GetComponent<IsometricPosition>();
+            iso.Position = spawn.Pos;
+            iso.Position.z = 1;
 
             return go;
         }

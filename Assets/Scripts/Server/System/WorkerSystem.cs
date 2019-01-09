@@ -14,8 +14,11 @@ namespace Server
     public class WorkerSystem : AbstractSystem
     {
 
-        public WorkerSystem() : base(Group.createGroup().All(typeof(WorkerComponent)))
+        private List<Entity> workerPool;
+
+        public WorkerSystem(List<Entity> workerPool) : base(Group.createGroup().All(typeof(WorkerComponent)))
         {
+            this.workerPool = workerPool;
         }
 
         public override void Update(float delta)
@@ -32,35 +35,12 @@ namespace Server
                     }
                     else
                     {
-                        giveJob(entity);
+                        worker.FinishJob();                        
+                        workerPool.Add(entity);
                     }
-                }
-                else
-                {
-                    giveJob(entity);
                 }
             }
         }
 
-        private void giveJob(Entity entity)
-        {
-            var worker = entity.GetComponent<WorkerComponent>();
-            var level = entity.GetComponent<LevelComponent>().Level;
-            var positions = level.GetObjects().Keys;
-
-            var rocks = new List<Vector3Int>(positions)
-                .FindAll(
-                    (pos) => level.ObjectAt(pos).GetComponent<EntityTypeComponent>().Type == EntityType.ROCK
-                );
-
-            if (rocks.Count == 0) return;
-            var random = rocks[Random.Range(0, rocks.Count)];
-
-            var move = new JobMove(level, new Vector3(random.x, random.y, 0));
-            var mine = new JobMine(level.ObjectAt(random), entity.GetComponent<GlobalComponent>().World.GetPlayer(0));
-
-            var jobSeq = new JobSequence(move, mine);
-            worker.AssignJob(jobSeq, entity);
-        }
     }
 }

@@ -14,6 +14,7 @@ namespace Shared
     [ProtoInclude(12, typeof(PathUpdate))]
     [ProtoInclude(13, typeof(StateUpdate))]
     [ProtoInclude(14, typeof(OreUpdate))]
+    [ProtoInclude(15, typeof(HouseUpdate))]
     public class SCUpdate
     {
     }
@@ -51,5 +52,12 @@ namespace Shared
     {
         [ProtoMember(1)]
         public int Amount { get; set; }
+    }
+
+    [ProtoContract]
+    public class HouseUpdate : SCUpdate
+    {
+        [ProtoMember(1)]
+        public int[] Residents { get; set; }
     }
 }
