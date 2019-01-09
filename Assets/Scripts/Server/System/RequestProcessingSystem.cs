@@ -56,8 +56,12 @@ namespace Server
                 {
                     var rock = Engine.GetEntity(workRequest.EntityID);
                     var pos = rock.GetComponent<MapObjectComponent>().Pos;
+                    var slots = rock.GetComponent<SlotComponent>();
+                    var slot = slots.Slots[workRequest.Slot];
+                    var slotPos = pos + new Vector3(slot.x, slot.y, 0);
+                    Debug.Log($"Rock: {pos}, Slot: {slot}, Slot Pos: {slotPos}");
 
-                    var move = new JobMove(worker.GetComponent<LevelComponent>().Level, new Vector3(pos.x, pos.y, 0));
+                    var move = new JobMove(worker.GetComponent<LevelComponent>().Level, slotPos);
                     var mine = new JobMine(rock, client);
 
                     return new JobSequence(move, mine);

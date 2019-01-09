@@ -56,7 +56,8 @@ namespace Server
             engine.AddSystem(new NetSpawnSystem());
             engine.AddSystem(new RequestProcessingSystem());    
             engine.AddSystem(new HiringSystem(workerPool));    
-            engine.AddSystem(new WorkerSystem(workerPool));    
+            engine.AddSystem(new WorkerSystem(workerPool));
+            engine.AddSystem(new HousingSystem());
             engine.AddSystem(new DeathSystem());    
             engine.AddSystem(new StateChangeEmitterSystem());
 

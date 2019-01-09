@@ -33,7 +33,12 @@ namespace Server
 
             rock.AddComponent<MapObjectComponent>().Pos = pos;
             rock.AddComponent<HealthComponent>();
-            rock.AddComponent<OreComponent>().Amount.Value = 100;
+            rock.AddComponent<OreComponent>().Amount.Value = 10000;
+            rock.AddComponent<SlotComponent>()
+                .AddSlot(new Vector2(-0.1f, 0.3f))
+                .AddSlot(new Vector2(-0.25f, 0))
+                .AddSlot(new Vector2(0, -0.25f))
+                .AddSlot(new Vector2(0.3f, -0.1f));
             return rock;
         }
 
@@ -45,6 +50,7 @@ namespace Server
 
             house.AddComponent<MapObjectComponent>().Pos = pos;
             house.AddComponent<HealthComponent>().Health.Value = 100;
+            house.AddComponent<HouseComponent>().Set(5);
             return house;
         }
 
@@ -58,7 +64,8 @@ namespace Server
             colonist.AddComponent<WorkerComponent>();
             colonist.AddComponent<LevelComponent>().Level = level;
             colonist.AddComponent<StateComponent>().State.Value = (int)EntityState.IDLE;
-            colonist.AddComponent<StatsComponent>().Set(40, 2);
+            colonist.AddComponent<StatsComponent>().Set(4, 2);
+            colonist.AddComponent<ResidentComponent>();
             return colonist;
         }
 

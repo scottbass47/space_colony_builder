@@ -17,11 +17,17 @@ namespace Server.Job
         private Vector3 dest;
 
         private List<PathNode> path;
+        private Entity target;
 
         public JobMove(Level level, Vector3 dest)
         {
             this.level = level;
             this.dest = dest;
+        }
+
+        public JobMove(Level level, Vector3 dest, Entity target) : this(level, dest)
+        {
+            this.target = target; 
         }
 
         public void Init()
@@ -51,10 +57,16 @@ namespace Server.Job
         {
             if (path == null) return true;
 
+            if(target != null)
+            {
+                var engine = entity.GetComponent<GlobalComponent>().Engine;
+                if (!engine.IsValid(target)) return true;
+            }
+
             var pos = entity.GetComponent<PositionComponent>();
             Vector3 myPos = pos.Pos;
 
-            return (dest - myPos).sqrMagnitude < 0.1f;
+            return (dest - myPos).sqrMagnitude < 0.01f;
         }
 
         public void OnUpdate(float delta)
