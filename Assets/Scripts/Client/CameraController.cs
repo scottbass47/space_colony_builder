@@ -37,6 +37,18 @@ namespace Client
                 transform.Translate(-delta.x * mouseSensitivity, -delta.y * mouseSensitivity, -delta.z * mouseSensitivity);
                 lastPosition = Input.mousePosition;
             }
+
+            if (Input.GetKey(KeyCode.C))
+            {
+                var colonist = GameObject.Find("Colonist(Clone)");
+                var colonistPosition = colonist.transform.position;
+                transform.position = new Vector3(colonistPosition.x, colonistPosition.y, transform.position.z);
+
+                Camera.main.orthographicSize = .70f;
+              //  Camera.main
+            }
+
+
         }
     }
 }

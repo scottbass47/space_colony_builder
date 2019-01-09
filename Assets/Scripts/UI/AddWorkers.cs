@@ -13,7 +13,7 @@ public class AddWorkers : MonoBehaviour
     public Button addButton;
 
     private Text workerCount;
-    private GameObject healthText;
+    private GameObject oreText;
 
     private void Start()
     {
@@ -24,8 +24,10 @@ public class AddWorkers : MonoBehaviour
     {
         if (rock != null)
         {
-            healthText = transform.GetChild(1).gameObject;
-            healthText.GetComponent<Text>().text = "Health: " + rock.GetComponent<RockProperties>().Health;
+            oreText = transform.GetChild(1).gameObject;
+            var rockProps = rock.GetComponent<RockProperties>();
+
+            oreText.GetComponent<Text>().text = "Ore Left: " + rockProps.Ore;
         }
     }
 
