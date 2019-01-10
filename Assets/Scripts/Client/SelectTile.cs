@@ -14,16 +14,18 @@ namespace Client
         private Tilemap tilemap;
         private GameObject popUpWindow;
 
-        private GameObject window;
+        public GameObject window;
 
         private void Start()
         {
             popUpWindow = Instantiate(popUpWindowPrefab).gameObject;
             popUpWindow.SetActive(false);
         
+            /*
             window = Instantiate(windowPrefab, FindObjectOfType<Canvas>().transform).gameObject;
             var rt = window.GetComponent<RectTransform>();
             rt.transform.position = new Vector3(650, 30, 0);
+            */
 
             tilemap = null;
         }
@@ -44,13 +46,14 @@ namespace Client
 
                 GameObject obj = Game.Instance.World.GetMapObject(new Vector3Int(mousePos.x, mousePos.y, 0));
 
+                /*
                 if (popUpWindow.activeSelf && !hit) popUpWindow.SetActive(false);
 
                 if (obj != null && !hit)
                 {
                     var selectable = obj.GetComponent<Selectable>();
                     if(selectable != null) selectable.DisplayPopUpWindow(popUpWindow);
-                }
+                }*/
 
                 if (Input.GetMouseButtonDown(0))
                 {
