@@ -43,9 +43,9 @@ namespace Server
                 var house = EntityFactory.CreateHouse(new Vector3Int { x = (int)packet.Pos.x, y = (int)packet.Pos.y, z = 0 });
                 wsm.Engine.AddEntity(house);
 
-                var colonist = EntityFactory.CreateColonist(wsm.Level);
-                colonist.GetComponent<PositionComponent>().Pos.Value = packet.Pos;
-                Engine.AddEntity(colonist);
+                //var colonist = EntityFactory.CreateColonist(wsm.Level);
+                //colonist.GetComponent<PositionComponent>().Pos.Value = packet.Pos;
+                //Engine.AddEntity(colonist);
             }
             else if(request.GetType() == typeof(AddWorkerRequest))
             {
@@ -59,7 +59,6 @@ namespace Server
                     var slots = rock.GetComponent<SlotComponent>();
                     var slot = slots.Slots[workRequest.Slot];
                     var slotPos = pos + new Vector3(slot.x, slot.y, 0);
-                    Debug.Log($"Rock: {pos}, Slot: {slot}, Slot Pos: {slotPos}");
 
                     var move = new JobMove(worker.GetComponent<LevelComponent>().Level, slotPos);
                     var mine = new JobMine(rock, client);

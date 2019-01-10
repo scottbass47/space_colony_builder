@@ -32,9 +32,11 @@ namespace Server.Job
            
             // Grab a reference to the engine
             engine = source.GetComponent<GlobalComponent>().Engine;
+
+            AddTerminationCondition(() => !engine.IsValid(source) || source.GetComponent<OreComponent>().Amount == 0);
         }
 
-        public void Init()
+        public override void Init()
         {
             if(worker.HasComponent<StateComponent>())
             {
@@ -43,7 +45,7 @@ namespace Server.Job
             }
         }
 
-        public void Done()
+        public override void Done()
         {
             if(worker.HasComponent<StateComponent>())
             {
@@ -52,12 +54,7 @@ namespace Server.Job
             }
         }
 
-        public bool IsFinished()
-        {
-            return !engine.IsValid(source) || source.GetComponent<OreComponent>().Amount == 0;
-        }
-
-        public void OnUpdate(float delta)
+        public override void OnUpdate(float delta)
         {
             elapsed += delta;
             if(elapsed >= 1f)
@@ -75,7 +72,7 @@ namespace Server.Job
             }
         }
 
-        public void SetEntity(Entity entity)
+        public override void SetEntity(Entity entity)
         {
             worker = entity;
         }

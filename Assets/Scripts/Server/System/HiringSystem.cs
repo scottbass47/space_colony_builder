@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using Utils;
 
 namespace Server
 {
@@ -25,7 +26,7 @@ namespace Server
                 var randomWorker = workerPool[Random.Range(0, workerPool.Count)];
                 var worker = randomWorker.GetComponent<WorkerComponent>();
                 worker.AssignJob(hire.OnHire(randomWorker), randomWorker);
-                workerPool.Remove(randomWorker);
+                DebugUtils.Assert(workerPool.Remove(randomWorker));
                 entity.RemoveComponent<HiringComponent>();
             }
         }

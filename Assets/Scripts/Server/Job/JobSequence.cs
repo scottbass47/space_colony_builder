@@ -17,22 +17,17 @@ namespace Server.Job
             this.jobs = jobs;
         }
 
-        public void Init()
+        public override void Init()
         {
-            jobs[currentJob].Init();
+            InitJob(jobs[currentJob]);
         }
 
-        public void Done()
+        public override void Done()
         {
             // The last job's Done will be handled in OnUpdate
         }
 
-        public bool IsFinished()
-        {
-            return currentJob == jobs.Length;
-        }
-
-        public void OnUpdate(float delta)
+        public override void OnUpdate(float delta)
         {
             jobs[currentJob].OnUpdate(delta);
 
@@ -40,11 +35,21 @@ namespace Server.Job
             {
                 jobs[currentJob].Done();
                 currentJob++;
-                if (currentJob < jobs.Length) jobs[currentJob].Init();
+                if (currentJob < jobs.Length)
+                {
+                    InitJob(jobs[currentJob]);
+                }
             }
         }
 
-        public void SetEntity(Entity entity)
+        private void InitJob(IJob job)
+        {
+            job.Init();
+            TerminationConditions.Clear();
+            TerminationConditions.AddRange(job.TerminationConditions);
+        }
+
+        public override void SetEntity(Entity entity)
         {
             foreach(var job in jobs)
             {

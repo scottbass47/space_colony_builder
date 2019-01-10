@@ -30,7 +30,7 @@ namespace Server.Job
             this.target = target; 
         }
 
-        public void Init()
+        public override void Init()
         {
             var pos = entity.GetComponent<PositionComponent>();
             Vector3 myPos = pos.Pos;
@@ -42,9 +42,24 @@ namespace Server.Job
                 var state = entity.GetComponent<StateComponent>();
                 state.State.Value = (int)EntityState.WALKING;
             }
+
+
+            AddTerminationCondition(() =>
+            {
+                if (path == null) return true;
+
+                if (target != null)
+                {
+                    var engine = entity.GetComponent<GlobalComponent>().Engine;
+                    if (!engine.IsValid(target)) return true;
+                }
+
+                var p = entity.GetComponent<PositionComponent>();
+                return AtDest(p.Pos, dest);
+            });
         }
 
-        public void Done()
+        public override void Done()
         {
             if(entity.HasComponent<StateComponent>())
             {
@@ -53,23 +68,7 @@ namespace Server.Job
             }
         }
 
-        public bool IsFinished()
-        {
-            if (path == null) return true;
-
-            if(target != null)
-            {
-                var engine = entity.GetComponent<GlobalComponent>().Engine;
-                if (!engine.IsValid(target)) return true;
-            }
-
-            var pos = entity.GetComponent<PositionComponent>();
-            Vector3 myPos = pos.Pos;
-
-            return (dest - myPos).sqrMagnitude < 0.01f;
-        }
-
-        public void OnUpdate(float delta)
+        public override void OnUpdate(float delta)
         {
             if (path == null) return;
 
@@ -96,6 +95,11 @@ namespace Server.Job
             moveAlongDir(dir, delta);
         }
 
+        public static bool AtDest(Vector3 pos, Vector3 dest)
+        {
+            return (dest - pos).sqrMagnitude < 0.01f;
+        }
+
         private void moveAlongDir(Vector3 dir, float delta)
         {
             var speed = entity.GetComponent<StatsComponent>().WalkSpeed;
@@ -118,7 +122,7 @@ namespace Server.Job
             return -1;
         }
 
-        public void SetEntity(Entity entity)
+        public override void SetEntity(Entity entity)
         {
             this.entity = entity;
         }
