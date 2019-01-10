@@ -114,7 +114,6 @@ namespace Server
 
             // Create player entity
             stateManager.AddPlayer(clientID);
-            stateManager.Engine.AddEntity(EntityFactory.CreatePlayer(clientID));
 
             SendClientID(clientID);
             SendWorldData(peer);

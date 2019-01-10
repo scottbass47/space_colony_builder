@@ -11,7 +11,6 @@ namespace Client
 {
     public class EntityObject : MonoBehaviour
     {
-        [HideInInspector]
         public int ID;
 
         [HideInInspector]

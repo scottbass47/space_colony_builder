@@ -35,11 +35,6 @@ namespace Server
                     }
                     else
                     {
-                        if(worker.Job is JobSequence)
-                        {
-                            Debug.Log($"Worker {entity.ID} is done mining!");
-                        }
-
                         // Some jobs are replaceable, and as such don't need to remove
                         // the worker from the worker pool when assigning them.
                         // Replaceable jobs are basically jobs that the AI can perform
