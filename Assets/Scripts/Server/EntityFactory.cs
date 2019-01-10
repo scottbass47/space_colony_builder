@@ -33,7 +33,7 @@ namespace Server
 
             rock.AddComponent<MapObjectComponent>().Pos = pos;
             rock.AddComponent<HealthComponent>();
-            rock.AddComponent<OreComponent>().Amount.Value = 10000;
+            rock.AddComponent<OreComponent>().Amount.Value = 100;
             rock.AddComponent<SlotComponent>()
                 .AddSlot(new Vector2(-0.1f, 0.3f))
                 .AddSlot(new Vector2(-0.25f, 0))

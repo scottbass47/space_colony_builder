@@ -18,6 +18,15 @@ public class RockProperties : MonoBehaviour
     public int workers;
 
     [HideInInspector]
+    public bool hasSlot0;
+    [HideInInspector]
+    public bool hasSlot1;
+    [HideInInspector]
+    public bool hasSlot2;
+    [HideInInspector]
+    public bool hasSlot3;
+
+    [HideInInspector]
     public GameObject healthBar;
     public Transform healthBarPrefab;
     private bool hasHealthBar;
@@ -27,6 +36,10 @@ public class RockProperties : MonoBehaviour
         Ore = 1000;
         hasHealthBar = false;
         origSet = false;
+        hasSlot0 = false;
+        hasSlot1 = false;
+        hasSlot2 = false;
+        hasSlot3 = false;
 
         workers = 0;
         var eo = GetComponent<EntityObject>();
