@@ -77,7 +77,8 @@ namespace Client
                         if (selectedItems.Count == 1)
                         {
                             foreach (Vector3Int pos in selectedItemsPos) tilemap.SetColor(pos, new Color(1, 1, 1, 1));
-                            foreach (GameObject item in selectedItems) item.GetComponent<Selectable>().enabled = false;
+                            foreach (GameObject item in selectedItems) if (item != null) item.GetComponent<Selectable>().enabled = false;
+
                             selectedItems.Clear();
                         }
                         if (!selectedItems.Contains(obj))
@@ -91,7 +92,7 @@ namespace Client
                     else if (!hit && !Input.GetKey(KeyCode.LeftControl))
                     {
                         foreach (Vector3Int pos in selectedItemsPos) tilemap.SetColor(pos, new Color(1, 1, 1, 1));
-                        foreach (GameObject item in selectedItems) item.GetComponent<Selectable>().enabled = false;
+                        foreach (GameObject item in selectedItems) if (item != null) item.GetComponent<Selectable>().enabled = false;
 
                         selectedItems.Clear();
                         Selectable.DisplayWindow(window, selectedItems);
