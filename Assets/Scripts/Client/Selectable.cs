@@ -14,7 +14,13 @@ public class Selectable : MonoBehaviour
     private Tilemap tilemap;
     private EntityObject eo;
 
-    private GameObject RockInfo;
+    private static GameObject RockInfo;
+    private static AddWorkers addWorkers;
+    private static GameObject HouseInfo;
+    private static HouseUI houseUI;
+    private static GameObject MultipleObjsInfo;
+
+    private static TextMeshProUGUI windowTitle;
 
     public void DisplayPopUpWindow(GameObject window)
     {
@@ -41,29 +47,63 @@ public class Selectable : MonoBehaviour
 
     public void DisplayWindow(GameObject window)
     {
-        if(RockInfo == null) RockInfo = window.transform.GetChild(3).gameObject;
+        if (RockInfo == null) RockInfo = window.transform.GetChild(3).gameObject;
+        if (addWorkers == null) addWorkers = RockInfo.GetComponent<AddWorkers>();
+
+        if (HouseInfo == null) HouseInfo = window.transform.GetChild(4).gameObject;
+        if (houseUI == null) houseUI = HouseInfo.GetComponent<HouseUI>();
+
+        if (MultipleObjsInfo == null) MultipleObjsInfo = window.transform.GetChild(5).gameObject;
+
+        if (windowTitle == null) windowTitle = window.GetComponentInChildren<TextMeshProUGUI>();
 
         eo = gameObject.GetComponent<EntityObject>();
+
         EntityType type = eo.Type;
-
-        var rt = window.GetComponent<RectTransform>();
-
         switch (type)
         {
             //@Gross
             case EntityType.ROCK:
-                window.GetComponentInChildren<TextMeshProUGUI>().text = "ROCK ";// + eo.ID;
+                windowTitle.text = "ROCK ";// + eo.ID;
+                MultipleObjsInfo.SetActive(false);
+                HouseInfo.SetActive(false);
+
                 RockInfo.SetActive(true);
-                var addWorkers = RockInfo.GetComponent<AddWorkers>();
                 addWorkers.rock = gameObject;
                 addWorkers.Refresh();
                 break;
             case EntityType.HOUSE:
-                window.GetComponentInChildren<TextMeshProUGUI>().text = "HOUSE ";// + eo.ID;
+                windowTitle.text = "HOUSE ";// + eo.ID;
                 RockInfo.SetActive(false);
+                MultipleObjsInfo.SetActive(false);
+
+                HouseInfo.SetActive(true);
+                houseUI.house = gameObject;
                 break;
         }
         
         window.SetActive(true);
+    }
+
+    public static void DisplayWindow(GameObject window, ArrayList selectedItems)
+    {
+        if (RockInfo == null) RockInfo = window.transform.GetChild(3).gameObject;
+        if (addWorkers == null) addWorkers = RockInfo.GetComponent<AddWorkers>();
+
+        if (HouseInfo == null) HouseInfo = window.transform.GetChild(4).gameObject;
+        if (houseUI == null) houseUI = HouseInfo.GetComponent<HouseUI>();
+
+        if (MultipleObjsInfo == null) MultipleObjsInfo = window.transform.GetChild(5).gameObject;
+
+        if (windowTitle == null) windowTitle = window.GetComponentInChildren<TextMeshProUGUI>();
+
+
+        windowTitle.text = selectedItems.Count + " ROCKS";// + eo.ID;
+        RockInfo.SetActive(false);
+        HouseInfo.SetActive(false);
+
+        MultipleObjsInfo.SetActive(true);
+
+        MultipleObjsInfo.GetComponent<MultipleObjsUI>().Entities = selectedItems;
     }
 }

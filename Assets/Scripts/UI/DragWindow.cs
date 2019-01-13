@@ -8,12 +8,6 @@ namespace Client {
     {
         private EventSystem FindEvent;
         private Event Find2;
-        private SelectTile selectTile;
-
-        private void Start()
-        {
-            selectTile = Game.Instance.GetComponent<SelectTile>();
-        }
 
         public void OnDrag(BaseEventData EventData)
         {  
@@ -32,14 +26,5 @@ namespace Client {
             }
         }
 
-        public void EnableTileSelection(BaseEventData EventData)
-        {
-            selectTile.enabled = true;
-        }
-
-        public void DisableTileSelection(BaseEventData EventData)
-        {
-            selectTile.enabled = false;
-        }
     }
 }

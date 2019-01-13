@@ -14,7 +14,7 @@ namespace Client
         void Update()
         {
             float scrollVal = Input.GetAxisRaw("Mouse ScrollWheel");
-            if (scrollVal > 0)
+            if (scrollVal > 0 && Camera.main.orthographicSize > 0.50f)
             {
                 // zoom in
                 Camera.main.orthographicSize -= Time.deltaTime * ScrollSpeed;
