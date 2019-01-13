@@ -26,7 +26,6 @@ namespace Server
         public Level Level => level;
 
         private Dictionary<int, Entity> players;
-        private List<Entity> workerPool;
 
         // Creates a new world state with the specified tile map size
         public WorldStateManager(int size)
@@ -38,33 +37,26 @@ namespace Server
             players = new Dictionary<int, Entity>();
 
             engine = new Engine();
+            level = new Level(this);
+
             EntityFactory.World = this;
             EntityFactory.Engine = engine;
+            EntityFactory.Level = Level;
 
-            workerPool = new List<Entity>();
-            engine.AddGroupListener(Group.createGroup().All(typeof(WorkerComponent)),
-                (entity) => 
-                {
-                    workerPool.Add(entity);
-                },
-                (entity) => 
-                {
-                    workerPool.Remove(entity);
-                }
-            );
-
-            engine.AddSystem(new NetSpawnSystem());
             engine.AddSystem(new RequestProcessingSystem());    
-            engine.AddSystem(new HiringSystem(workerPool));    
-            engine.AddSystem(new WorkerSystem(workerPool));
+            engine.AddSystem(new NetSpawnSystem());
+            engine.AddSystem(new TaskProcessingSystem());
+            engine.AddSystem(new HiringSystem());    
+            engine.AddSystem(new WorkerSystem());
             engine.AddSystem(new HousingSystem());
             engine.AddSystem(new DeathSystem());    
             engine.AddSystem(new StateChangeEmitterSystem());
 
-            level = new Level(this);
 
             List<Vector3Int> rockSpawns;
-            tiles = WorldGeneration.GenerateWorld(size, 5, out rockSpawns);
+            Vector3Int landingPadSpawn;
+            Vector3Int houseSpawn;
+            tiles = WorldGeneration.GenerateWorld(size, Constants.ROCK_SPAWN_CHANCE, out rockSpawns, out landingPadSpawn, out houseSpawn);
 
             foreach (Vector3Int spawn in rockSpawns)
             {
@@ -72,11 +64,15 @@ namespace Server
                 engine.AddEntity(rock);
             }
 
-            for (int i = 0; i < 10; i++)
-            {
-                //var dest = rockSpawns[Random.Range(0, rockSpawns.Count)];
+            var house = EntityFactory.CreateHouse(houseSpawn);
+            engine.AddEntity(house);
 
-                var colonist = EntityFactory.CreateColonist(level);
+            var landingPad = EntityFactory.CreateLandingPad(landingPadSpawn);
+            engine.AddEntity(landingPad);
+
+            for (int i = 0; i < Constants.NUM_INITIAL_COLONISTS; i++)
+            {
+                var colonist = EntityFactory.CreateColonist();
                 var spawnPoint = new Vector3(Random.Range(0, Size), Random.Range(0, Size));
                 colonist.GetComponent<PositionComponent>().Pos.Value = spawnPoint;
                 engine.AddEntity(colonist);
@@ -183,6 +179,20 @@ namespace Server
             var player = EntityFactory.CreatePlayer(clientID);
             players.Add(clientID, player);
             Engine.AddEntity(player);
+
+            var taskFac = player.GetComponent<TaskFactoryComponent>().Factory;
+
+            var level = player.GetComponent<LevelComponent>().Level;
+            var allRocks = level.GetObjects((entity) => 
+            {
+                return entity.GetComponent<EntityTypeComponent>().Type == EntityType.ROCK;
+            });
+            var ids = new List<int>();
+            allRocks.ForEach((rock) => ids.Add(rock.ID));
+
+            var task = taskFac.CreateMiningTask(ids, player);
+            var taskQueue = player.GetComponent<TaskQueueComponent>().Tasks;
+            taskQueue.AddTask(task);
         }
 
         public Entity GetPlayer(int clientID)

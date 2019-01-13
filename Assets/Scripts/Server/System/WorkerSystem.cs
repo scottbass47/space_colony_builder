@@ -14,11 +14,8 @@ namespace Server
     public class WorkerSystem : AbstractSystem
     {
 
-        private List<Entity> workerPool;
-
-        public WorkerSystem(List<Entity> workerPool) : base(Group.createGroup().All(typeof(WorkerComponent)))
+        public WorkerSystem() : base(Group.createGroup().All(typeof(WorkerComponent)))
         {
-            this.workerPool = workerPool;
         }
 
         public override void Update(float delta)
@@ -45,11 +42,7 @@ namespace Server
                         // there home a player could request work to be done and hire that 
                         // worker.
 
-                        var removedFromPool = worker.Job.RemoveWorkerFromPool;
                         worker.FinishJob();                        
-
-                        // Only add the worker back to the pool if they were removed in the first place.
-                        if(removedFromPool) workerPool.Add(entity);  
                     }
                 }
                 else

@@ -15,6 +15,7 @@ namespace Shared
     [ProtoInclude(13, typeof(StateUpdate))]
     [ProtoInclude(14, typeof(OreUpdate))]
     [ProtoInclude(15, typeof(HouseUpdate))]
+    [ProtoInclude(16, typeof(TaskQueueUpdate))]
     public class SCUpdate
     {
     }
@@ -59,5 +60,12 @@ namespace Shared
     {
         [ProtoMember(1)]
         public int[] Residents { get; set; }
+    }
+
+    [ProtoContract]
+    public class TaskQueueUpdate : SCUpdate
+    {
+        [ProtoMember(1)]
+        public string QueueText { get; set; } 
     }
 }

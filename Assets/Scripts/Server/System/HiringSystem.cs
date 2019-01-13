@@ -1,4 +1,5 @@
 ﻿using ECS;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,24 +11,49 @@ namespace Server
 {
     public class HiringSystem : AbstractSystem
     {
-        private List<Entity> workerPool;
+        private List<Entity> owners;
 
-        public HiringSystem(List<Entity> workerPool) : base(Group.createGroup().All(typeof(HiringComponent)))
+        public HiringSystem() : base(Group.createGroup().All(typeof(NotOwnedComponent)))
         {
-            this.workerPool = workerPool;
+            owners = new List<Entity>();
+        }
+
+        public override void AddedToEngine()
+        {
+            Engine.AddGroupListener(Group.createGroup().All(typeof(OwnedWorkersComponent)), AddOwner, RemoveOwner);
+        }
+
+        private void AddOwner(Entity obj)
+        {
+            owners.Add(obj);
+        }
+
+        private void RemoveOwner(Entity obj)
+        {
+            owners.Remove(obj);
         }
 
         public override void Update(float delta)
         {
-            foreach(var entity in Entities)
-            {
-                var hire = entity.GetComponent<HiringComponent>();
+            var entities = Entities;
+            int idx = 0;
 
-                var randomWorker = workerPool[Random.Range(0, workerPool.Count)];
-                var worker = randomWorker.GetComponent<WorkerComponent>();
-                worker.AssignJob(hire.OnHire(randomWorker), randomWorker);
-                DebugUtils.Assert(workerPool.Remove(randomWorker));
-                entity.RemoveComponent<HiringComponent>();
+            foreach(var owner in owners)
+            {
+                var o = owner.GetComponent<OwnedWorkersComponent>();
+
+                // If we can hire workers, start hiring
+                if(o.NumWorkers < o.MaxWorkers)
+                {
+                    for(; idx < entities.Count; idx++)
+                    {
+                        var worker = entities[idx];
+                        o.AddWorker(worker);
+                        worker.RemoveComponent<NotOwnedComponent>();
+                        if (o.NumWorkers == o.MaxWorkers) break;
+                    }
+                    
+                }
             }
         }
     }

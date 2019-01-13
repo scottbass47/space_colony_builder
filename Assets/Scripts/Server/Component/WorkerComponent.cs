@@ -13,22 +13,36 @@ namespace Server
         public IJob Job => job; 
         private IJob job;
 
-        public void AssignJob(IJob job, Entity entity)
+        public delegate void JobListener(Entity worker);
+        private JobListener OnComplete;
+        private Entity me;
+
+        public void AssignJob(IJob job, Entity me, JobListener onComplete = null)
         {
-            job.SetEntity(entity);
+            this.me = me;
+            job.SetEntity(me);
             job.Init();
+            OnComplete = onComplete;
             this.job = job;
         }
 
         public void FinishJob()
         {
+            if (OnComplete != null) OnComplete(me);
             job.Done();
             job = null;
+        }
+
+        public bool AvailableForHire()
+        {
+            return job == null || !job.RemoveWorkerFromPool;
         }
 
         public void Reset()
         {
             job = null;
+            OnComplete = null;
+            me = null;
         }
     }
 }

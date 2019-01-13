@@ -10,9 +10,9 @@ namespace Server
     public class StatsComponent : Component
     {
         public int MineSpeed { get; set; } 
-        public int WalkSpeed { get; set; }
+        public float WalkSpeed { get; set; }
 
-        public StatsComponent Set(int mineSpeed, int walkSpeed)
+        public StatsComponent Set(int mineSpeed, float walkSpeed)
         {
             MineSpeed = mineSpeed;
             WalkSpeed = walkSpeed;

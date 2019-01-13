@@ -11,6 +11,13 @@ namespace Client
 {
     public class EntityObjectFactory : MonoBehaviour
     {
+        private EntityPrefabTable prefabTable;
+
+        private void Start()
+        {
+            prefabTable = Game.Instance.PrefabTable;
+        }
+
         public GameObject CreateEntityObject(EntityType type, EntitySpawn spawn)
         {
             GameObject go = null;
@@ -28,6 +35,9 @@ namespace Client
                 case EntityType.PLAYER:
                     go = CreatePlayer(spawn);
                     break;
+                case EntityType.LANDING_PAD:
+                    go = CreateLandingPad(spawn);
+                    break;
             }
             var eo = go.GetComponent<EntityObject>();
             eo.ID = spawn.ID;
@@ -39,7 +49,6 @@ namespace Client
         private GameObject CreateRock(EntitySpawn spawn)
         {
             // Create the rock from prefab    
-            var prefabTable = Game.Instance.PrefabTable;
             var go = Instantiate(prefabTable.GetPrefab(EntityType.ROCK));
 
             Vector3 pos = spawn.Pos;
@@ -50,7 +59,6 @@ namespace Client
 
         private GameObject CreateHouse(EntitySpawn spawn)
         {  
-            var prefabTable = Game.Instance.PrefabTable;
             var go = Instantiate(prefabTable.GetPrefab(EntityType.HOUSE));
 
             Vector3 pos = spawn.Pos;
@@ -61,7 +69,6 @@ namespace Client
 
         private GameObject CreateColonist(EntitySpawn spawn)
         {
-            var prefabTable = Game.Instance.PrefabTable;
             var go = Instantiate(prefabTable.GetPrefab(EntityType.COLONIST));
 
             var iso = go.GetComponent<IsometricPosition>();
@@ -73,8 +80,15 @@ namespace Client
 
         private GameObject CreatePlayer(EntitySpawn spawn)
         {
-            var prefabTable = Game.Instance.PrefabTable;
             var go = Instantiate(prefabTable.GetPrefab(EntityType.PLAYER));
+            return go;
+        }
+
+        private GameObject CreateLandingPad(EntitySpawn spawn)
+        {
+            var go = Instantiate(prefabTable.GetPrefab(EntityType.LANDING_PAD));
+            Vector3 pos = spawn.Pos;
+            go.GetComponent<TilemapObject>().Pos = new Vector3Int((int)pos.x, (int)pos.y, (int)pos.z);
             return go;
         }
     }

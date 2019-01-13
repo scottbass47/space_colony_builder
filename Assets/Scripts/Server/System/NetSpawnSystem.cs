@@ -35,7 +35,7 @@ namespace Server
                 var world = entity.GetComponent<GlobalComponent>().World;
                 var type = entity.GetComponent<EntityTypeComponent>().Type;
                 world.ApplyChange(new EntitySpawn { EntityType = type, ID = entity.ID, Pos = pos });
-                Debug.Log($"Spawning entity {entity.ID}");
+                //Debug.Log($"Spawning entity {entity.ID}");
                 entity.RemoveComponent<NetSpawnComponent>();
             }
         }

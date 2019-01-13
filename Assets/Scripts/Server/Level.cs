@@ -21,6 +21,7 @@ namespace Server
         public int Size => size;
         public PathFinder PathFinder => pathFinder;
 
+        // Requires: engine != null
         public Level(WorldStateManager worldManager)
         {
             this.worldManager = worldManager;
@@ -63,6 +64,17 @@ namespace Server
         public Dictionary<Vector3Int, Entity> GetObjects()
         {
             return objectPositions;
+        }
+
+        public List<Vector3Int> GetObjectPositions(Predicate<Entity> predicate)
+        {
+            Predicate<Vector3Int> pred = (pos) => { return predicate(ObjectAt(pos)); };
+            return new List<Vector3Int>(objectPositions.Keys).FindAll(pred);
+        }
+
+        public List<Entity> GetObjects(Predicate<Entity> predicate)
+        {
+            return new List<Entity>(objectPositions.Values).FindAll(predicate);
         }
     }
 
