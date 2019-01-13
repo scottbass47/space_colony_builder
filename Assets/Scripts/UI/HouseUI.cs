@@ -13,7 +13,19 @@ public class HouseUI : MonoBehaviour
 
     void Start()
     {
-        
+        var houseProps = house.GetComponent<HouseProperties>();
+        var residents = houseProps.Residents;
+
+        for (int i = 0; i < 4; i++)
+        {
+            if (i < residents.Length)
+            {
+                images[i].enabled = true;
+                images[i].sprite = Game.Instance.EntityManager.GetEntity(residents[i]).GetComponent<SpriteRenderer>().sprite;
+                images[i].color = houseProps.houseColor;
+            }
+            else images[i].enabled = false;
+        }
     }
 
     void OnGUI()
@@ -23,9 +35,15 @@ public class HouseUI : MonoBehaviour
             var houseProps = house.GetComponent<HouseProperties>();
             var residents = houseProps.Residents;
             
-            for(int i = 0; i < residents.Length; i++)
+            for(int i = 0; i < 4; i++)
             {
-                images[i].sprite = Game.Instance.EntityManager.GetEntity(residents[i]).GetComponent<SpriteRenderer>().sprite;
+                if (i < residents.Length)
+                {
+                    images[i].enabled = true;
+                    images[i].sprite = Game.Instance.EntityManager.GetEntity(residents[i]).GetComponent<SpriteRenderer>().sprite;
+                    images[i].color = houseProps.houseColor;
+                }
+                else images[i].enabled = false;
             }
         } 
     }

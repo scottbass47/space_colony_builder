@@ -23,17 +23,9 @@ namespace Client
         {
             selectedItems = new ArrayList();
             selectedItemsPos = new ArrayList();
-            selectedColor = new Color(1f, .40f, 0f, .8f);
+            selectedColor = new Color(1f, 0f, 1f, .5f);
             popUpWindow = Instantiate(popUpWindowPrefab).gameObject;
             popUpWindow.SetActive(false);
-        
-            /*
-            window = Instantiate(windowPrefab, FindObjectOfType<Canvas>().transform).gameObject;
-            var rt = window.GetComponent<RectTransform>();
-            rt.transform.position = new Vector3(650, 30, 0);
-            */
-
-            tilemap = null;
         }
 
         private void Update()
@@ -64,31 +56,43 @@ namespace Client
 
                     GameObject obj = Game.Instance.World.GetMapObject(new Vector3Int(mousePos.x, mousePos.y, 0));
 
-                    if (Input.GetKey(KeyCode.LeftControl) && obj != null && !hit && selectedItems.Count >= 1)
+                    Selectable selectable = null;
+                    if (obj != null) selectable = obj.GetComponent<Selectable>();
+
+
+                    if (Input.GetKey(KeyCode.LeftControl) && obj != null && !hit && selectedItems.Count >= 1 && selectable != null)
                     {
                         if (!selectedItems.Contains(obj))
                         {
+                            selectable.enabled = true;
                             selectedItems.Add(obj);
                             selectedItemsPos.Add(tilePos);
                             tilemap.SetColor(tilePos, selectedColor);
                         }
                         Selectable.DisplayWindow(window, selectedItems);
                     }
-                    else if (obj != null && !hit)
+                    else if (obj != null && !hit && selectable != null)
                     {
-                        var selectable = obj.GetComponent<Selectable>();
-                        if (selectable != null) selectable.DisplayWindow(window);
-                        if (selectedItems.Count == 1) selectedItems.Clear();
+                        selectable.DisplayWindow(window);
+                        if (selectedItems.Count == 1)
+                        {
+                            foreach (Vector3Int pos in selectedItemsPos) tilemap.SetColor(pos, new Color(1, 1, 1, 1));
+                            foreach (GameObject item in selectedItems) item.GetComponent<Selectable>().enabled = false;
+                            selectedItems.Clear();
+                        }
                         if (!selectedItems.Contains(obj))
                         {
+                            selectable.enabled = true;
                             selectedItems.Add(obj);
                             selectedItemsPos.Add(tilePos);
                             tilemap.SetColor(tilePos, selectedColor);
                         }
                     }
-                    else if (!hit)
+                    else if (!hit && !Input.GetKey(KeyCode.LeftControl))
                     {
                         foreach (Vector3Int pos in selectedItemsPos) tilemap.SetColor(pos, new Color(1, 1, 1, 1));
+                        foreach (GameObject item in selectedItems) item.GetComponent<Selectable>().enabled = false;
+
                         selectedItems.Clear();
                         Selectable.DisplayWindow(window, selectedItems);
                     }

@@ -1669,8 +1669,8 @@ MonoBehaviour:
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_text: HOUSE
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8383b6a6a88785244a2389754bcf3090, type: 2}
-  m_sharedMaterial: {fileID: 21877786238566034, guid: 8383b6a6a88785244a2389754bcf3090,
+  m_fontAsset: {fileID: 11400000, guid: f4854ad73d6229445935c67864e6584b, type: 2}
+  m_sharedMaterial: {fileID: 21790386012042094, guid: f4854ad73d6229445935c67864e6584b,
     type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
