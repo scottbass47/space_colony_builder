@@ -6,12 +6,14 @@ using System.Threading.Tasks;
 using ECS;
 using Shared.SCData;
 using UnityEngine;
+using Utils;
 
 namespace Server.Job
 {
     // Component list per entity:
     // Source
     //      - Ore Component (net)
+    //      - Slot Component
     // Owner
     //      - Resource Component (net)
     // Worker
@@ -24,11 +26,13 @@ namespace Server.Job
 
         private float elapsed;
         private Engine engine;
+        private int slotNum;
 
-        public JobMine(Entity oreSource, Entity player)
+        public JobMine(Entity oreSource, Entity player, int slotNum)
         {
             source = oreSource;
             owner = player;
+            this.slotNum = slotNum;
            
             // Grab a reference to the engine
             engine = source.GetComponent<GlobalComponent>().Engine;
@@ -43,6 +47,9 @@ namespace Server.Job
                 var state = worker.GetComponent<StateComponent>();
                 state.State.Value = (int)EntityState.MINING;
             }
+
+            var slots = source.GetComponent<SlotComponent>();
+            DebugUtils.Assert(slots.GetEntity(slotNum).ID == worker.ID, $"The worker at slot {slotNum} is not this worker.");
         }
 
         public override void Done()
@@ -52,6 +59,9 @@ namespace Server.Job
                 var state = worker.GetComponent<StateComponent>();
                 state.State.Value = (int)EntityState.IDLE;
             }
+            var slots = source.GetComponent<SlotComponent>();
+            DebugUtils.Assert(slots.GetEntity(slotNum).ID == worker.ID, $"The worker at slot {slotNum} is not this worker.");
+            slots.RemoveFromSlot(slotNum);
         }
 
         public override void OnUpdate(float delta)

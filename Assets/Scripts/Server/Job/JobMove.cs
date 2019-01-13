@@ -129,7 +129,7 @@ namespace Server.Job
 
         private Vector3Int worldPosToGrid(Vector3 pos)
         {
-            return new Vector3Int { x = (int)pos.x, y = (int)pos.y, z = (int)pos.z };
+            return new Vector3Int { x = (int)(pos.x + 0.5f), y = (int)(pos.y + 0.5f), z = (int)pos.z };
         }
     }
 }

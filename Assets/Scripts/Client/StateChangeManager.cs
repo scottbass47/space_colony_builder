@@ -105,6 +105,10 @@ namespace Client
                 {
                     //Debug.Log($"[Client] - applying changes for version {version}");
                 }
+
+                // @Important @Todo @Bug ENTITY SPAWN CHANGES MUST BE APPLIED FIRST
+                // otherwise update listeners will not fire!!!
+
                 foreach (var packet in stateChangeBuffer[version])
                 {
                     IStateChange change = packet.Change;

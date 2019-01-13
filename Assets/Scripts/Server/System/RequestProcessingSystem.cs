@@ -7,7 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 
 namespace Server
@@ -50,21 +49,20 @@ namespace Server
             else if(request.GetType() == typeof(AddWorkerRequest))
             {
                 AddWorkerRequest workRequest = (AddWorkerRequest)request;
+                //var hire = client.AddComponent<HiringComponent>();
+                //hire.OnHire = (worker) => 
+                //{
+                //    var rock = Engine.GetEntity(workRequest.EntityID);
+                //    var pos = rock.GetComponent<MapObjectComponent>().Pos;
+                //    var slots = rock.GetComponent<SlotComponent>();
+                //    var slot = slots.Slots[workRequest.Slot];
+                //    var slotPos = pos + new Vector3(slot.x, slot.y, 0);
 
-                var hire = client.AddComponent<HiringComponent>();
-                hire.OnHire = (worker) => 
-                {
-                    var rock = Engine.GetEntity(workRequest.EntityID);
-                    var pos = rock.GetComponent<MapObjectComponent>().Pos;
-                    var slots = rock.GetComponent<SlotComponent>();
-                    var slot = slots.Slots[workRequest.Slot];
-                    var slotPos = pos + new Vector3(slot.x, slot.y, 0);
+                //    var move = new JobMove(worker.GetComponent<LevelComponent>().Level, slotPos);
+                //    var mine = new JobMine(rock, client);
 
-                    var move = new JobMove(worker.GetComponent<LevelComponent>().Level, slotPos);
-                    var mine = new JobMine(rock, client);
-
-                    return new JobSequence(move, mine);
-                }; 
+                //    return new JobSequence(move, mine);
+                //}; 
             }
         }
     }

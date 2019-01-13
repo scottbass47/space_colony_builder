@@ -15,7 +15,6 @@ namespace Server
 {
     public class SCServer : MonoBehaviour, INetEventListener
     {
-        public int WorldSize = 20;
         private float elapsed;
         private float startTime;
         private int nextClientID = 0;
@@ -42,7 +41,7 @@ namespace Server
             connectedClients = new Dictionary<int, NetPeer>();
             clientVersions = new Dictionary<int, int>();
 
-            stateManager = new WorldStateManager(WorldSize);
+            stateManager = new WorldStateManager(Constants.WORLD_SIZE);
 
             processor = PacketUtils.CreateProcessor();
             processor.Subscribe<UpdatePacket, NetPeer>(OnUpdatePacket, () => new UpdatePacket());
