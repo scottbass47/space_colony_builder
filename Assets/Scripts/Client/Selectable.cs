@@ -36,10 +36,10 @@ public class Selectable : MonoBehaviour
 
     private void Update()
     {
+        if (tilemap == null) tilemap = FindObjectOfType<Tilemap>();
         if (!outlineSetup && tilemap != null)
         {
-            outlineSetup = true;
-            if (tilemap == null) tilemap = FindObjectOfType<Tilemap>();
+            outlineSetup = true;      
             var to = GetComponent<TilemapObject>();
             var outlinePos = tilemap.CellToWorld(new Vector3Int(to.Pos.x, to.Pos.y, 1));
             outlinePos.y += .25f;
