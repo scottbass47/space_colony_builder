@@ -29,7 +29,7 @@ public class MultipleObjsUI : MonoBehaviour
                 var eo = entity.GetComponent<EntityObject>();
                 Debug.Log("ID" + eo.ID);
                 client.SendRequestPacket(new AddWorkerRequest { EntityID = eo.ID, Slot = 0 });
-                eo.GetComponent<RockProperties>().hasSlot[0] = true;
+                eo.GetComponent<OreProperties>().hasSlot[0] = true;
             }
         }
     }

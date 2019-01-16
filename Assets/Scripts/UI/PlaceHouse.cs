@@ -9,7 +9,6 @@ namespace Client
 {
     public class PlaceHouse : MonoBehaviour
     {
-        public TileBase houseTile;
         public Sprite houseSprite;
         public Transform ghostPrefab;
 

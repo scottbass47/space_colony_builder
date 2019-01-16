@@ -259,7 +259,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4212ed336f984b54fb54d5f9c8f1e9f3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rock: {fileID: 0}
+  ore: {fileID: 0}
   addButtons:
   - {fileID: 1431402644}
   - {fileID: 8255257376149104756}
@@ -270,6 +270,7 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 6d0329ee48dc7094586ad9d3a1ec63ba, type: 3}
   - {fileID: 21300000, guid: ca72e3c2a51d76948bcde1db0b5138cf, type: 3}
   - {fileID: 21300000, guid: c60088d8481573941bc2918304805dd1, type: 3}
+  origButtonSprite: {fileID: 21300000, guid: 19e059fea20ce05458ccf763b7ac5cf3, type: 3}
 --- !u!1 &1371629348
 GameObject:
   m_ObjectHideFlags: 0
@@ -699,11 +700,11 @@ MonoBehaviour:
     lineCount: 1
     pageCount: 1
     materialCount: 1
-  m_havePropertiesChanged: 0
+  m_havePropertiesChanged: 1
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_spriteAnimator: {fileID: 0}
-  m_isInputParsingRequired: 0
+  m_isInputParsingRequired: 1
   m_inputSource: 0
   m_hasFontAssetChanged: 0
   m_subTextObjects:
@@ -1136,7 +1137,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &4214204660638742283
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1745,11 +1746,11 @@ MonoBehaviour:
     lineCount: 1
     pageCount: 1
     materialCount: 1
-  m_havePropertiesChanged: 0
+  m_havePropertiesChanged: 1
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_spriteAnimator: {fileID: 0}
-  m_isInputParsingRequired: 0
+  m_isInputParsingRequired: 1
   m_inputSource: 0
   m_hasFontAssetChanged: 0
   m_subTextObjects:

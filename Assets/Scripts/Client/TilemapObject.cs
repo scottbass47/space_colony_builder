@@ -31,7 +31,7 @@ namespace Client
         private void Start()
         {
             //Game.Instance.World.Ground.GetComponent<MapObjectRenderer>().AddMapObject(this.gameObject);       
-            Game.Instance.World.AddMapObject(this.gameObject);
+            if(Game.Instance.World != null) Game.Instance.World.AddMapObject(this.gameObject);
         }
 
         private void OnDestroy()

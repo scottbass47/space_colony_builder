@@ -39,9 +39,12 @@ TagManager:
   - 
   - 
   m_SortingLayers:
+  - name: Default
+    uniqueID: 0
+    locked: 0
   - name: UI
     uniqueID: 2732065077
     locked: 0
-  - name: Default
-    uniqueID: 0
+  - name: FloatyNumber
+    uniqueID: 776508985
     locked: 0

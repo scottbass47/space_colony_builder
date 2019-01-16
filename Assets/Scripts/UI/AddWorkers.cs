@@ -8,18 +8,17 @@ using UnityEngine.UI;
 public class AddWorkers : MonoBehaviour
 {
     [HideInInspector]
-    public GameObject rock;
+    public GameObject ore;
 
     public Button[] addButtons = new Button[4];
     public Sprite[] rockStates = new Sprite[4];
 
-    private Sprite origButtonSprite;
+    public Sprite origButtonSprite;
     private Text workerCount;
-    private RockProperties rockProps;
+    private OreProperties rockProps;
 
-    private void Start()
+    private void Awake()
     {
-        origButtonSprite = addButtons[0].image.sprite;
         addButtons[0].onClick.AddListener(RequestWorker0);
         addButtons[1].onClick.AddListener(RequestWorker1);
         addButtons[2].onClick.AddListener(RequestWorker2);
@@ -30,12 +29,12 @@ public class AddWorkers : MonoBehaviour
     {
         var rockImage = transform.GetChild(0).gameObject;
         var image = rockImage.GetComponent<Image>();
-        if (rock != null)
+        if (ore != null)
         {
             foreach (Button button in addButtons) button.image.enabled = true;
             
             image.enabled = true;
-            rockProps = rock.GetComponent<RockProperties>();
+            rockProps = ore.GetComponent<OreProperties>();
 
             float rockPercentage = (float)rockProps.Ore / rockProps.originalOre;
 
@@ -59,11 +58,9 @@ public class AddWorkers : MonoBehaviour
     private void RequestWorker(int slot)
     {
         var client = Game.Instance.Client;
-        var eo = rock.GetComponent<EntityObject>();
+        var eo = ore.GetComponent<EntityObject>();
 
         client.SendRequestPacket(new AddWorkerRequest { EntityID = eo.ID, Slot = slot});
-
-        rockProps.workers++;
     }
 
     private void RequestWorker0()
@@ -97,13 +94,13 @@ public class AddWorkers : MonoBehaviour
 
     public void Refresh()
     {
-        rockProps = rock.GetComponent<RockProperties>();
+        rockProps = ore.GetComponent<OreProperties>();
         for (int i = 0; i < addButtons.Length; i++) RefreshButton(addButtons[i], i);
     }
 
     public void RefreshButton(Button button, int slot)
     {
-        rockProps = rock.GetComponent<RockProperties>();
+        rockProps = ore.GetComponent<OreProperties>();
 
         if (!rockProps.hasSlot[slot])
         {

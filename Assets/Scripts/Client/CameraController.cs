@@ -45,7 +45,6 @@ namespace Client
                 transform.position = new Vector3(colonistPosition.x, colonistPosition.y, transform.position.z);
 
                 Camera.main.orthographicSize = .70f;
-              //  Camera.main
             }
 
 

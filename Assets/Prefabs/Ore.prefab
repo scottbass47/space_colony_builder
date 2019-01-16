@@ -11,11 +11,11 @@ GameObject:
   - component: {fileID: 1035483358648761508}
   - component: {fileID: 5766742661558833932}
   - component: {fileID: 411764687059813932}
+  - component: {fileID: 8020162098220311033}
   - component: {fileID: 8743107047151802290}
-  - component: {fileID: 7017438466856243660}
   - component: {fileID: 6171209461189297626}
   m_Layer: 0
-  m_Name: Rock
+  m_Name: Ore
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -47,7 +47,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a989c72ac6c4f3946b3279ea7ed16b86, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Tile: {fileID: 11400000, guid: 71a47a6e20ea71342970a075fe228835, type: 2}
+  Tile: {fileID: 11400000, guid: 29f4d68819f7fb1468a7343e7d311bfe, type: 2}
 --- !u!114 &411764687059813932
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -62,19 +62,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ID: 0
   Type: 0
---- !u!114 &8743107047151802290
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8428974769952096574}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d01c5d864abc3ff47addaf7483ee30c9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &7017438466856243660
+--- !u!114 &8020162098220311033
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -87,10 +75,39 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Ore: 0
-  workers: 0
+  originalOre: 0
+  floatyNumber: {fileID: 7810960294229859564, guid: 8dbc6c365005cca41ac531d3b5daba86,
+    type: 3}
+  hasSlot: 
   healthBar: {fileID: 0}
   healthBarPrefab: {fileID: 5867923049835922702, guid: 6519a29f024bf6a4981f85599d4e5fa8,
     type: 3}
+  oreTiles:
+  - {fileID: 11400000, guid: 29f4d68819f7fb1468a7343e7d311bfe, type: 2}
+  - {fileID: 11400000, guid: 682132b5e8a3fa6418ea94d8883c1775, type: 2}
+  - {fileID: 11400000, guid: 2432abb6f10f015419dbbc74157ccc1c, type: 2}
+  - {fileID: 11400000, guid: 5a0fcc8f81cb7584fa5165c30c026842, type: 2}
+  outlines:
+  - {fileID: 21300002, guid: 962ad191e2baf6f439392c7865a9807d, type: 3}
+  - {fileID: 21300010, guid: 962ad191e2baf6f439392c7865a9807d, type: 3}
+  - {fileID: 21300012, guid: 962ad191e2baf6f439392c7865a9807d, type: 3}
+  - {fileID: 21300014, guid: 962ad191e2baf6f439392c7865a9807d, type: 3}
+--- !u!114 &8743107047151802290
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8428974769952096574}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d01c5d864abc3ff47addaf7483ee30c9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tilemap: {fileID: 0}
+  outlinePrefab: {fileID: 3539182734780433595, guid: a5eb2f7d7a4c6db4f841941272d66123,
+    type: 3}
+  outline: {fileID: 0}
 --- !u!114 &6171209461189297626
 MonoBehaviour:
   m_ObjectHideFlags: 0

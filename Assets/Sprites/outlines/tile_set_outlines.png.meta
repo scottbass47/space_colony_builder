@@ -1,12 +1,15 @@
 fileFormatVersion: 2
-guid: b0f4c60f89c7e674fa32206b0a0b68a9
+guid: 962ad191e2baf6f439392c7865a9807d
 TextureImporter:
   fileIDToRecycleName:
-    21300000: test_tile_0
-    21300002: test_tile_1
-    21300004: test_tile_2
-    21300006: test_tile_3
-    21300008: test_tile_4
+    21300000: tile_set_outlines_0
+    21300002: tile_set_outlines_1
+    21300004: tile_set_outlines_2
+    21300006: tile_set_outlines_3
+    21300008: tile_set_outlines_4
+    21300010: tile_set_outlines_5
+    21300012: tile_set_outlines_6
+    21300014: tile_set_outlines_7
   externalObjects: {}
   serializedVersion: 7
   mipmaps:
@@ -89,11 +92,11 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: test_tile_0
+      name: tile_set_outlines_0
       rect:
         serializedVersion: 2
         x: 0
-        y: 0
+        y: 222
         width: 74
         height: 74
       alignment: 0
@@ -103,17 +106,17 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 63e29bbd3a9c60845addde1a4235c592
+      spriteID: ad21c006ce6303844a60239c8bdba9e2
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: test_tile_1
+      name: tile_set_outlines_1
       rect:
         serializedVersion: 2
         x: 74
-        y: 0
+        y: 222
         width: 74
         height: 74
       alignment: 0
@@ -123,13 +126,113 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 0d19b431d9dd0914891af87a71142a00
+      spriteID: f21afc13f1205544aab0e95e736a20fe
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: test_tile_2
+      name: tile_set_outlines_2
+      rect:
+        serializedVersion: 2
+        x: 148
+        y: 222
+        width: 74
+        height: 74
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 83d86e555d5f14f4986492b00114fb02
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tile_set_outlines_3
+      rect:
+        serializedVersion: 2
+        x: 222
+        y: 222
+        width: 74
+        height: 74
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6745458c77066404a9e6256cdd2bba21
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tile_set_outlines_4
+      rect:
+        serializedVersion: 2
+        x: 296
+        y: 222
+        width: 74
+        height: 74
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 79e643ade99744d428932324c12dc272
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tile_set_outlines_5
+      rect:
+        serializedVersion: 2
+        x: 148
+        y: 148
+        width: 74
+        height: 74
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e28a3a33977da19468051d302cb6d7d0
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tile_set_outlines_6
+      rect:
+        serializedVersion: 2
+        x: 148
+        y: 74
+        width: 74
+        height: 74
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1646b495337299d4fb3c00cca910710c
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tile_set_outlines_7
       rect:
         serializedVersion: 2
         x: 148
@@ -143,47 +246,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: d345ded11fe4e424886e37a1f0b5f919
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: test_tile_3
-      rect:
-        serializedVersion: 2
-        x: 222
-        y: 0
-        width: 74
-        height: 74
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: f9fc65acc23ff474f9deadb6a97c9c50
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: test_tile_4
-      rect:
-        serializedVersion: 2
-        x: 296
-        y: 0
-        width: 74
-        height: 74
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 96d7bb0553b09a44ebca0859195ef77d
+      spriteID: c74b954917e39874c801edec6e56e459
       vertices: []
       indices: 
       edges: []
@@ -191,7 +254,7 @@ TextureImporter:
     outline: []
     physicsShape: []
     bones: []
-    spriteID: 9f035f5ea23a23b40943d8c0c3e00729
+    spriteID: b80dd459c9325aa40815bb053dcba98a
     vertices: []
     indices: 
     edges: []

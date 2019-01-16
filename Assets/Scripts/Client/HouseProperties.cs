@@ -7,7 +7,7 @@ using UnityEngine.Tilemaps;
 
 public class HouseProperties : MonoBehaviour
 {
-    //[HideInInspector]
+    [HideInInspector]
     public int[] Residents;
 
     [HideInInspector]
@@ -15,6 +15,9 @@ public class HouseProperties : MonoBehaviour
 
     private Selectable selectable;
     private Tilemap tilemap;
+
+    public Sprite[] outlines = new Sprite[4];
+    private GameObject outline;
 
     private void Awake()
     {
@@ -33,8 +36,10 @@ public class HouseProperties : MonoBehaviour
     private void Start()
     {
         tilemap = FindObjectOfType<Tilemap>();
-        //Disable this if you don't want houses to show their house color
-        SetHouseColor();
+
+        //Adding outline object from Selectable
+        outline = selectable.outline;
+        outline.GetComponent<SpriteRenderer>().sprite = outlines[3];
     }
 
     private void Update()
@@ -46,7 +51,7 @@ public class HouseProperties : MonoBehaviour
     {
         var to = GetComponent<TilemapObject>();
         
-        tilemap.SetColor(new Vector3Int(to.Pos.x, to.Pos.y, 1), houseColor);
+        if(tilemap!= null) tilemap.SetColor(new Vector3Int(to.Pos.x, to.Pos.y, 1), houseColor);
     }
 
     private void SetResidentsColor()
