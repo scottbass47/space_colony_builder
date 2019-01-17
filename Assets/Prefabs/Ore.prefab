@@ -76,7 +76,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Ore: 0
   originalOre: 0
-  floatyNumber: {fileID: 7810960294229859564, guid: 8dbc6c365005cca41ac531d3b5daba86,
+  floatyNumber: {fileID: 6194789627732392247, guid: 89dd720ad2a73a742967237e00f511a4,
     type: 3}
   hasSlot: 
   healthBar: {fileID: 0}

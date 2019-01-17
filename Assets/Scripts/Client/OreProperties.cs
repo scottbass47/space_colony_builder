@@ -106,11 +106,11 @@ public class OreProperties : MonoBehaviour
     public void CreateFloatyNumber(int val)
     {
         var num = Instantiate(floatyNumber, transform).gameObject;
-        var controller = num.GetComponent<FloatyNumberControl>();
-        controller.value = val;
-        Vector3 numPos = outline.transform.position;
+        var controller = num.GetComponent<FloatingText>();
+        controller.val = val;
+        Vector3 numPos = tilemap.CellToWorld(new Vector3Int(to.Pos.x, to.Pos.y, to.Pos.z+1));
         numPos.x += Random.Range(-.10f, .25f);
-        numPos.y += Random.Range(-.10f, .10f);
+        numPos.y += Random.Range(0, .20f) + .25f; 
         num.transform.SetPositionAndRotation(numPos, Quaternion.identity);
     }
 
