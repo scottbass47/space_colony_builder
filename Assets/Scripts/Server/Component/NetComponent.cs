@@ -15,7 +15,7 @@ namespace Server
         public bool HasChanges => hasChanges;
 
         public abstract SCUpdate CreateChange();
-        public abstract void OnReset();
+        public abstract void OnResetTemp();
 
         //public NetComponent()
         //{
@@ -45,7 +45,7 @@ namespace Server
             hasChanges = false;
         }
 
-        public void Reset()
+        public override void OnReset()
         {
             hasChanges = false;
             OnReset();

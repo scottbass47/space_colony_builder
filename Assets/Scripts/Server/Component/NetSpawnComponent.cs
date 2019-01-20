@@ -9,7 +9,7 @@ namespace Server
 {
     public class NetSpawnComponent : Component
     {
-        public void Reset()
+        public override void OnReset()
         {
         }
     }

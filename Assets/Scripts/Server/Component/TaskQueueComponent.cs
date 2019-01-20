@@ -41,7 +41,7 @@ namespace Server
             queueChanged.Value = true;
         }
 
-        public override void OnReset()
+        public override void OnResetTemp()
         {
             queueChanged = new NetValue<bool>();
             AddNetValue(queueChanged);

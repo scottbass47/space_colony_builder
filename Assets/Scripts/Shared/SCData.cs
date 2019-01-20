@@ -36,6 +36,14 @@ namespace Shared
             LANDING_PAD
         }
 
+        public enum NetObjectType
+        {
+            NOTHING,
+            TEST,
+            TEST_CHILD,
+            COMPONENT
+        }
+
         public enum EntityState
         {
             IDLE = 0,

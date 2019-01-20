@@ -7,6 +7,7 @@ using LiteNetLib;
 using LiteNetLib.Utils;
 using Shared.StateChanges;
 using ProtoBuf;
+using Shared.SCData;
 
 namespace Shared
 {
@@ -56,6 +57,36 @@ namespace Shared
         {
             [ProtoMember(1)]
             public int ClientID { get; set; }
+        }
+
+        [ProtoContract]
+        public class NetUpdatePacket
+        {
+            [ProtoMember(1)]
+            public int NetID { get; set; }
+
+            [ProtoMember(2)]
+            public NetUpdate Update { get; set; }
+        }
+
+        [ProtoContract]
+        public class NetCreatePacket
+        {
+            [ProtoMember(1)]
+            public int NetID{ get; set; }
+
+            [ProtoMember(2)]
+            public NetObjectType Type{ get; set; }
+
+            [ProtoMember(3)]
+            public int ParentID { get; set; }
+        }
+
+        [ProtoContract]
+        public class NetDestroyPacket
+        {
+            [ProtoMember(1)]
+            public int NetID{ get; set; }
         }
 
         [ProtoContract]

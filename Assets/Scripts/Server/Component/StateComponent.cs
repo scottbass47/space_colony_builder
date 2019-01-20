@@ -24,7 +24,7 @@ namespace Server
             return new StateUpdate { State = State.Value };
         }
 
-        public override void OnReset()
+        public override void OnResetTemp()
         {
             State = new NetValue<int>();
 

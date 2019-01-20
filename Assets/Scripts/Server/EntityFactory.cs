@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using ECS;
+using Server.NetObjects;
 using Server.Tasks;
 using Shared.SCData;
 using UnityEngine;
+using Utils;
 
 namespace Server
 {
@@ -89,9 +91,10 @@ namespace Server
 
             public EntityBuilder(WorldStateManager world, Engine engine, Level level, EntityType type)
             {
+                DebugUtils.Assert(engine is NetEngine, "Engine must be of type NetEngine.");
                 entity = engine.CreateEntity();
                 entity.AddComponent<EntityTypeComponent>().Type = type;
-                entity.AddComponent<GlobalComponent>().Set(world, engine);
+                entity.AddComponent<GlobalComponent>().Set(world, engine as NetEngine);
                 entity.AddComponent<LevelComponent>().Level = level;
             }
 

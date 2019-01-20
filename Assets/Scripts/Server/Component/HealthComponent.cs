@@ -22,7 +22,7 @@ namespace Server
             return new HealthUpdate { Health = Health };
         }
 
-        public override void OnReset()
+        public override void OnResetTemp()
         {
             Health = new NetValue<int>();
 

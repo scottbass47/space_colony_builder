@@ -45,6 +45,9 @@ namespace Client
             processor.Subscribe<WorldInitPacket>(NotifyPacketListeners<WorldInitPacket>, () => new WorldInitPacket());
             processor.Subscribe<WorldChunkPacket>(NotifyPacketListeners<WorldChunkPacket>, () => new WorldChunkPacket());
             processor.Subscribe<StateChangePacket>(NotifyPacketListeners<StateChangePacket>, () => new StateChangePacket());
+            processor.Subscribe<NetCreatePacket>(NotifyPacketListeners<NetCreatePacket>, () => new NetCreatePacket());
+            processor.Subscribe<NetUpdatePacket>(NotifyPacketListeners<NetUpdatePacket>, () => new NetUpdatePacket());
+            processor.Subscribe<NetDestroyPacket>(NotifyPacketListeners<NetDestroyPacket>, () => new NetDestroyPacket());
 
             //eventTable = new Dictionary<Type, List<Action<object>>>();
             eventTable = new EventTable<object>();

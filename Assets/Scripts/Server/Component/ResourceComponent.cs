@@ -24,7 +24,7 @@ namespace Server
             return new OreUpdate { Amount = OreAmount };
         }
 
-        public override void OnReset()
+        public override void OnResetTemp()
         {
             OreAmount = new NetValue<int>();
 

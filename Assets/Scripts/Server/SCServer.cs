@@ -41,7 +41,7 @@ namespace Server
             connectedClients = new Dictionary<int, NetPeer>();
             clientVersions = new Dictionary<int, int>();
 
-            stateManager = new WorldStateManager(Constants.WORLD_SIZE);
+            stateManager = new WorldStateManager(this, Constants.WORLD_SIZE);
 
             processor = PacketUtils.CreateProcessor();
             processor.Subscribe<UpdatePacket, NetPeer>(OnUpdatePacket, () => new UpdatePacket());
@@ -67,6 +67,20 @@ namespace Server
         {
             server.Stop();
         }
+
+        public void SendToAllClients<T>(T packet, DeliveryMethod method = DeliveryMethod.ReliableOrdered) where T : class, new()
+        {
+            foreach(var clientID in connectedClients.Keys)
+            {
+                processor.Send(connectedClients[clientID], packet, method);
+            }
+        }
+
+        public void SendToSingleClient<T>(T packet, int clientID, DeliveryMethod method = DeliveryMethod.ReliableOrdered) where T : class, new()
+        {
+            processor.Send(connectedClients[clientID], packet, method);
+        }
+
 
         void OnUpdatePacket(UpdatePacket packet, NetPeer peer)
         {

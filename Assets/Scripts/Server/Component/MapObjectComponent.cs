@@ -10,7 +10,7 @@ namespace Server
     {
         public Vector3Int Pos { get; set; } = Vector3Int.zero;
 
-        public void Reset()
+        public override void OnReset()
         {
             Pos = Vector3Int.zero;
         }

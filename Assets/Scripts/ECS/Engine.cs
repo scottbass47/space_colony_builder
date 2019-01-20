@@ -46,6 +46,8 @@ namespace ECS
         private Dictionary<Group, List<Entity>> groupMembership;
         private Dictionary<Group, List<Action<Entity>[]>> groupListeners;
 
+        public Func<int, Engine, Entity> EntityConstructor { get; set; }
+
         public Engine()
         {
             entities = new Dictionary<int, Entity>();
@@ -63,11 +65,14 @@ namespace ECS
             operationPool = new Pool<Operation>();
 
             pendingOps = new Queue<Operation>();
+
+            EntityConstructor = (id, engine) => new Entity(id, engine);
         }
 
         public Entity CreateEntity()
         {
-            Entity entity = new Entity(currentID++, this);
+            //Entity entity = new Entity(currentID++, this);
+            var entity = EntityConstructor(currentID++, this);
             return entity;
         }
 
@@ -249,7 +254,7 @@ namespace ECS
             }
         }
 
-        public void Update(float delta)
+        public virtual void Update(float delta)
         {
             
             for(int i = 0; i < systems.Count; i++)

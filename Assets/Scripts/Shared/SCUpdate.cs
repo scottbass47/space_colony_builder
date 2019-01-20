@@ -9,6 +9,24 @@ using UnityEngine;
 namespace Shared
 {
     [ProtoContract]
+    [ProtoInclude(10, typeof(TestUpdate))]
+    public class NetUpdate
+    {
+    }
+
+    [ProtoContract]
+    public class TestUpdate : NetUpdate
+    {
+        [ProtoMember(1)]
+        public int Value { get; set; }
+
+        public override string ToString()
+        {
+            return $"Value: {Value}";
+        }
+    }
+
+    [ProtoContract]
     [ProtoInclude(10, typeof(HealthUpdate))]
     [ProtoInclude(11, typeof(PositionUpdate))]
     [ProtoInclude(12, typeof(PathUpdate))]

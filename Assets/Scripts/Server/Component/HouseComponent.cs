@@ -64,7 +64,7 @@ namespace Server
             return new HouseUpdate { Residents = ids };
         }
 
-        public override void OnReset()
+        public override void OnResetTemp()
         {
             Capacity = 0;
             residentList.Clear();

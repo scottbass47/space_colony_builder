@@ -19,7 +19,7 @@ namespace Server
             return this;
         }
 
-        public void Reset()
+        public override void OnReset()
         {
             Set(0, 0);
         }

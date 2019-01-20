@@ -23,7 +23,7 @@ namespace Server
             return new OreUpdate { Amount = Amount.Value };
         }
 
-        public override void OnReset()
+        public override void OnResetTemp()
         {
             Amount = new NetValue<int>();
 

@@ -25,7 +25,7 @@ namespace Server
             return new PositionUpdate { Pos = Pos };
         }
 
-        public override void OnReset()
+        public override void OnResetTemp()
         {
             Pos = new NetValue<Vector3>();
             Pos.Value = Vector3.zero;

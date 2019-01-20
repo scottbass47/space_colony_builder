@@ -1,4 +1,5 @@
 ﻿using ECS;
+using Server.NetObjects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,15 +11,15 @@ namespace Server
     public class GlobalComponent : Component
     {
         public WorldStateManager World { get; set; }
-        public Engine Engine { get; set; }
+        public NetEngine Engine { get; set; }
 
-        public void Set(WorldStateManager world, Engine engine)
+        public void Set(WorldStateManager world, NetEngine engine)
         {
             World = world;
             Engine = engine;
         }
 
-        public void Reset()
+        public override void OnReset()
         {
         }
     }
