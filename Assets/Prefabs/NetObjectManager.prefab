@@ -43,5 +43,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d81ea59bf9c05e42a2046e3f41e80f2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  testObjPrefab: {fileID: 5279482399480971115, guid: d042f757910704c43b365b8b186592ee,
+  playerPrefab: {fileID: 7427420361433372236, guid: 2be5cfe4506fdae40b012309257d0c6d,
+    type: 3}
+  housePrefab: {fileID: 304224611386968025, guid: a14e7206665b2994bbdecb1da6063db2,
+    type: 3}
+  rockPrefab: {fileID: 8428974769952096574, guid: d1438a48a726fff48938fd9d3e5f5401,
+    type: 3}
+  landingPadPrefab: {fileID: 1836993510316919141, guid: 6c43c01f560fa094da9a9baa977e6c00,
+    type: 3}
+  colonistPrefab: {fileID: 1008030070994176929, guid: 69237a70b2a83024fb4afa5779e17489,
     type: 3}

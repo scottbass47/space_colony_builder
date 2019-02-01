@@ -45,7 +45,7 @@ namespace Server.Job
             if(worker.HasComponent<StateComponent>())
             {
                 var state = worker.GetComponent<StateComponent>();
-                state.State.Value = (int)EntityState.MINING;
+                state.State = (int)EntityState.MINING;
             }
 
             var slots = source.GetComponent<SlotComponent>();
@@ -57,7 +57,7 @@ namespace Server.Job
             if(worker.HasComponent<StateComponent>())
             {
                 var state = worker.GetComponent<StateComponent>();
-                state.State.Value = (int)EntityState.IDLE;
+                state.State = (int)EntityState.IDLE;
             }
             var slots = source.GetComponent<SlotComponent>();
             DebugUtils.Assert(slots.GetEntity(slotNum).ID == worker.ID, $"The worker at slot {slotNum} is not this worker.");
@@ -74,9 +74,9 @@ namespace Server.Job
                 var resources = owner.GetComponent<ResourceComponent>();
 
                 int before = ore.Amount;
-                ore.Amount.Value = Math.Max(0, ore.Amount.Value - stats.MineSpeed);
+                ore.Amount = Math.Max(0, ore.Amount - stats.MineSpeed);
                 int after = ore.Amount;
-                resources.OreAmount.Value += before - after;
+                resources.OreAmount += before - after;
 
                 elapsed = 0;
             }
@@ -86,6 +86,5 @@ namespace Server.Job
         {
             worker = entity;
         }
-
     }
 }

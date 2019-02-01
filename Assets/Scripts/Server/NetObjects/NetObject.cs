@@ -16,7 +16,8 @@ namespace Server.NetObjects
         private bool sendToAllClients = true;
         private int clientID;
         private NetMode mode;
-        private NetObjectType type;
+        private NetObjectType netType;
+        private EntityType entityType = EntityType.NOTHING;
         private bool hasParent;
         private int parent;
         private List<int> children;
@@ -27,13 +28,16 @@ namespace Server.NetObjects
         public int ParentID => parent;
         public bool HasParent => hasParent;
         public Func<NetUpdate> OnUpdate { get => update; set => update = value; }
-        public NetObjectType Type { get => type; set => type = value; }
+        public NetObjectType NetObjectType { get => netType; set => netType = value; }
+        public EntityType EntityType { get => entityType; set => entityType = value; }
+        public bool IsEntity => entityType == EntityType.NOTHING;
         public List<int> Children => children;
         public bool HasChildren => children.Count > 0;
         public bool Alive { get; set; }  // True if the netobject has been created but not destroyed
         public NetMode NetMode { get => mode; set => mode = value; }
         public int ClientID => clientID;
         public bool SendToAllClients => sendToAllClients;
+        public string TypeName => EntityType == EntityType.NOTHING ? $"{NetObjectType}" : $"{EntityType}";
 
         public delegate void SyncListener(NetObject obj);
 
@@ -71,7 +75,8 @@ namespace Server.NetObjects
             sendToAllClients = false;
             clientID = -1;
             mode = NetMode.LATEST;
-            type = NetObjectType.NOTHING;
+            netType = NetObjectType.NOTHING;
+            entityType = EntityType.NOTHING;
             parent = -1;
             children.Clear();
             Alive = false;
@@ -97,6 +102,11 @@ namespace Server.NetObjects
         {
             parent.AddChild(child.ID);
             child.SetParent(parent.id);
+        }
+
+        public override string ToString()
+        {
+            return $"[{id}]: {TypeName}";
         }
     }
 

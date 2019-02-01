@@ -694,7 +694,6 @@ MonoBehaviour:
   EntityManager: {fileID: 0}
   PrefabTable: {fileID: 0}
   World: {fileID: 0}
-  StateChangeManager: {fileID: 0}
   NetObjectManager: {fileID: 0}
 --- !u!4 &952919329
 Transform:

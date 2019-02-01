@@ -9,41 +9,60 @@ using Utils;
 
 namespace Client
 {
+    [RequireComponent(typeof(NetObject))]
     public class EntityObject : MonoBehaviour
     {
         public int ID;
 
         [HideInInspector]
-        public EntityType Type;
+        public EntityType Type => GetComponent<NetObject>().NetObj.EntityType;
 
-        private EventTable<SCUpdate> listeners = new EventTable<SCUpdate>();
+        private EventTable<NetUpdate> listeners = new EventTable<NetUpdate>();
 
-        // This should be called ASAP (once the ID has been assigned, but not before)
-        public void OnCreate()
+        private void Awake()
         {
-            //Debug.Log($"EntityObject.AddToEntityManager - Adding entity object with ID {ID} to entity manager.");
-            Game.Instance.EntityManager.AddEntity(ID, this.gameObject);
-            Game.Instance.StateChangeManager.AddEntityUpdateListener(this);
+            GetComponent<NetObject>().RegisterChild(NetObjectType.COMPONENT, OnComponentCreate, OnComponentUpdate, OnComponentDestroy);
         }
 
-        private void OnDestroy()
+        private void OnComponentUpdate(INetObject netObj, NetUpdate update)
         {
-            //Debug.Log($"EntityObject.OnDestroy - Removing entity object with ID {ID} from entity manager.");
-            Game.Instance.EntityManager.RemoveEntity(ID);
-            Game.Instance.StateChangeManager.RemoveEntityUpdateListener(this);
+            listeners.NotifyListeners(update);
         }
 
-        public void AddUpdateListener<T>(Action<T> listener) where T : SCUpdate
+        private void OnComponentCreate(INetObject obj)
+        {
+        }
+
+        private void OnComponentDestroy(INetObject obj)
+        {
+        }
+
+        //// This should be called ASAP (once the ID has been assigned, but not before)
+        //public void OnCreate()
+        //{
+        //    //Debug.Log($"EntityObject.AddToEntityManager - Adding entity object with ID {ID} to entity manager.");
+        //    Game.Instance.EntityManager.AddEntity(ID, this.gameObject);
+        //    Game.Instance.StateChangeManager.AddEntityUpdateListener(this);
+        //}
+
+        //private void OnDestroy()
+        //{
+        //    //Debug.Log($"EntityObject.OnDestroy - Removing entity object with ID {ID} from entity manager.");
+        //    Game.Instance.EntityManager.RemoveEntity(ID);
+        //    Game.Instance.StateChangeManager.RemoveEntityUpdateListener(this);
+        //}
+
+        public void AddUpdateListener<T>(Action<T> listener) where T : NetUpdate
         {
             listeners.AddListener(listener);
         }
 
-        public void RemoveUpdateListener<T>(Action<T> listener) where T : SCUpdate
+        public void RemoveUpdateListener<T>(Action<T> listener) where T : NetUpdate
         {
             listeners.RemoveListener(listener);
         }
 
-        public void OnEntityUpdate<T>(T update) where T : SCUpdate
+        public void OnEntityUpdate<T>(T update) where T : NetUpdate
         {
             listeners.NotifyListeners(update);
         }

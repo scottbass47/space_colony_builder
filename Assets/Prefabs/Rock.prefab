@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 8743107047151802290}
   - component: {fileID: 7017438466856243660}
   - component: {fileID: 6171209461189297626}
+  - component: {fileID: 6683564807343420208}
   m_Layer: 0
   m_Name: Rock
   m_TagString: Untagged
@@ -61,7 +62,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ID: 0
-  Type: 0
 --- !u!114 &8743107047151802290
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -87,7 +87,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Ore: 0
+  originalOre: 0
   workers: 0
+  hasSlot: 
   healthBar: {fileID: 0}
   healthBarPrefab: {fileID: 5867923049835922702, guid: 6519a29f024bf6a4981f85599d4e5fa8,
     type: 3}
@@ -104,3 +106,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Position: {x: 0, y: 0, z: 0}
+--- !u!114 &6683564807343420208
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8428974769952096574}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cb875007731007c48b6e3cee3a0a5916, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

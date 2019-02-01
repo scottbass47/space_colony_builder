@@ -61,7 +61,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ID: 0
-  Type: 0
 --- !u!114 &304224611386968026
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -83,7 +82,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 304224611386968025}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e2c769470ac9aff42889b902b23c196f, type: 3}
+  m_Script: {fileID: 11500000, guid: cb875007731007c48b6e3cee3a0a5916, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &942800187
@@ -98,5 +97,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97603f0c4876556428c408c5f4528400, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Residents: []
+  Residents: 
   houseColor: {r: 0, g: 0, b: 0, a: 0}

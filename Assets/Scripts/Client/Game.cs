@@ -33,8 +33,8 @@ namespace Client
         [HideInInspector]
         public World World;
 
-        [HideInInspector]
-        public StateChangeManager StateChangeManager;
+        //[HideInInspector]
+        //public StateChangeManager StateChangeManager;
 
         [HideInInspector]
         public NetObjectManager NetObjectManager;
@@ -66,7 +66,7 @@ namespace Client
             PrefabTable = factory.GetComponent<EntityPrefabTable>();
 
             World = Instantiate(WorldPrefab).GetComponent<World>();
-            StateChangeManager = Instantiate(StateChangeManagerPrefab).GetComponent<StateChangeManager>();
+            //StateChangeManager = Instantiate(StateChangeManagerPrefab).GetComponent<StateChangeManager>();
             NetObjectManager = Instantiate(NetObjectManagerPrefab).GetComponent<NetObjectManager>();
         }
     }

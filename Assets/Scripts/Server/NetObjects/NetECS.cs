@@ -1,4 +1,5 @@
 ﻿using ECS;
+using Shared.SCData;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -39,29 +40,37 @@ namespace Server.NetObjects
             this.nom = nom;
 
             netObj = nom.CreateNetObject();
-            nom.AddNetObject(netObj);
         }
 
         public NetEngine GetNetEngine()
         {
             return Engine as NetEngine; // This is safe because we asserted in the constructor that engine is type NetEngine
         }
+
+        public void AddToNetObjectManager()
+        {
+            nom.AddNetObject(netObj);
+        }
+
+        public void RemoveFromNetManager()
+        {
+            nom.RemoveNetObject(netObj.ID);
+        }
     }
 
     public class NetComponent : Component
     {
         private int netID;
+        private NetObject netObj;
         protected NetEntity netEntity => (NetEntity)Entity;
         protected NetObjectManager nom => netEntity.NetObjectManager;
-        protected NetObject net => nom.Get(netID);
-
-        // Called AFTER the NetObject has been created but BEFORE it's added to the NetObjectManager
-        public Action<NetObject> OnInit { get; set; }
+        protected NetObject net => netObj;
 
         public override void ComponentAdded()
         {
-            var netObj = nom.CreateNetObject();
+            netObj = nom.CreateNetObject();
             netID = netObj.ID;
+            netObj.NetObjectType = NetObjectType.COMPONENT;
 
             OnInit(netObj);
 
@@ -73,6 +82,9 @@ namespace Server.NetObjects
         {
             nom.RemoveNetObject(netID);
         }
+
+        // Called AFTER the NetObject has been created but BEFORE it's added to the NetObjectManager
+        protected virtual void OnInit(NetObject netObj) { }
 
         public override void OnReset()
         {

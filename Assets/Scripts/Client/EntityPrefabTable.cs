@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Shared.SCData;
+using Utils;
 
 namespace Client
 {
@@ -22,7 +23,9 @@ namespace Client
 
         public GameObject GetPrefab(EntityType type)
         {
-            return prefabTable[type];
+            GameObject go;
+            DebugUtils.Assert(prefabTable.TryGetValue(type, out go), $"Entity of type {type} not found in prefab table.");
+            return go;
         }
 
     }

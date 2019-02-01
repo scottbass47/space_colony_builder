@@ -24,7 +24,7 @@ namespace Server
                 .build();
 
             player.AddComponent<ClientComponent>().ID = clientID;
-            player.AddComponent<ResourceComponent>().OreAmount.Value = 0;
+            player.AddComponent<ResourceComponent>().OreAmount = 0;
             player.AddComponent<TaskFactoryComponent>().Set(new TaskFactory(Engine));
             player.AddComponent<TaskQueueComponent>();
             player.AddComponent<OwnedWorkersComponent>().Set(maxWorkers: Constants.MAX_WORKERS_PER_PLAYER);
@@ -39,7 +39,7 @@ namespace Server
 
             rock.AddComponent<MapObjectComponent>().Pos = pos;
             rock.AddComponent<HealthComponent>();
-            rock.AddComponent<OreComponent>().Amount.Value = Constants.ROCK_ORE;
+            rock.AddComponent<OreComponent>().Amount = Constants.ROCK_ORE;
             rock.AddComponent<SlotComponent>()
                 .AddSlot(new Vector2(-0.1f, 0.3f))
                 .AddSlot(new Vector2(-0.25f, 0))
@@ -55,7 +55,7 @@ namespace Server
                 .build();
 
             house.AddComponent<MapObjectComponent>().Pos = pos;
-            house.AddComponent<HealthComponent>().Health.Value = 100;
+            house.AddComponent<HealthComponent>().Health = 100;
             house.AddComponent<HouseComponent>().Set(Constants.HOUSE_CAPACITY);
             return house;
         }
@@ -66,10 +66,10 @@ namespace Server
                 .Net()
                 .build();
 
-            colonist.AddComponent<PositionComponent>().Pos.Value = Vector3.zero;
+            colonist.AddComponent<PositionComponent>().Pos = Vector3.zero;
             colonist.AddComponent<WorkerComponent>();
             colonist.AddComponent<NotOwnedComponent>();
-            colonist.AddComponent<StateComponent>().State.Value = (int)EntityState.IDLE;
+            colonist.AddComponent<StateComponent>().State = (int)EntityState.IDLE;
             colonist.AddComponent<StatsComponent>().Set(walkSpeed: Constants.COLONIST_SPEED, mineSpeed: Constants.COLONIST_MINE_RATE);
             colonist.AddComponent<ResidentComponent>();
             return colonist;
@@ -101,8 +101,12 @@ namespace Server
             // Networked entities
             public EntityBuilder Net()
             {
-                entity.AddComponent<NetSpawnComponent>();
+                //entity.AddComponent<NetSpawnComponent>();
                 entity.AddComponent<StateUpdateComponent>();
+
+                var netEntity = entity as NetEntity;
+                netEntity.NetObject.EntityType = netEntity.GetComponent<EntityTypeComponent>().Type;
+                netEntity.AddToNetObjectManager();
                 return this;
             }
 

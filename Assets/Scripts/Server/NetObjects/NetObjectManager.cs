@@ -78,6 +78,7 @@ namespace Server.NetObjects
             var obj = netObjectPool.Obtain<NetObject>();
             obj.ID = nextID++;
             obj.Alive = true;
+            obj.AddSyncListener(OnObjectSync);
             return obj;
         }
 
@@ -87,10 +88,10 @@ namespace Server.NetObjects
         {
             DebugUtils.Assert(!netObjects.ContainsKey(obj.ID), $"NetObject with ID {obj.ID} already exists!");
             netObjects.Add(obj.ID, obj);
-            obj.AddSyncListener(OnObjectSync);
-            Debug.Log($"[Server] - Adding net object {obj.ID} has parent {obj.HasParent}");
+            //Debug.Log($"[Server] - Adding {obj.TypeName} net object {obj.ID} has parent {obj.HasParent}");
 
-            var packet = new NetCreatePacket { NetID = obj.ID, Type = obj.Type, ParentID = obj.HasParent ? obj.ParentID : -1 };
+            DebugUtils.Assert(obj.NetObjectType != NetObjectType.NOTHING || obj.EntityType != EntityType.NOTHING, "Can't have NOTHING for both fields EntityType and NetObjectType");
+            var packet = new NetCreatePacket { NetID = obj.ID, NetObjectType = obj.NetObjectType, EntityType = obj.EntityType, ParentID = obj.HasParent ? obj.ParentID : -1 };
             if(obj.SendToAllClients)
             {
                 server.SendToAllClients(packet);

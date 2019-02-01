@@ -52,12 +52,12 @@ namespace Shared
             public SCTileData[] TileData { get; set; }
         }
 
-        [ProtoContract]
-        public class UpdatePacket
-        {
-            [ProtoMember(1)]
-            public int ClientID { get; set; }
-        }
+        //[ProtoContract]
+        //public class UpdatePacket
+        //{
+        //    [ProtoMember(1)]
+        //    public int ClientID { get; set; }
+        //}
 
         [ProtoContract]
         public class NetUpdatePacket
@@ -76,10 +76,15 @@ namespace Shared
             public int NetID{ get; set; }
 
             [ProtoMember(2)]
-            public NetObjectType Type{ get; set; }
+            public NetObjectType NetObjectType{ get; set; }
 
             [ProtoMember(3)]
+            public EntityType EntityType { get; set; }
+
+            [ProtoMember(4)]
             public int ParentID { get; set; }
+
+            public string TypeName => EntityType == EntityType.NOTHING ? $"{NetObjectType}" : $"{EntityType}";
         }
 
         [ProtoContract]
@@ -98,18 +103,18 @@ namespace Shared
             public ClientRequest Request { get; set; }
         }
 
-        [ProtoContract]
-        public class StateChangePacket
-        {
-            [ProtoMember(1)]
-            public int Version { get; set; }
-            [ProtoMember(2)]
-            public byte TotalChanges { get; set; }
-            [ProtoMember(3)]
-            public byte ChangeNumber { get; set; }
-            [ProtoMember(4)]
-            public IStateChange Change { get; set; }
-        }
+        //[ProtoContract]
+        //public class StateChangePacket
+        //{
+        //    [ProtoMember(1)]
+        //    public int Version { get; set; }
+        //    [ProtoMember(2)]
+        //    public byte TotalChanges { get; set; }
+        //    [ProtoMember(3)]
+        //    public byte ChangeNumber { get; set; }
+        //    [ProtoMember(4)]
+        //    public IStateChange Change { get; set; }
+        //}
 
     }
 }

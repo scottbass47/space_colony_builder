@@ -10,6 +10,7 @@ using Shared.SCData;
 using Shared.StateChanges;
 using Shared;
 using Utils;
+using System;
 
 namespace Server
 {
@@ -18,6 +19,7 @@ namespace Server
         private float elapsed;
         private float startTime;
         private int nextClientID = 0;
+        private bool worldStarted = false;
 
         private NetManager server;
         private NetDataWriter writer;
@@ -25,8 +27,6 @@ namespace Server
         private Dictionary<int, int> clientVersions;
         private NetPacketProcessor processor;
         private WorldStateManager stateManager;
-
-        //private ProtoSerializer serializer;
 
         void Start()
         {
@@ -44,7 +44,7 @@ namespace Server
             stateManager = new WorldStateManager(this, Constants.WORLD_SIZE);
 
             processor = PacketUtils.CreateProcessor();
-            processor.Subscribe<UpdatePacket, NetPeer>(OnUpdatePacket, () => new UpdatePacket());
+            //processor.Subscribe<UpdatePacket, NetPeer>(OnUpdatePacket, () => new UpdatePacket());
             processor.Subscribe<ClientRequestPacket, NetPeer>(OnClientRequest, () => new ClientRequestPacket());
         }
 
@@ -52,6 +52,16 @@ namespace Server
         void Update()
         {
             server.PollEvents();
+
+            // The server shouldn't update until a client is connected
+            if (connectedClients.Count == 0) return;
+
+            // If the world hasn't been initialized yet, then call Init
+            if(!worldStarted)
+            {
+                worldStarted = true;
+                stateManager.Init();
+            }
 
             elapsed += Time.deltaTime;
 
@@ -70,37 +80,18 @@ namespace Server
 
         public void SendToAllClients<T>(T packet, DeliveryMethod method = DeliveryMethod.ReliableOrdered) where T : class, new()
         {
+            DebugUtils.Assert(connectedClients.Count > 0, "No connected clients to send packet to!");
             foreach(var clientID in connectedClients.Keys)
             {
                 processor.Send(connectedClients[clientID], packet, method);
             }
         }
 
+
         public void SendToSingleClient<T>(T packet, int clientID, DeliveryMethod method = DeliveryMethod.ReliableOrdered) where T : class, new()
         {
+            DebugUtils.Assert(connectedClients.ContainsKey(clientID), $"Client with ID {clientID} is not connected to the server.");
             processor.Send(connectedClients[clientID], packet, method);
-        }
-
-
-        void OnUpdatePacket(UpdatePacket packet, NetPeer peer)
-        {
-            //Debug.Log($"[Server] received update packet with version {packet.Version}");
-            StateChangePacket[] changes = stateManager.GetDiff(clientVersions[packet.ClientID]);
-            clientVersions[packet.ClientID] = stateManager.Version - 1;
-
-            if (changes == null) return;
-
-
-            foreach(StateChangePacket change in changes)
-            {
-                if (change.Change is EntityRemove)
-                {
-                    Debug.Log($"[Server] - deleting entity with ID {(change.Change as EntityRemove).ID}");
-                }
-                //serializer.Send(peer, change, DeliveryMethod.ReliableUnordered);
-                processor.Send(peer, change, DeliveryMethod.ReliableUnordered);
-                //peer.Send(data, 0, data.Length, DeliveryMethod.ReliableUnordered);
-            }
         }
 
         void OnClientRequest(ClientRequestPacket packet, NetPeer peer) 
@@ -127,9 +118,7 @@ namespace Server
 
             // Create player entity
             stateManager.AddPlayer(clientID);
-
             SendClientID(clientID);
-            SendWorldData(peer);
         }
 
         private void SendClientID(int clientID)
@@ -137,8 +126,17 @@ namespace Server
             processor.Send(connectedClients[clientID], new ClientID { ID = clientID }, DeliveryMethod.ReliableOrdered);
         }
 
-        private void SendWorldData(NetPeer peer)
+        public void SendWorldData()
         {
+            foreach(var clientID in connectedClients.Keys)
+            {
+                SendWorldData(clientID);
+            }
+        }
+
+        private void SendWorldData(int clientID)
+        {
+            var peer = connectedClients[clientID];
             // SEND WORLD DATA
             TileID[][] tiles = stateManager.GetTiles();
             int worldSize = stateManager.Size;
@@ -177,7 +175,7 @@ namespace Server
                                 ChunkNumber = packetIndex,
                                 TileData = tileArr,
                                 DataCount = tileCount
-                            }, DeliveryMethod.ReliableUnordered);
+                            }, DeliveryMethod.ReliableOrdered);
 
                         // @Performance Allocating new memory here is probably not the best.
                         // Alternatively, we can just overwrite the values existing for the next
@@ -195,7 +193,7 @@ namespace Server
                 ChunkNumber = packetIndex,
                 TileData = tileArr,
                 DataCount = tileCount
-            }, DeliveryMethod.ReliableUnordered);
+            }, DeliveryMethod.ReliableOrdered);
         }
 
         // @Todo We need to figure out what the client ID is when a client disconnects

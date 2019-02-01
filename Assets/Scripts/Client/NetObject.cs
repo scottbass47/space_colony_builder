@@ -17,7 +17,6 @@ namespace Client
 
         private void Awake()
         {
-            Debug.Log("NetObject.Awake");
             registries = new Dictionary<NetObjectType, object[]>();
         }
 
@@ -29,6 +28,7 @@ namespace Client
         public void SetNetObject(INetObject obj)
         {
             netObj = obj;
+            netObj.GameObject = gameObject;
 
             // Transfer stored registrations to INetObject
             foreach(var type in registries.Keys)
@@ -54,7 +54,9 @@ namespace Client
         private bool hasParent;
         private int parentHandlerID; // This is the parent that has THIS NetObject registered as a child
         private bool hasParentHandler;
-        private NetObjectType type;
+        private NetObjectType netObjectType;
+        private EntityType entityType;
+        private GameObject gameObject;
         private bool isGameObject;
         private EventTable<NetUpdate> updateTable;
         private Action<INetObject> onChildCreate; 
@@ -71,14 +73,18 @@ namespace Client
         public bool IsParent => children.Count > 0;
         public int ParentID => parentID;
         public int ParentHandlerID => parentHandlerID;
-        public NetObjectType Type => type;
+        public NetObjectType NetObjectType => netObjectType;
+        public EntityType EntityType => entityType;
+        public bool IsEntity => entityType != EntityType.NOTHING;
+        public GameObject GameObject { get => gameObject; set => gameObject = value; }
         public bool IsGameObject { get => isGameObject; set => isGameObject = value; }
         public HashSet<int> Children => children;
 
-        public INetObject(NetObjectManager nom, NetObjectType type, int netID)
+        public INetObject(NetObjectManager nom, NetObjectType netObjectType, EntityType entityType, int netID)
         {
             this.nom = nom;
-            this.type = type;
+            this.netObjectType = netObjectType;
+            this.entityType = entityType;
             this.netID = netID;
             registeredChildren = new HashSet<NetObjectType>();
             updateTable = new EventTable<NetUpdate>();

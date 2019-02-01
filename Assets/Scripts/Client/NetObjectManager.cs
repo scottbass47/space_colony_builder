@@ -12,19 +12,12 @@ namespace Client
 {
     public class NetObjectManager : MonoBehaviour
     {
-        public GameObject testObjPrefab;
-
         private Dictionary<int, INetObject> netObjects;
         private Dictionary<NetObjectType, Func<GameObject>> netObjectCreateDict;
 
-        public NetObjectManager()
+        private void Awake()
         {
             netObjectCreateDict = new Dictionary<NetObjectType, Func<GameObject>>();
-
-            RegisterNetObjectCreator(NetObjectType.TEST, () => 
-            {
-                return Instantiate(testObjPrefab);
-            });
         }
 
         public void RegisterNetObjectCreator(NetObjectType type, Func<GameObject> creator)
@@ -53,9 +46,10 @@ namespace Client
 
         private void OnNetCreate(NetCreatePacket obj)
         {
-            Debug.Log($"[Client] - NetObject created with id {obj.NetID} and parent id {obj.ParentID}");
+            Debug.Log($"[Client] - NetObject {obj.TypeName} created with id {obj.NetID} and parent id {obj.ParentID}");
             DebugUtils.Assert(!NetObjectExists(obj.NetID), $"Net object with id {obj.NetID} already exists on the client.");
-            var netObj = new INetObject(this, obj.Type, obj.NetID);
+            var netObj = new INetObject(this, obj.NetObjectType, obj.EntityType, obj.NetID);
+
             netObjects.Add(obj.NetID, netObj);
 
             // If the corresponding obj has a parent, then we need to go up the chain
@@ -116,10 +110,10 @@ namespace Client
             //    the NetObject component transfers the cached registries to the INetObject. This way we can
             //    guarantee that by the time the Child's Awake method is called, the parent has already defined
             //    all the children it can handle.
-            if(parent.HandlesChild(child.Type))
+            if(parent.HandlesChild(child.NetObjectType))
             {
                 // Call OnCreate for this child
-                DebugUtils.Assert(parent.OnChildCreate != null, $"Parent has child of type {child.Type} registered but does not define an OnChildCreate method.");
+                DebugUtils.Assert(parent.OnChildCreate != null, $"Parent has child of type {child.NetObjectType} registered but does not define an OnChildCreate method.");
                 parent.OnChildCreate(child);
                 child.SetParentHandler(parent.NetID);
                 return true;
@@ -137,10 +131,22 @@ namespace Client
 
         private GameObject CreateGameObject(INetObject obj)
         {
-            DebugUtils.Assert(netObjectCreateDict.ContainsKey(obj.Type), $"No registered creator for net object of type {obj.Type}.");
-            var go = netObjectCreateDict[obj.Type]();
+            GameObject go = null;
+            if(obj.IsGameObject)
+            {
+                go = Game.Instance.EntityObjectFactory.CreateEntityObject(obj.EntityType);
+                DebugUtils.Assert(go.GetComponent<NetObject>() != null, 
+                    $"Game object of type {obj.EntityType} missing NetObject component. Did you forget to register a child?");
+            }
+            else
+            {
+                DebugUtils.Assert(netObjectCreateDict.ContainsKey(obj.NetObjectType), $"No registered creator for net object of type {obj.NetObjectType}.");
+                go = netObjectCreateDict[obj.NetObjectType]();
 
-            DebugUtils.Assert(go.GetComponent<NetObject>() != null, $"Game object missing NetObject component. Did you forget to register a child?");
+                DebugUtils.Assert(go.GetComponent<NetObject>() != null, 
+                    $"Game object of type {obj.NetObjectType} missing NetObject component. Did you forget to register a child?");
+            }
+
             go.GetComponent<NetObject>().SetNetObject(obj);
 
             return go;
@@ -170,7 +176,6 @@ namespace Client
             var netObj = netObjects[obj.NetID];
             // We need to recursively destroy objects and clean up references
             RecursivelyDestroyNetObject(netObj);
-
         }
 
         private void RecursivelyDestroyNetObject(INetObject obj, bool cleanupChildReference = true)
@@ -199,6 +204,12 @@ namespace Client
             }
 
             netObjects.Remove(obj.NetID);
+            if (obj.IsGameObject) Destroy(obj.GameObject);
+        }
+
+        public INetObject GetNetObject(int netID)
+        {
+            return netObjects[netID];
         }
     }
 }

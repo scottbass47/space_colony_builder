@@ -1,4 +1,5 @@
 ﻿using ECS;
+using Server.NetObjects;
 using Shared.StateChanges;
 using System;
 using System.Collections.Generic;
@@ -30,8 +31,9 @@ namespace Server
                 }
                 if (dead)
                 {
+                    (entity as NetEntity).RemoveFromNetManager();
                     Engine.RemoveEntity(entity);
-                    entity.GetComponent<GlobalComponent>().World.ApplyChange(new EntityRemove { ID = entity.ID });
+                    //entity.GetComponent<GlobalComponent>().World.ApplyChange(new EntityRemove { ID = entity.ID });
                 }
             }
         }

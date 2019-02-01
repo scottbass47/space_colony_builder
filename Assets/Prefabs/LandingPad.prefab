@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 8946658344019558656}
   - component: {fileID: 2448198121284350467}
   - component: {fileID: 7291267910900633132}
+  - component: {fileID: 4752362274835302990}
   m_Layer: 0
   m_Name: LandingPad
   m_TagString: Untagged
@@ -45,7 +46,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ID: 0
-  Type: 0
 --- !u!114 &7291267910900633132
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -59,3 +59,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Tile: {fileID: 11400000, guid: 7b309a5fa98b40f44b5e7016abe2052b, type: 2}
+--- !u!114 &4752362274835302990
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1836993510316919141}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cb875007731007c48b6e3cee3a0a5916, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Server.NetObjects;
 using Shared;
 using UnityEngine;
 
@@ -10,25 +11,21 @@ namespace Server
 {
     public class ResourceComponent : NetComponent
     {
-        public NetValue<int> OreAmount;
-
-        public ResourceComponent()
+        private int oreVal;
+        public int OreAmount
         {
-            OreAmount = new NetValue<int>();
-
-            AddNetValue(OreAmount);
+            get => oreVal;
+            set
+            {
+                oreVal = value;
+                net.Sync();
+            }
         }
 
-        public override SCUpdate CreateChange()
+        protected override void OnInit(NetObject netObj)
         {
-            return new OreUpdate { Amount = OreAmount };
-        }
-
-        public override void OnResetTemp()
-        {
-            OreAmount = new NetValue<int>();
-
-            AddNetValue(OreAmount);
+            OreAmount = 0;
+            netObj.OnUpdate = () => new OreUpdate { Amount = OreAmount };
         }
     }
 }
