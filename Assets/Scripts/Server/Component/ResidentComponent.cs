@@ -11,7 +11,7 @@ namespace Server
     {
         public Entity House { get; set; }
 
-        public void Reset()
+        public override void OnReset()
         {
             House = null;
         }

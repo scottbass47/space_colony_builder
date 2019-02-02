@@ -1,4 +1,5 @@
 ﻿using ECS;
+using Server.NetObjects;
 using Server.Tasks;
 using Shared;
 using System;
@@ -9,20 +10,32 @@ using Task = Server.Tasks.Task;
 
 namespace Server
 {
-    public class TaskQueueComponent : NetComponent
+    public class TaskQueueComponent : NetComponent 
     {
         public TaskQueue Tasks => taskQueue;
         private TaskQueue taskQueue;
         public Entity Player { get; set; }
 
-        private NetValue<bool> queueChanged;
+        private bool qc;
+        private bool queueChanged
+        {
+            get => qc;
+            set
+            {
+                qc = value;
+                net.Sync();
+            }
+        }
 
         public TaskQueueComponent()
         {
             taskQueue = new TaskQueue();
+        }
 
-            queueChanged = new NetValue<bool>();
-            AddNetValue(queueChanged);
+        protected override void OnInit(NetObject netObj)
+        {
+            netObj.NetMode = NetMode.IMPORTANT;
+            netObj.OnUpdate = () => new TaskQueueUpdate { QueueText = taskQueue.ToString() };
         }
 
         //public void AddTask(Task task)
@@ -31,20 +44,9 @@ namespace Server
         //    queueChanged.Value = true;
         //}
 
-        public override SCUpdate CreateChange()
-        {
-            return new TaskQueueUpdate { QueueText = taskQueue.ToString() };
-        }
-
         public void ForceUpdate()
         {
-            queueChanged.Value = true;
-        }
-
-        public override void OnReset()
-        {
-            queueChanged = new NetValue<bool>();
-            AddNetValue(queueChanged);
+            queueChanged= true;
         }
     }
 }

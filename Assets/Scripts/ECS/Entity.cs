@@ -43,6 +43,8 @@ namespace ECS
             components.Put(compIndex, component);
             compArr.Add(component);
             componentBits.Set(compIndex, true);
+            component.Entity = this;
+            component.ComponentAdded();
 
             // Fire event
             if(ComponentAdded != null) ComponentAdded(ComponentType.Get(component.GetType()), component);
@@ -56,6 +58,7 @@ namespace ECS
             T ret = (T) components.Remove(compIndex);
             compArr.Remove(ret);
             componentBits.Set(compIndex, false);
+            ret.ComponentRemoved();
 
             Engine.RecycleComponent(ret);
 

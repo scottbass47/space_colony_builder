@@ -29,6 +29,7 @@ public class HouseProperties : MonoBehaviour
 
         eo.AddUpdateListener<HouseUpdate>((residents) => {
             this.Residents = residents.Residents;
+            Debug.Log($"House residents {string.Join(",", residents.Residents)}");
             SetResidentsColor();
         });
     }

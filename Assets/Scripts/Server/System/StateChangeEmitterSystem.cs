@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ECS;
+using Server.NetObjects;
 using Shared.StateChanges;
 using UnityEngine;
 
@@ -24,16 +25,16 @@ namespace Server
                 {
                     if(comp is NetComponent)
                     {
-                        var net = comp as NetComponent;
-                        if(net.HasChanges)
-                        {
-                            var update = net.CreateChange();
-                            var id = entity.ID;
+                        //var net = comp as NetComponent;
+                        //if(net.HasChanges)
+                        //{
+                        //    var update = net.CreateChange();
+                        //    var id = entity.ID;
 
-                            //Debug.Log($"[Server] sending update of type {update.GetType()}");
-                            entity.GetComponent<GlobalComponent>().World.ApplyChange(new EntityUpdate { ID = id, Update = update });
-                            net.ResetChanges();
-                        }
+                        //    //Debug.Log($"[Server] sending update of type {update.GetType()}");
+                        //    entity.GetComponent<GlobalComponent>().World.ApplyChange(new EntityUpdate { ID = id, Update = update });
+                        //    net.ResetChanges();
+                        //}
                     }
                 }
             }

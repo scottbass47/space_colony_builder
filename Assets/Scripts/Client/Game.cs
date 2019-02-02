@@ -13,6 +13,7 @@ namespace Client
         public GameObject EntityManagerPrefab;
         public GameObject WorldPrefab;
         public GameObject StateChangeManagerPrefab;
+        public GameObject NetObjectManagerPrefab;
         
         [HideInInspector]
         public SCNetworkManager NetManager;
@@ -32,8 +33,11 @@ namespace Client
         [HideInInspector]
         public World World;
 
+        //[HideInInspector]
+        //public StateChangeManager StateChangeManager;
+
         [HideInInspector]
-        public StateChangeManager StateChangeManager;
+        public NetObjectManager NetObjectManager;
 
         private static Game instance;
 
@@ -62,7 +66,8 @@ namespace Client
             PrefabTable = factory.GetComponent<EntityPrefabTable>();
 
             World = Instantiate(WorldPrefab).GetComponent<World>();
-            StateChangeManager = Instantiate(StateChangeManagerPrefab).GetComponent<StateChangeManager>();
+            //StateChangeManager = Instantiate(StateChangeManagerPrefab).GetComponent<StateChangeManager>();
+            NetObjectManager = Instantiate(NetObjectManagerPrefab).GetComponent<NetObjectManager>();
         }
     }
 }

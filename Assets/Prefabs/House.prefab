@@ -60,7 +60,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ID: 0
-  Type: 0
 --- !u!114 &304224611386968026
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -77,6 +76,18 @@ MonoBehaviour:
   outlinePrefab: {fileID: 3539182734780433595, guid: a5eb2f7d7a4c6db4f841941272d66123,
     type: 3}
   outline: {fileID: 0}
+--- !u!114 &783331956093140077
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 304224611386968025}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cb875007731007c48b6e3cee3a0a5916, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &942800187
 MonoBehaviour:
   m_ObjectHideFlags: 0

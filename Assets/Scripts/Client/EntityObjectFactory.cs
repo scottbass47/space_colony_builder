@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 using Shared.SCData;
 using Shared.StateChanges;
+using Utils;
 
 namespace Client
 {
@@ -18,77 +19,76 @@ namespace Client
             prefabTable = Game.Instance.PrefabTable;
         }
 
-        public GameObject CreateEntityObject(EntityType type, EntitySpawn spawn)
+        public GameObject CreateEntityObject(EntityType type)
         {
             GameObject go = null;
             switch (type)
             {
                 case EntityType.ROCK:
-                    go = CreateRock(spawn);
+                    go = CreateRock();
                     break;
                 case EntityType.HOUSE:
-                    go = CreateHouse(spawn);
+                    go = CreateHouse();
                     break;
                 case EntityType.COLONIST:
-                    go = CreateColonist(spawn);
+                    go = CreateColonist();
                     break;
                 case EntityType.PLAYER:
-                    go = CreatePlayer(spawn);
+                    go = CreatePlayer();
                     break;
                 case EntityType.LANDING_PAD:
-                    go = CreateLandingPad(spawn);
+                    go = CreateLandingPad();
+                    break;
+                case EntityType.NOTHING:
+                    DebugUtils.Assert(false, "Can't create Entity of type NOTHING.");
                     break;
             }
-            var eo = go.GetComponent<EntityObject>();
-            eo.ID = spawn.ID;
-            eo.Type = type; 
-            eo.OnCreate();
             return go;
         }
 
-        private GameObject CreateRock(EntitySpawn spawn)
+        private GameObject CreateRock()
         {
             // Create the rock from prefab    
             var go = Instantiate(prefabTable.GetPrefab(EntityType.ROCK));
 
-            Vector3 pos = spawn.Pos;
-            go.GetComponent<TilemapObject>().Pos = new Vector3Int((int)pos.x, (int)pos.y, (int)pos.z);
+            //Vector3 pos = spawn.Pos;
+            //go.GetComponent<TilemapObject>().Pos = new Vector3Int((int)pos.x, (int)pos.y, (int)pos.z);
 
             return go;
         }
 
-        private GameObject CreateHouse(EntitySpawn spawn)
+        private GameObject CreateHouse()
         {  
             var go = Instantiate(prefabTable.GetPrefab(EntityType.HOUSE));
 
-            Vector3 pos = spawn.Pos;
-            go.GetComponent<TilemapObject>().Pos = new Vector3Int((int)pos.x, (int)pos.y, (int)pos.z);
+            //Vector3 pos = spawn.Pos;
+            //go.GetComponent<TilemapObject>().Pos = new Vector3Int((int)pos.x, (int)pos.y, (int)pos.z);
 
             return go;
         }
 
-        private GameObject CreateColonist(EntitySpawn spawn)
+        private GameObject CreateColonist()
         {
             var go = Instantiate(prefabTable.GetPrefab(EntityType.COLONIST));
 
-            var iso = go.GetComponent<IsometricPosition>();
-            iso.Position = spawn.Pos;
-            iso.Position.z = 1;
+            //var iso = go.GetComponent<IsometricPosition>();
+            //iso.Position = spawn.Pos;
+            //iso.Position.z = 1;
 
             return go;
         }
 
-        private GameObject CreatePlayer(EntitySpawn spawn)
+        private GameObject CreatePlayer()
         {
             var go = Instantiate(prefabTable.GetPrefab(EntityType.PLAYER));
             return go;
         }
 
-        private GameObject CreateLandingPad(EntitySpawn spawn)
+        private GameObject CreateLandingPad()
         {
             var go = Instantiate(prefabTable.GetPrefab(EntityType.LANDING_PAD));
-            Vector3 pos = spawn.Pos;
-            go.GetComponent<TilemapObject>().Pos = new Vector3Int((int)pos.x, (int)pos.y, (int)pos.z);
+            //Vector3 pos = spawn.Pos;
+            //go.GetComponent<TilemapObject>().Pos = new Vector3Int((int)pos.x, (int)pos.y, (int)pos.z);
             return go;
         }
     }

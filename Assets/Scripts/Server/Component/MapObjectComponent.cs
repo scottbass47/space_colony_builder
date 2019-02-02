@@ -1,19 +1,30 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using ECS;
+using Server.NetObjects;
+using Shared;
 using UnityEngine;
 using Component = ECS.Component;
 
 namespace Server
 {
-    public class MapObjectComponent : Component
+    public class MapObjectComponent : NetComponent
     {
-        public Vector3Int Pos { get; set; } = Vector3Int.zero;
-
-        public void Reset()
+        private Vector3Int pos;
+        public Vector3Int Pos
         {
-            Pos = Vector3Int.zero;
+            get => pos;
+            set
+            {
+                pos = value;
+                net.Sync();
+            }
+        }
+
+        protected override void OnInit(NetObject netObj)
+        {
+            pos = Vector3Int.zero;
+            netObj.OnUpdate = () => new PositionUpdate { Pos = pos };
         }
     }
-
 }

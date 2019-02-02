@@ -16,54 +16,54 @@ namespace Shared
     [ProtoInclude(14, typeof(OreUpdate))]
     [ProtoInclude(15, typeof(HouseUpdate))]
     [ProtoInclude(16, typeof(TaskQueueUpdate))]
-    public class SCUpdate
+    public class NetUpdate
     {
     }
 
     [ProtoContract]
-    public class HealthUpdate : SCUpdate
+    public class HealthUpdate : NetUpdate
     {
         [ProtoMember(1)]
         public int Health { get; set; }
     }
 
     [ProtoContract]
-    public class PositionUpdate : SCUpdate
+    public class PositionUpdate : NetUpdate
     {
         [ProtoMember(1)]
         public Vector3 Pos { get; set; }
     }
 
     [ProtoContract]
-    public class PathUpdate : SCUpdate
+    public class PathUpdate : NetUpdate
     {
         [ProtoMember(1)]
         public Vector2[] Path { get; set; }
     }
 
     [ProtoContract]
-    public class StateUpdate : SCUpdate
+    public class StateUpdate : NetUpdate
     {
         [ProtoMember(1)]
         public int State { get; set; }
     }
 
     [ProtoContract]
-    public class OreUpdate : SCUpdate
+    public class OreUpdate : NetUpdate
     {
         [ProtoMember(1)]
         public int Amount { get; set; }
     }
 
     [ProtoContract]
-    public class HouseUpdate : SCUpdate
+    public class HouseUpdate : NetUpdate
     {
         [ProtoMember(1)]
         public int[] Residents { get; set; }
     }
 
     [ProtoContract]
-    public class TaskQueueUpdate : SCUpdate
+    public class TaskQueueUpdate : NetUpdate
     {
         [ProtoMember(1)]
         public string QueueText { get; set; } 

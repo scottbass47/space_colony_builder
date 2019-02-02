@@ -1,0 +1,8 @@
+Todo
+-----
+* Implement new NetObject system
+* Complete tasks if no workers can be assigned (i.e. other player is trying to do the same thing)
+
+Bugs
+-----
+* StateManager process EntitySpawn changes first (might not be relevant w/ new NetObject system)

@@ -27,13 +27,22 @@ namespace Shared
             TOWER
         }
 
+        // @Note Reordering this enum will fuck up the EntityPrefabTable in the inspector.
+        // Add new entity types to the end of the enum to avoid this.
         public enum EntityType
         {
+            NOTHING,
             ROCK,
             HOUSE,
             PLAYER,
             COLONIST,
             LANDING_PAD
+        }
+
+        public enum NetObjectType
+        {
+            NOTHING,
+            COMPONENT
         }
 
         public enum EntityState

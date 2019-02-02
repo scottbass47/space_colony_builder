@@ -7,6 +7,7 @@ using LiteNetLib;
 using LiteNetLib.Utils;
 using Shared.StateChanges;
 using ProtoBuf;
+using Shared.SCData;
 
 namespace Shared
 {
@@ -51,11 +52,46 @@ namespace Shared
             public SCTileData[] TileData { get; set; }
         }
 
+        //[ProtoContract]
+        //public class UpdatePacket
+        //{
+        //    [ProtoMember(1)]
+        //    public int ClientID { get; set; }
+        //}
+
         [ProtoContract]
-        public class UpdatePacket
+        public class NetUpdatePacket
         {
             [ProtoMember(1)]
-            public int ClientID { get; set; }
+            public int NetID { get; set; }
+
+            [ProtoMember(2)]
+            public NetUpdate Update { get; set; }
+        }
+
+        [ProtoContract]
+        public class NetCreatePacket
+        {
+            [ProtoMember(1)]
+            public int NetID{ get; set; }
+
+            [ProtoMember(2)]
+            public NetObjectType NetObjectType{ get; set; }
+
+            [ProtoMember(3)]
+            public EntityType EntityType { get; set; }
+
+            [ProtoMember(4)]
+            public int ParentID { get; set; }
+
+            public string TypeName => EntityType == EntityType.NOTHING ? $"{NetObjectType}" : $"{EntityType}";
+        }
+
+        [ProtoContract]
+        public class NetDestroyPacket
+        {
+            [ProtoMember(1)]
+            public int NetID{ get; set; }
         }
 
         [ProtoContract]
@@ -67,18 +103,18 @@ namespace Shared
             public ClientRequest Request { get; set; }
         }
 
-        [ProtoContract]
-        public class StateChangePacket
-        {
-            [ProtoMember(1)]
-            public int Version { get; set; }
-            [ProtoMember(2)]
-            public byte TotalChanges { get; set; }
-            [ProtoMember(3)]
-            public byte ChangeNumber { get; set; }
-            [ProtoMember(4)]
-            public IStateChange Change { get; set; }
-        }
+        //[ProtoContract]
+        //public class StateChangePacket
+        //{
+        //    [ProtoMember(1)]
+        //    public int Version { get; set; }
+        //    [ProtoMember(2)]
+        //    public byte TotalChanges { get; set; }
+        //    [ProtoMember(3)]
+        //    public byte ChangeNumber { get; set; }
+        //    [ProtoMember(4)]
+        //    public IStateChange Change { get; set; }
+        //}
 
     }
 }

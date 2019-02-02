@@ -40,7 +40,7 @@ namespace Server.Job
             if(entity.HasComponent<StateComponent>())
             {
                 var state = entity.GetComponent<StateComponent>();
-                state.State.Value = (int)EntityState.WALKING;
+                state.State = (int)EntityState.WALKING;
             }
 
 
@@ -64,7 +64,7 @@ namespace Server.Job
             if(entity.HasComponent<StateComponent>())
             {
                 var state = entity.GetComponent<StateComponent>();
-                state.State.Value = (int)EntityState.IDLE;
+                state.State = (int)EntityState.IDLE;
             }
         }
 
@@ -104,7 +104,7 @@ namespace Server.Job
         {
             var speed = entity.GetComponent<StatsComponent>().WalkSpeed;
             var pos = entity.GetComponent<PositionComponent>();
-            pos.Pos.Value += dir * speed * delta;
+            pos.Pos += dir * speed * delta;
             //Debug.Log($"Moving colonist. New pos: {pos.Pos}");
         }
 

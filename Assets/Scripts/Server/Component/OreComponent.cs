@@ -3,31 +3,28 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Server.NetObjects;
 using Shared;
 
 namespace Server
 {
     public class OreComponent : NetComponent
     {
-        public NetValue<int> Amount;
-
-        public OreComponent()
+        private int amount;
+        public int Amount
         {
-            Amount = new NetValue<int>();
-
-            AddNetValue(Amount);
+            get => amount;
+            set
+            {
+                amount = value;
+                net.Sync();
+            }
         }
 
-        public override SCUpdate CreateChange()
+        protected override void OnInit(NetObject netObj)
         {
-            return new OreUpdate { Amount = Amount.Value };
-        }
-
-        public override void OnReset()
-        {
-            Amount = new NetValue<int>();
-
-            AddNetValue(Amount);
+            Amount = 0;
+            netObj.OnUpdate = () => new OreUpdate { Amount = Amount };
         }
     }
 }

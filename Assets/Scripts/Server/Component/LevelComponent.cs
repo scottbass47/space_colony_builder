@@ -11,7 +11,7 @@ namespace Server
     {
         public Level Level { get; set; }
 
-        public void Reset()
+        public override void OnReset()
         {
             Level = null;
         }

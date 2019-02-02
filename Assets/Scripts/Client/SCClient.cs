@@ -44,7 +44,10 @@ namespace Client
             );
             processor.Subscribe<WorldInitPacket>(NotifyPacketListeners<WorldInitPacket>, () => new WorldInitPacket());
             processor.Subscribe<WorldChunkPacket>(NotifyPacketListeners<WorldChunkPacket>, () => new WorldChunkPacket());
-            processor.Subscribe<StateChangePacket>(NotifyPacketListeners<StateChangePacket>, () => new StateChangePacket());
+            //processor.Subscribe<StateChangePacket>(NotifyPacketListeners<StateChangePacket>, () => new StateChangePacket());
+            processor.Subscribe<NetCreatePacket>(NotifyPacketListeners<NetCreatePacket>, () => new NetCreatePacket());
+            processor.Subscribe<NetUpdatePacket>(NotifyPacketListeners<NetUpdatePacket>, () => new NetUpdatePacket());
+            processor.Subscribe<NetDestroyPacket>(NotifyPacketListeners<NetDestroyPacket>, () => new NetDestroyPacket());
 
             //eventTable = new Dictionary<Type, List<Action<object>>>();
             eventTable = new EventTable<object>();
@@ -61,11 +64,11 @@ namespace Client
             {
                 client.SendDiscoveryRequest(new byte[] { 1 }, 5000);
             }
-            else if (!Game.Instance.World.loadingWorld && clientIDSet)
-            {
-                // Request updates
-                SendPacket(new UpdatePacket { ClientID = clientID });
-            }
+            //else if (!Game.Instance.World.loadingWorld && clientIDSet)
+            //{
+            //    // Request updates
+            //    SendPacket(new UpdatePacket { ClientID = clientID });
+            //}
         }
 
         public void AddPacketListener<T>(Action<T> listener) 
