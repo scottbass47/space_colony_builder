@@ -17,6 +17,8 @@ namespace Client
         [HideInInspector]
         public Vector3 Position;
 
+        private Vector3 actual;
+        private Vector3 direction;
         private void Start()
         {
             var eo = GetComponent<EntityObject>();
@@ -25,12 +27,24 @@ namespace Client
                 Position = position.Pos;
                 Position.z = 1;
             });
+            actual = new Vector3();
         }
 
         private void Update()
         {
-            var actual = IsoConversion();
+            
+            actual = IsoConversion();
             transform.position = actual;
+             
+/*
+            if (actual != IsoConversion())
+            {
+                actual = IsoConversion();
+                direction = new Vector3(actual.x - transform.position.x, actual.y - transform.position.y, 1);
+            }
+
+            if (direction.magnitude > .5) 
+                transform.Translate(direction * Time.deltaTime * .1f);*/
         }
 
         public Vector3 IsoConversion()
