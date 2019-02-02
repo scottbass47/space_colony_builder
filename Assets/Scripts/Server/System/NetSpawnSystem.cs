@@ -20,23 +20,23 @@ namespace Server
         {
             foreach(var entity in Entities)
             {
-                Vector3 pos = Vector3.zero;
-                if(entity.HasComponent<PositionComponent>())
-                {
-                    pos = entity.GetComponent<PositionComponent>().Pos.Value;
-                }
-                else if(entity.HasComponent<MapObjectComponent>())
-                {
-                    var p = entity.GetComponent<MapObjectComponent>().Pos;
-                    pos.x = (int)p.x;
-                    pos.y = (int)p.y;
-                }
+                //Vector3 pos = Vector3.zero;
+                //if(entity.HasComponent<PositionComponent>())
+                //{
+                //    pos = entity.GetComponent<PositionComponent>().Pos;
+                //}
+                //else if(entity.HasComponent<MapObjectComponent>())
+                //{
+                //    var p = entity.GetComponent<MapObjectComponent>().Pos;
+                //    pos.x = (int)p.x;
+                //    pos.y = (int)p.y;
+                //}
 
-                var world = entity.GetComponent<GlobalComponent>().World;
-                var type = entity.GetComponent<EntityTypeComponent>().Type;
-                world.ApplyChange(new EntitySpawn { EntityType = type, ID = entity.ID, Pos = pos });
-                //Debug.Log($"Spawning entity {entity.ID}");
-                entity.RemoveComponent<NetSpawnComponent>();
+                //var world = entity.GetComponent<GlobalComponent>().World;
+                //var type = entity.GetComponent<EntityTypeComponent>().Type;
+                //world.ApplyChange(new EntitySpawn { EntityType = type, ID = entity.ID, Pos = pos });
+                ////Debug.Log($"Spawning entity {entity.ID}");
+                //entity.RemoveComponent<NetSpawnComponent>();
             }
         }
     }

@@ -55,7 +55,7 @@ namespace Server
             workers.Add(worker);
         }
 
-        public void Reset()
+        public override void OnReset()
         {
             workers.Clear();
             MaxWorkers = 0;

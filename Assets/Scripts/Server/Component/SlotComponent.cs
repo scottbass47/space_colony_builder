@@ -84,7 +84,7 @@ namespace Server
             slots[slotNum] = null;
         }
 
-        public void Reset()
+        public override void OnReset()
         {
             slotLocations.Clear();
             slots.Clear();

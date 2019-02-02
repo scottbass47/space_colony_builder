@@ -18,7 +18,7 @@ namespace Server
             Requests = new Queue<ClientRequest>();
         }
 
-        public void Reset()
+        public override void OnReset()
         {
             ID = 0;
             Requests.Clear();

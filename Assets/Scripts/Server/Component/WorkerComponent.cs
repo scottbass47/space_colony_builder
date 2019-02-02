@@ -38,7 +38,7 @@ namespace Server
             return job == null || !job.RemoveWorkerFromPool;
         }
 
-        public void Reset()
+        public override void OnReset()
         {
             job = null;
             OnComplete = null;

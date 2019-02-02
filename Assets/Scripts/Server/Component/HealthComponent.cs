@@ -1,4 +1,5 @@
-﻿using Shared;
+﻿using Server.NetObjects;
+using Shared;
 using Shared.StateChanges;
 using System;
 using System.Collections.Generic;
@@ -10,23 +11,22 @@ namespace Server
 {
     public class HealthComponent : NetComponent
     {
-        public NetValue<int> Health = new NetValue<int>();
-
-        public HealthComponent()
+        private int health;
+        public int Health
         {
-            AddNetValue(Health);
+            get => health;
+            set
+            {
+                health = value;
+                net.Sync();
+            }
         }
 
-        public override SCUpdate CreateChange()
+        protected override void OnInit(NetObject netObj)
         {
-            return new HealthUpdate { Health = Health };
+            Health = 0;
+            netObj.OnUpdate = () => new HealthUpdate { Health = Health };
         }
 
-        public override void OnReset()
-        {
-            Health = new NetValue<int>();
-
-            AddNetValue(Health);
-        }
     }
 }

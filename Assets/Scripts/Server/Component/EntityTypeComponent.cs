@@ -12,7 +12,7 @@ namespace Server
     {
         public EntityType Type { get; set; }
 
-        public void Reset()
+        public override void OnReset()
         {
             Type = EntityType.ROCK;
         }

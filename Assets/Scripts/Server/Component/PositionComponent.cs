@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ECS;
+using Server.NetObjects;
 using Shared;
 using Shared.StateChanges;
 using UnityEngine;
@@ -13,24 +14,21 @@ namespace Server
 {
     public class PositionComponent : NetComponent
     {
-        public NetValue<Vector3> Pos = new NetValue<Vector3>();
-
-        public PositionComponent()
+        private Vector3 pos; 
+        public Vector3 Pos
         {
-            AddNetValue(Pos);
+            get => pos;
+            set
+            {
+                pos = value;
+                net.Sync();
+            }
         }
 
-        public override SCUpdate CreateChange()
+        protected override void OnInit(NetObject netObj)
         {
-            return new PositionUpdate { Pos = Pos };
-        }
-
-        public override void OnReset()
-        {
-            Pos = new NetValue<Vector3>();
-            Pos.Value = Vector3.zero;
-
-            AddNetValue(Pos);
+            Pos = Vector3.zero;
+            netObj.OnUpdate = () => new PositionUpdate { Pos = pos };
         }
     }
 }

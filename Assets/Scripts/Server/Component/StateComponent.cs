@@ -1,4 +1,5 @@
 ﻿using ECS;
+using Server.NetObjects;
 using Shared;
 using System;
 using System.Collections.Generic;
@@ -10,25 +11,22 @@ namespace Server
 {
     public class StateComponent : NetComponent
     {
-        public NetValue<int> State;
-
-        public StateComponent()
+        private int state;
+        public int State
         {
-            State = new NetValue<int>();
-
-            AddNetValue(State);
+            get => state;
+            set
+            {
+                state = value;
+                net.Sync();
+            }
         }
 
-        public override SCUpdate CreateChange()
+        protected override void OnInit(NetObject netObj)
         {
-            return new StateUpdate { State = State.Value };
+            netObj.NetMode = NetMode.IMPORTANT;
+            netObj.OnUpdate = () => new StateUpdate { State = State };
         }
 
-        public override void OnReset()
-        {
-            State = new NetValue<int>();
-
-            AddNetValue(State);
-        }
     }
 }

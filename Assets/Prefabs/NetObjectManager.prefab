@@ -1,0 +1,55 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &6687419776698733176
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 9201253456574250247}
+  - component: {fileID: 1798888569523233259}
+  m_Layer: 0
+  m_Name: NetObjectManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &9201253456574250247
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6687419776698733176}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1798888569523233259
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6687419776698733176}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7d81ea59bf9c05e42a2046e3f41e80f2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerPrefab: {fileID: 7427420361433372236, guid: 2be5cfe4506fdae40b012309257d0c6d,
+    type: 3}
+  housePrefab: {fileID: 304224611386968025, guid: a14e7206665b2994bbdecb1da6063db2,
+    type: 3}
+  rockPrefab: {fileID: 8428974769952096574, guid: d1438a48a726fff48938fd9d3e5f5401,
+    type: 3}
+  landingPadPrefab: {fileID: 1836993510316919141, guid: 6c43c01f560fa094da9a9baa977e6c00,
+    type: 3}
+  colonistPrefab: {fileID: 1008030070994176929, guid: 69237a70b2a83024fb4afa5779e17489,
+    type: 3}
