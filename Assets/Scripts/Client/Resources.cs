@@ -14,7 +14,7 @@ namespace Client
             var eo = GetComponent<EntityObject>();
             eo.AddUpdateListener<OreUpdate>((ore) => 
             {
-                Debug.Log($"Total ore: {ore.Amount}");
+                //Debug.Log($"Total ore: {ore.Amount}");
             });
         }
     }

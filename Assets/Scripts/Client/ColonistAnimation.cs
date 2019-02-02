@@ -4,6 +4,7 @@ using Shared.SCData;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 public class ColonistAnimation : MonoBehaviour
 {
@@ -19,6 +20,8 @@ public class ColonistAnimation : MonoBehaviour
     private Animator anim;
     private IsometricPosition isoPos;
     private bool FacingRight;
+
+    private Tilemap tilemap;
 
     void Start()
     {
@@ -43,6 +46,7 @@ public class ColonistAnimation : MonoBehaviour
 
     void Update()
     {
+        if (tilemap == null) tilemap = FindObjectOfType<Tilemap>();
         Vector3 actualPos = isoPos.IsoConversion();
 
         if (State == (int)EntityState.WALKING)
@@ -63,10 +67,25 @@ public class ColonistAnimation : MonoBehaviour
             if (actualPos.y > transform.position.y) anim.SetBool("isFacingFront", false);
             else if (actualPos.y < transform.position.y) anim.SetBool("isFacingFront", true);  
         }
+
         else if(State == (int)EntityState.MINING)
         {
             anim.SetBool("isRunning", false);
             anim.SetBool("isMining", true);
+
+            Vector3Int cellPos = tilemap.WorldToCell(transform.position);
+            Vector3 worldCellPos = tilemap.CellToWorld(cellPos);
+
+            if (worldCellPos.x < transform.position.x && !FacingRight)
+            {
+                transform.Rotate(Vector3.up, 180);
+                FacingRight = true;
+            }
+            if (worldCellPos.x > transform.position.x && FacingRight)
+            {
+                transform.Rotate(Vector3.up, 180);
+                FacingRight = false;
+            }
         }
     }
 }

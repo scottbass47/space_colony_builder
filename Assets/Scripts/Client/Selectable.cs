@@ -9,9 +9,8 @@ using UnityEngine.UI;
 
 public class Selectable : MonoBehaviour
 {
-    //Some sort of data/type field
-
-    private Tilemap tilemap;
+    [HideInInspector]
+    public Tilemap tilemap;
     private EntityObject eo;
 
     private static GameObject RockInfo;
@@ -21,6 +20,32 @@ public class Selectable : MonoBehaviour
     private static GameObject MultipleObjsInfo;
 
     private static TextMeshProUGUI windowTitle;
+
+
+    public Transform outlinePrefab;
+    [HideInInspector]
+    public GameObject outline;
+    private bool outlineSetup;
+
+    private void Awake()
+    {
+        outline = Instantiate(outlinePrefab, transform).gameObject;
+        outline.SetActive(false);
+        outlineSetup = false;
+    }
+
+    private void Update()
+    {
+        if (tilemap == null) tilemap = FindObjectOfType<Tilemap>();
+        if (!outlineSetup && tilemap != null)
+        {
+            outlineSetup = true;      
+            var to = GetComponent<TilemapObject>();
+            var outlinePos = tilemap.CellToWorld(new Vector3Int(to.Pos.x, to.Pos.y, 1));
+            outlinePos.y += .25f;
+            outline.transform.SetPositionAndRotation(outlinePos, Quaternion.identity);
+        }
+    }
 
     public void DisplayPopUpWindow(GameObject window)
     {
@@ -69,7 +94,7 @@ public class Selectable : MonoBehaviour
                 HouseInfo.SetActive(false);
 
                 RockInfo.SetActive(true);
-                addWorkers.rock = gameObject;
+                addWorkers.ore = gameObject;
                 addWorkers.Refresh();
                 break;
             case EntityType.HOUSE:
@@ -105,5 +130,7 @@ public class Selectable : MonoBehaviour
         MultipleObjsInfo.SetActive(true);
 
         MultipleObjsInfo.GetComponent<MultipleObjsUI>().Entities = selectedItems;
+
+        window.SetActive(true);
     }
 }

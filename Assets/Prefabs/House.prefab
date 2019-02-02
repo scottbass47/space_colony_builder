@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 304224611386968028}
   - component: {fileID: 304224611386968027}
   - component: {fileID: 304224611386968026}
-  - component: {fileID: 783331956093140077}
   - component: {fileID: 942800187}
   m_Layer: 0
   m_Name: House
@@ -45,9 +44,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a989c72ac6c4f3946b3279ea7ed16b86, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Tile: {fileID: 11400000, guid: 1ac759e7fd375f14896919d47bdc84fa, type: 2}
+  m_Name:
+  m_EditorClassIdentifier:
+  Tile: {fileID: 11400000, guid: 905ae5ae1574d2b46aacfd675c133563, type: 2}
 --- !u!114 &304224611386968027
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -58,8 +57,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 46aae29467cabf741ab50577084e27d0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
   ID: 0
 --- !u!114 &304224611386968026
 MonoBehaviour:
@@ -71,8 +70,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d01c5d864abc3ff47addaf7483ee30c9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
+  outlinePrefab: {fileID: 3539182734780433595, guid: a5eb2f7d7a4c6db4f841941272d66123,
+    type: 3}
+  outline: {fileID: 0}
 --- !u!114 &783331956093140077
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -83,8 +85,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: cb875007731007c48b6e3cee3a0a5916, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
 --- !u!114 &942800187
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -95,7 +97,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 97603f0c4876556428c408c5f4528400, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Residents: 
+  m_Name:
+  m_EditorClassIdentifier:
+  Residents:
   houseColor: {r: 0, g: 0, b: 0, a: 0}
+  outlines:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 21300008, guid: 962ad191e2baf6f439392c7865a9807d, type: 3}
