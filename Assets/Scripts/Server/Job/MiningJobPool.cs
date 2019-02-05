@@ -23,14 +23,14 @@ namespace Server.Job
 
         public override string GetDescription()
         {
-            return $"Mine Rock {source.ID}";
+            return $"Mine Ore {source.ID}";
         }
 
         public override IJob GetJob(Entity worker)
         {
-            var rock = source;
-            var pos = rock.GetComponent<MapObjectComponent>().Pos;
-            var slots = rock.GetComponent<SlotComponent>();
+            var ore = source;
+            var pos = ore.GetComponent<MapObjectComponent>().Pos;
+            var slots = ore.GetComponent<SlotComponent>();
 
             // Get the next open slot and add the worker to it
             var slotNum = slots.NextSlot();
@@ -41,7 +41,7 @@ namespace Server.Job
             var slotPos = pos + new Vector3(slotLoc.x, slotLoc.y, 0);
 
             var move = new JobMove(level, slotPos);
-            var mine = new JobMine(rock, player, slotNum);
+            var mine = new JobMine(ore, player, slotNum);
 
             return new JobSequence(move, mine);
         }

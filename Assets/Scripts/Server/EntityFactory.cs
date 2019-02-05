@@ -31,21 +31,21 @@ namespace Server
             return player;
         }
 
-        public static Entity CreateRock(Vector3Int pos)
+        public static Entity CreateOre(Vector3Int pos)
         {
-            var rock = new EntityBuilder(World, Engine, Level, EntityType.ROCK)
+            var ore = new EntityBuilder(World, Engine, Level, EntityType.ORE)
                 .Net()
                 .build();
 
-            rock.AddComponent<MapObjectComponent>().Pos = pos;
-            rock.AddComponent<HealthComponent>();
-            rock.AddComponent<OreComponent>().Amount = Constants.ROCK_ORE;
-            rock.AddComponent<SlotComponent>()
+            ore.AddComponent<MapObjectComponent>().Pos = pos;
+            ore.AddComponent<HealthComponent>();
+            ore.AddComponent<OreComponent>().Amount = Constants.ORE_AMOUNT;
+            ore.AddComponent<SlotComponent>()
                 .AddSlot(new Vector2(-0.1f, 0.3f))
                 .AddSlot(new Vector2(-0.25f, 0))
                 .AddSlot(new Vector2(0, -0.25f))
                 .AddSlot(new Vector2(0.3f, -0.1f));
-            return rock;
+            return ore;
         }
 
         public static Entity CreateHouse(Vector3Int pos)
@@ -69,6 +69,7 @@ namespace Server
             colonist.AddComponent<PositionComponent>().Pos = Vector3.zero;
             colonist.AddComponent<WorkerComponent>();
             colonist.AddComponent<NotOwnedComponent>();
+            colonist.AddComponent<PathComponent>();
             colonist.AddComponent<StateComponent>().State = (int)EntityState.IDLE;
             colonist.AddComponent<StatsComponent>().Set(walkSpeed: Constants.COLONIST_SPEED, mineSpeed: Constants.COLONIST_MINE_RATE);
             colonist.AddComponent<ResidentComponent>();

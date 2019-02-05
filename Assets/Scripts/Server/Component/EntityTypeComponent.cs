@@ -14,7 +14,7 @@ namespace Server
 
         public override void OnReset()
         {
-            Type = EntityType.ROCK;
+            Type = EntityType.ORE;
         }
     }
 }

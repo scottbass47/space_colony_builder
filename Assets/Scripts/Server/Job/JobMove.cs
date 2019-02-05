@@ -43,6 +43,11 @@ namespace Server.Job
                 state.State = (int)EntityState.WALKING;
             }
 
+            if(entity.HasComponent<PathComponent>())
+            {
+                entity.GetComponent<PathComponent>().Path = path;
+            }
+
 
             AddTerminationCondition(() =>
             {

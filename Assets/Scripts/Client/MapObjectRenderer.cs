@@ -12,7 +12,7 @@ namespace Client
         private Tilemap tilemap;
         private readonly Vector3Int shift = new Vector3Int(0, 0, 1);
 
-        void Start()
+        void Awake()
         {
             gameObjects = new List<GameObject>();
             tilemap = GetComponentInChildren<Tilemap>();

@@ -21,6 +21,7 @@ namespace Utils
         static ProtoSerializer()
         {
             RuntimeTypeModel.Default[typeof(Vector3)].SetSurrogate(typeof(Vector3Surrogate));
+            RuntimeTypeModel.Default[typeof(Vector2)].SetSurrogate(typeof(Vector2Surrogate));
         }
 
         public ProtoSerializer()
@@ -78,10 +79,29 @@ namespace Utils
         {
             return new Vector3 { x = v.x, y = v.y, z = v.z };
         }
-        //  User-defined conversion from double to Digit
+
         public static implicit operator Vector3Surrogate(Vector3 v)
         {
             return new Vector3Surrogate { x = v.x, y = v.y, z = v.z };
+        }
+    }
+
+    [ProtoContract]
+    public class Vector2Surrogate
+    {
+        [ProtoMember(1)]
+        public float x { get; set; }
+        [ProtoMember(2)]
+        public float y { get; set; }
+
+        public static implicit operator Vector2(Vector2Surrogate v)
+        {
+            return new Vector2 { x = v.x, y = v.y };
+        }
+
+        public static implicit operator Vector2Surrogate(Vector2 v)
+        {
+            return new Vector2Surrogate { x = v.x, y = v.y };
         }
     }
 }

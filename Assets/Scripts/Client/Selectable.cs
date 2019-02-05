@@ -88,7 +88,7 @@ public class Selectable : MonoBehaviour
         switch (type)
         {
             //@Gross
-            case EntityType.ROCK:
+            case EntityType.ORE:
                 windowTitle.text = "ROCK ";// + eo.ID;
                 MultipleObjsInfo.SetActive(false);
                 HouseInfo.SetActive(false);

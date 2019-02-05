@@ -18,17 +18,17 @@ namespace Server.Tasks
             this.engine = engine;
         }
 
-        public Task CreateMiningTask(List<int> rockIDs, Entity player)
+        public Task CreateMiningTask(List<int> oreIDs, Entity player)
         {
-            DebugUtils.Assert(rockIDs.Count > 0);
+            DebugUtils.Assert(oreIDs.Count > 0);
 
-            Task miningTask = new Task($"Mine {rockIDs.Count} rocks");
-            foreach(int id in rockIDs)
+            Task miningTask = new Task($"Mine {oreIDs.Count} ores");
+            foreach(int id in oreIDs)
             {
-                var rock = engine.GetEntity(id);
-                DebugUtils.Assert(engine.IsValid(rock));
+                var ore = engine.GetEntity(id);
+                DebugUtils.Assert(engine.IsValid(ore));
 
-                JobPool jobPool = new MiningJobPool(player, rock, player.GetComponent<LevelComponent>().Level);
+                JobPool jobPool = new MiningJobPool(player, ore, player.GetComponent<LevelComponent>().Level);
                 miningTask.AddJob(jobPool);
             }
             return miningTask;

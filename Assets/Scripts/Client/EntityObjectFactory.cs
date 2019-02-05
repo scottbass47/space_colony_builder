@@ -24,7 +24,7 @@ namespace Client
             GameObject go = null;
             switch (type)
             {
-                case EntityType.ROCK:
+                case EntityType.ORE:
                     go = CreateRock();
                     break;
                 case EntityType.HOUSE:
@@ -49,7 +49,7 @@ namespace Client
         private GameObject CreateRock()
         {
             // Create the rock from prefab    
-            var go = Instantiate(prefabTable.GetPrefab(EntityType.ROCK));
+            var go = Instantiate(prefabTable.GetPrefab(EntityType.ORE));
 
             //Vector3 pos = spawn.Pos;
             //go.GetComponent<TilemapObject>().Pos = new Vector3Int((int)pos.x, (int)pos.y, (int)pos.z);
