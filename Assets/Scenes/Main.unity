@@ -2019,6 +2019,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: FloatyNumber
       objectReference: {fileID: 0}
+    - target: {fileID: 6194789627732392244, guid: 89dd720ad2a73a742967237e00f511a4,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6194789627732392247, guid: 89dd720ad2a73a742967237e00f511a4,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -2133,6 +2138,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_isInputParsingRequired
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6194789627886796176, guid: 89dd720ad2a73a742967237e00f511a4,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 89dd720ad2a73a742967237e00f511a4, type: 3}

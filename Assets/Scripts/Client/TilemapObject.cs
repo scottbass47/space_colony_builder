@@ -11,7 +11,7 @@ namespace Client
     {
         public TileBase Tile;
 
-        private Vector3Int pos = Vector3Int.zero;
+        public Vector3Int pos = Vector3Int.zero;
         public Vector3Int Pos
         {
             set

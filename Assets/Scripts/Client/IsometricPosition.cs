@@ -29,8 +29,19 @@ namespace Client
 
         private void Update()
         {
-            var actual = IsoConversion();
+            
+            Vector3 actual = IsoConversion();
             transform.position = actual;
+             
+            /*
+            if (actual != IsoConversion())
+            {
+                actual = IsoConversion();
+                direction = new Vector3(actual.x - transform.position.x, actual.y - transform.position.y, 1);
+            }
+
+            if (direction.magnitude > .5) 
+                transform.Translate(direction * Time.deltaTime * .1f);*/
         }
 
         public Vector3 IsoConversion()

@@ -46,9 +46,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a989c72ac6c4f3946b3279ea7ed16b86, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   Tile: {fileID: 11400000, guid: 29f4d68819f7fb1468a7343e7d311bfe, type: 2}
+  pos: {x: 0, y: 0, z: 0}
 --- !u!114 &411764687059813932
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -59,10 +60,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 46aae29467cabf741ab50577084e27d0, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   ID: 0
-  Type: 0
 --- !u!114 &8020162098220311033
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -73,13 +73,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d09d4e3c553638d4a9a8cc47c5a2e330, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   Ore: 0
   originalOre: 0
   floatyNumber: {fileID: 6194789627732392247, guid: 89dd720ad2a73a742967237e00f511a4,
     type: 3}
-  hasSlot:
+  hasSlot: 
   healthBar: {fileID: 0}
   healthBarPrefab: {fileID: 5867923049835922702, guid: 6519a29f024bf6a4981f85599d4e5fa8,
     type: 3}
@@ -100,11 +100,11 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8428974769952096574}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d01c5d864abc3ff47addaf7483ee30c9, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   tilemap: {fileID: 0}
   outlinePrefab: {fileID: 3539182734780433595, guid: a5eb2f7d7a4c6db4f841941272d66123,
     type: 3}
@@ -119,8 +119,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 258a1cca677a4b54db4918aff27ca967, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   Position: {x: 0, y: 0, z: 0}
 --- !u!114 &6683564807343420208
 MonoBehaviour:
@@ -132,5 +132,5 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: cb875007731007c48b6e3cee3a0a5916, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
