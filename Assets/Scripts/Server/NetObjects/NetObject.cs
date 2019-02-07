@@ -12,11 +12,12 @@ namespace Server.NetObjects
 {
     public class NetObject : Poolable
     {
+        private NetObjectManager nom;
         private int id;
         private bool sendToAllClients = true;
         private int clientID;
         private NetMode mode;
-        private NetObjectType netType;
+        private NetObjectType netType = NetObjectType.NOTHING;
         private EntityType entityType = EntityType.NOTHING;
         private bool hasParent;
         private int parent;
@@ -24,6 +25,7 @@ namespace Server.NetObjects
         private Func<NetUpdate> update;
         private event SyncListener OnSync;
 
+        public NetObjectManager NetObjectManager { get => nom; set => nom = value; }
         public int ID { get => id; set => id = value; }
         public int ParentID => parent;
         public bool HasParent => hasParent;
@@ -34,6 +36,7 @@ namespace Server.NetObjects
         public List<int> Children => children;
         public bool HasChildren => children.Count > 0;
         public bool Alive { get; set; }  // True if the netobject has been created but not destroyed
+        public bool Added { get; set; }  // True if the netobject is added to the NetObjectManager 
         public NetMode NetMode { get => mode; set => mode = value; }
         public int ClientID => clientID;
         public bool SendToAllClients => sendToAllClients;
@@ -41,9 +44,13 @@ namespace Server.NetObjects
 
         public delegate void SyncListener(NetObject obj);
 
+        private List<NetObject> childrenToBeAdded;
+        public List<NetObject> ChildrenToBeAdded => childrenToBeAdded;
+
         public NetObject()
         {
             children = new List<int>();
+            childrenToBeAdded = new List<NetObject>();
         }
 
         // Call this whenever changes have been made and the netobject needs to sync
@@ -51,6 +58,12 @@ namespace Server.NetObjects
         {
             DebugUtils.Assert(Alive, "Can't call sync on a NetObject that's not alive.");
             OnSync(this);
+        }
+
+        // Removes the NetObject from the NetObjectManager sending a Destroy packet to the client
+        public void Destroy()
+        {
+            nom.RemoveNetObject(id);
         }
 
         public void AddSyncListener(SyncListener listener)
@@ -77,9 +90,12 @@ namespace Server.NetObjects
             mode = NetMode.LATEST;
             netType = NetObjectType.NOTHING;
             entityType = EntityType.NOTHING;
-            parent = -1;
+            parent = 0;
+            hasParent = false;
             children.Clear();
             Alive = false;
+            childrenToBeAdded.Clear();
+            update = null;
         }
 
         public void AddChild(int id)
@@ -102,6 +118,35 @@ namespace Server.NetObjects
         {
             parent.AddChild(child.ID);
             child.SetParent(parent.id);
+        }
+
+        // This will create a new NetObject and bind it to this NetObject in a parent-child relationship.
+        // Furthermore, when this NetObject is added to the NetObjectManager, it will add all its children
+        // created through this method.
+        //
+        // IF the parent object is already added to the NetObjectManager, then this method will ALSO add
+        // the child.
+        public NetObject CreateChild(NetObjectType netObjectType = NetObjectType.NOTHING, EntityType entityType = EntityType.NOTHING)
+        {
+            var childObj = nom.CreateNetObject();
+            childObj.NetObjectType = netObjectType;
+            childObj.EntityType = entityType;
+            NetObject.BindParentChild(this, childObj);
+
+            if(Added)
+            {
+                nom.AddNetObject(childObj);
+            }
+            else
+            {
+                childrenToBeAdded.Add(childObj);
+            }
+            return childObj;
+        }
+
+        public void ClearChildrenToBeAdded()
+        {
+            childrenToBeAdded.Clear();
         }
 
         public override string ToString()

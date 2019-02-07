@@ -92,7 +92,7 @@ namespace Client
         public void RemoveMapObject(GameObject obj)
         {
             map.Remove(obj.GetComponent<TilemapObject>().Pos);
-            Ground.GetComponent<MapObjectRenderer>().RemoveMapObject(obj);     
+            if(Ground != null) Ground.GetComponent<MapObjectRenderer>().RemoveMapObject(obj);     
         }
 
         public GameObject GetMapObject(Vector3Int pos)

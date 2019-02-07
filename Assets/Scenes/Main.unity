@@ -1555,7 +1555,7 @@ GameObject:
   - component: {fileID: 1919629021}
   - component: {fileID: 1919629020}
   m_Layer: 5
-  m_Name: TaskQueue
+  m_Name: TaskQueueDisplay
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

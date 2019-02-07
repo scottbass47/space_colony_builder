@@ -42,7 +42,9 @@ namespace Shared
         public enum NetObjectType
         {
             NOTHING,
-            COMPONENT
+            COMPONENT,
+            TASK_QUEUE,
+            TASK
         }
 
         public enum EntityState

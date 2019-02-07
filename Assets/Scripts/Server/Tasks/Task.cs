@@ -1,5 +1,8 @@
 ﻿using ECS;
 using Server.Job;
+using Server.NetObjects;
+using Shared;
+using Shared.SCData;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +16,7 @@ namespace Server.Tasks
     {
         private List<JobPool> jobs;
         private string desc;
+        private NetObject net;
 
         public Task(string desc)
         {
@@ -26,11 +30,34 @@ namespace Server.Tasks
             jobPool.OnComplete += () => jobs.Remove(jobPool);
         }
 
+        public void AddToQueue(TaskQueue queue, int index)
+        {
+            var parentNetObj = queue.TaskQueueNet;
+            net = parentNetObj.CreateChild(NetObjectType.TASK);
+            net.NetMode = NetMode.IMPORTANT;
+            net.OnUpdate = () => new TaskUpdate { Text = ToString(), Order = index };
+            net.Sync();
+        }
+
+        public void RemoveFromQueue()
+        {
+            net.Destroy();
+        }
+
         public bool CanHireWorker()
         {
-            foreach(var job in jobs)
+            for(int i = 0; i < jobs.Count; i++)
             {
+                var job = jobs[i];
                 if (job.CanHireWorker()) return true; 
+
+                // If the job can't hire a worker AND it hasn't been started,
+                // then that means the job is no longer available. So we can remove it.
+                else if(job.GetStatus() == JobStatus.INCOMPLETE)
+                {
+                    jobs.RemoveAt(i);
+                    i--;
+                }
             }
             return false;
         }
@@ -49,6 +76,7 @@ namespace Server.Tasks
                     break;
                 } 
             }
+            net.Sync();
         }
 
         public bool IsComplete()

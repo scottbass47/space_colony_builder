@@ -20,6 +20,7 @@ namespace Client
             registries = new Dictionary<NetObjectType, object[]>();
         }
 
+        // Do this in Awake
         public void RegisterChild(NetObjectType type, Action<INetObject> onCreateChild, Action<INetObject, NetUpdate> onUpdateChild, Action<INetObject> onDestroyChild)
         {
             registries.Add(type, new object[] { onCreateChild, onUpdateChild, onDestroyChild });

@@ -29,6 +29,9 @@ namespace Server
 
         private Dictionary<int, Entity> players;
 
+        private float waitTime = 0f;
+        private float elapsed;
+
         // Creates a new world state with the specified tile map size
         public WorldStateManager(SCServer server, int size)
         {
@@ -96,15 +99,20 @@ namespace Server
             var ids = new List<int>();
             allOre.ForEach((ore) => ids.Add(ore.ID));
 
-            var task = taskFac.CreateMiningTask(ids, player);
             var taskQueue = player.GetComponent<TaskQueueComponent>().Tasks;
-            taskQueue.AddTask(task);
+            foreach(var id in ids)
+            {
+                var task = taskFac.CreateMiningTask(new List<int>{ id }, player);
+                taskQueue.AddTask(task);
+            }
         }
 
         // Call this every SERVER update so the version numbers get
         // incremented properly.
         public void Update(float delta)
         {
+            elapsed += delta;
+            if (elapsed < waitTime) return;
             engine.Update(delta);
         }
 
