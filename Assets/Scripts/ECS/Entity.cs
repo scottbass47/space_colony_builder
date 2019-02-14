@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Utils;
 
 namespace ECS
 {
@@ -35,11 +36,11 @@ namespace ECS
             compArr = new List<Component>();
         }
 
-        // @Todo What happens when you add a component of a type that already exists?
         public T AddComponent<T>() where T : Component
         {
             var component = Engine.CreateComponent<T>();
-            int compIndex = ComponentType.GetIndex(component.GetType()); 
+            int compIndex = ComponentType.GetIndex(component.GetType());
+            DebugUtils.Assert(!HasComponent<T>(), $"Failed to add component. Entity already has component of type {typeof(T)}.");
             components.Put(compIndex, component);
             compArr.Add(component);
             componentBits.Set(compIndex, true);
