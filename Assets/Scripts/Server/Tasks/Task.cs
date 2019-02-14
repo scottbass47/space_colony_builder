@@ -33,7 +33,7 @@ namespace Server.Tasks
         public void AddToQueue(TaskQueue queue, int index)
         {
             var parentNetObj = queue.TaskQueueNet;
-            net = parentNetObj.CreateChild(NetObjectType.TASK);
+            net = parentNetObj.CreateChild(NetObjectType.TASK, data: new TaskCreateData { Order = index });
             net.NetMode = NetMode.IMPORTANT;
             net.OnUpdate = () => new TaskUpdate { Text = ToString(), Order = index };
             net.Sync();
@@ -41,6 +41,7 @@ namespace Server.Tasks
 
         public void RemoveFromQueue()
         {
+            net.DestroyData = new TaskDestroyData { DummyText = "shiiiit dawg" };
             net.Destroy();
         }
 

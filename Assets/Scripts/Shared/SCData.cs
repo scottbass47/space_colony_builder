@@ -53,5 +53,6 @@ namespace Shared
             MINING = 1,
             WALKING = 2
         }
+
     }
 }

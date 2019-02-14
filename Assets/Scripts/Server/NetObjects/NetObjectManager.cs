@@ -112,7 +112,15 @@ namespace Server.NetObjects
                 //Debug.Log($"[Server] - Adding {obj.TypeName} net object {obj.ID} has parent {obj.HasParent}");
 
                 DebugUtils.Assert(obj.NetObjectType != NetObjectType.NOTHING || obj.EntityType != EntityType.NOTHING, "Can't have NOTHING for both fields EntityType and NetObjectType");
-                var packet = new NetCreatePacket { NetID = obj.ID, NetObjectType = obj.NetObjectType, EntityType = obj.EntityType, ParentID = obj.HasParent ? obj.ParentID : -1 };
+
+                var packet = new NetCreatePacket {
+                    NetID = obj.ID,
+                    NetObjectType = obj.NetObjectType,
+                    EntityType = obj.EntityType,
+                    ParentID = obj.HasParent ? obj.ParentID : -1,
+                    CreateData = obj.CreateData
+                };
+
                 if(obj.SendToAllClients)
                 {
                     server.SendToAllClients(packet);
@@ -147,7 +155,7 @@ namespace Server.NetObjects
                 Get(obj.ParentID).RemoveChild(obj.ID);
             }
 
-            var packet = new NetDestroyPacket { NetID = obj.ID };
+            var packet = new NetDestroyPacket { NetID = obj.ID, DestroyData = obj.DestroyData };
             if(obj.SendToAllClients)
             {
                 server.SendToAllClients(packet);

@@ -52,7 +52,7 @@ namespace Client
         {
             Debug.Log($"[Client] - NetObject {obj.TypeName} created with id {obj.NetID} and parent id {obj.ParentID}");
             DebugUtils.Assert(!NetObjectExists(obj.NetID), $"Net object with id {obj.NetID} already exists on the client.");
-            var netObj = new INetObject(this, obj.NetObjectType, obj.EntityType, obj.NetID);
+            var netObj = new INetObject(this, obj.NetObjectType, obj.EntityType, obj.NetID, obj.CreateData);
 
             netObjects.Add(obj.NetID, netObj);
 
@@ -180,6 +180,7 @@ namespace Client
             DebugUtils.Assert(NetObjectExists(obj.NetID), $"Net object with id {obj.NetID} doesn't exist on the client.");
 
             var netObj = netObjects[obj.NetID];
+            netObj.DestroyData = obj.DestroyData;
             // We need to recursively destroy objects and clean up references
             RecursivelyDestroyNetObject(netObj);
         }

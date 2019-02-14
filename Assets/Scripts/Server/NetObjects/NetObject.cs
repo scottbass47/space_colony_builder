@@ -25,6 +25,10 @@ namespace Server.NetObjects
         private Func<NetUpdate> update;
         private event SyncListener OnSync;
 
+        // Create / Destroy data
+        private CreateData createData;
+        private DestroyData destroyData;
+
         public NetObjectManager NetObjectManager { get => nom; set => nom = value; }
         public int ID { get => id; set => id = value; }
         public int ParentID => parent;
@@ -46,6 +50,11 @@ namespace Server.NetObjects
 
         private List<NetObject> childrenToBeAdded;
         public List<NetObject> ChildrenToBeAdded => childrenToBeAdded;
+
+        public bool HasCreateData => createData != null;
+        public CreateData CreateData { get => createData; set => createData = value; } 
+        public bool HasDestroyData => destroyData != null;
+        public DestroyData DestroyData { get => destroyData; set => destroyData = value; } 
 
         public NetObject()
         {
@@ -85,7 +94,7 @@ namespace Server.NetObjects
         public void Reset()
         {
             id = -1;
-            sendToAllClients = false;
+            sendToAllClients = true;
             clientID = -1;
             mode = NetMode.LATEST;
             netType = NetObjectType.NOTHING;
@@ -96,6 +105,7 @@ namespace Server.NetObjects
             Alive = false;
             childrenToBeAdded.Clear();
             update = null;
+            createData = null;
         }
 
         public void AddChild(int id)
@@ -126,11 +136,12 @@ namespace Server.NetObjects
         //
         // IF the parent object is already added to the NetObjectManager, then this method will ALSO add
         // the child.
-        public NetObject CreateChild(NetObjectType netObjectType = NetObjectType.NOTHING, EntityType entityType = EntityType.NOTHING)
+        public NetObject CreateChild(NetObjectType netObjectType = NetObjectType.NOTHING, EntityType entityType = EntityType.NOTHING, CreateData data = null)
         {
             var childObj = nom.CreateNetObject();
             childObj.NetObjectType = netObjectType;
             childObj.EntityType = entityType;
+            childObj.CreateData = data;
             NetObject.BindParentChild(this, childObj);
 
             if(Added)

@@ -52,13 +52,6 @@ namespace Shared
             public SCTileData[] TileData { get; set; }
         }
 
-        //[ProtoContract]
-        //public class UpdatePacket
-        //{
-        //    [ProtoMember(1)]
-        //    public int ClientID { get; set; }
-        //}
-
         [ProtoContract]
         public class NetUpdatePacket
         {
@@ -84,6 +77,9 @@ namespace Shared
             [ProtoMember(4)]
             public int ParentID { get; set; }
 
+            [ProtoMember(5)]
+            public CreateData CreateData { get; set; }
+
             public string TypeName => EntityType == EntityType.NOTHING ? $"{NetObjectType}" : $"{EntityType}";
         }
 
@@ -92,6 +88,8 @@ namespace Shared
         {
             [ProtoMember(1)]
             public int NetID{ get; set; }
+            [ProtoMember(2)]
+            public DestroyData DestroyData { get; set; }
         }
 
         [ProtoContract]

@@ -63,6 +63,8 @@ namespace Client
         private Action<INetObject> onChildCreate; 
         private Action<INetObject, NetUpdate> onChildUpdate;
         private Action<INetObject> onChildDestroy;
+        private CreateData createData;
+        private DestroyData destroyData;
 
         public Action<INetObject> OnChildCreate => onChildCreate;
         public Action<INetObject, NetUpdate> OnChildUpdate => onChildUpdate;
@@ -80,13 +82,16 @@ namespace Client
         public GameObject GameObject { get => gameObject; set => gameObject = value; }
         public bool IsGameObject { get => isGameObject; set => isGameObject = value; }
         public HashSet<int> Children => children;
+        public CreateData CreateData => createData;
+        public DestroyData DestroyData { get => destroyData; set => destroyData = value; } 
 
-        public INetObject(NetObjectManager nom, NetObjectType netObjectType, EntityType entityType, int netID)
+        public INetObject(NetObjectManager nom, NetObjectType netObjectType, EntityType entityType, int netID, CreateData data)
         {
             this.nom = nom;
             this.netObjectType = netObjectType;
             this.entityType = entityType;
             this.netID = netID;
+            createData = data;
             registeredChildren = new HashSet<NetObjectType>();
             updateTable = new EventTable<NetUpdate>();
             children = new HashSet<int>();

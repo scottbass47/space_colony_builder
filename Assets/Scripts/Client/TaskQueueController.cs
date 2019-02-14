@@ -19,11 +19,12 @@ namespace Client
         {
             taskDict = new Dictionary<int, TaskObj>();
             GetComponent<NetObject>().RegisterChild(NetObjectType.TASK, OnTaskCreate, OnTaskUpdate, OnTaskDestroy);
+            taskQueueUI = GameObject.Find("TaskQueueDisplay").GetComponent<TextMeshProUGUI>();
         }
 
         private void OnTaskCreate(INetObject obj)
         {
-            taskDict.Add(obj.NetID, new TaskObj());
+            taskDict.Add(obj.NetID, new TaskObj { Order = (obj.CreateData as TaskCreateData).Order });
             UpdateQueueText();
         }
 
@@ -43,7 +44,7 @@ namespace Client
             builder.Append("Queue:\n======\n");
             foreach(var obj in taskObjs)
             {
-                builder.Append(obj.Desc);
+                builder.Append(obj.Order + " " + obj.Desc);
                 builder.Append('\n');
             }
             taskQueueUI.SetText(builder.ToString().ToUpper());
@@ -51,14 +52,10 @@ namespace Client
 
         private void OnTaskDestroy(INetObject obj)
         {
+            //var data = obj.DestroyData as TaskDestroyData;
+            //Debug.Log($"{taskDict[obj.NetID].Order} - {data.DummyText}");
             taskDict.Remove(obj.NetID);
             UpdateQueueText();
-        }
-
-        // Start is called before the first frame update
-        void Start()
-        {
-            taskQueueUI = GameObject.Find("TaskQueueDisplay").GetComponent<TextMeshProUGUI>();
         }
 
         private class TaskObj
