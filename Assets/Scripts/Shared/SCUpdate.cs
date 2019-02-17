@@ -8,6 +8,34 @@ using UnityEngine;
 
 namespace Shared
 {
+
+    // Base class for sending data in the NetCreatePacket
+    [ProtoContract]
+    [ProtoInclude(10, typeof(TaskCreateData))]
+    public class CreateData
+    {
+    }
+
+    [ProtoContract]
+    public class TaskCreateData : CreateData
+    {
+        [ProtoMember(1)] 
+        public int Order { get; set; }
+    }
+
+    [ProtoContract]
+    [ProtoInclude(10, typeof(TaskDestroyData))]
+    public class DestroyData
+    {
+    }
+
+    [ProtoContract]
+    public class TaskDestroyData : DestroyData
+    {
+        [ProtoMember(1)] 
+        public string DummyText { get; set; }
+    }
+
     [ProtoContract]
     [ProtoInclude(10, typeof(HealthUpdate))]
     [ProtoInclude(11, typeof(PositionUpdate))]
@@ -16,6 +44,7 @@ namespace Shared
     [ProtoInclude(14, typeof(OreUpdate))]
     [ProtoInclude(15, typeof(HouseUpdate))]
     [ProtoInclude(16, typeof(TaskQueueUpdate))]
+    [ProtoInclude(17, typeof(TaskUpdate))]
     public class NetUpdate
     {
     }
@@ -67,5 +96,14 @@ namespace Shared
     {
         [ProtoMember(1)]
         public string QueueText { get; set; } 
+    }
+
+    [ProtoContract]
+    public class TaskUpdate : NetUpdate
+    {
+        [ProtoMember(1)]
+        public string Text { get; set; }
+        [ProtoMember(2)]
+        public int Order { get; set; }
     }
 }

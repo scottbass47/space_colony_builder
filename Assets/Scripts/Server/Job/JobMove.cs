@@ -123,8 +123,13 @@ namespace Server.Job
                     return i;
                 }
             }
-            DebugUtils.Assert(false, $"Position {pos} not on path {path}.");
-            return -1;
+
+            // Unclear how to handle this
+            path = level.PathFinder.GetPath(pos, worldPosToGrid(dest));
+            return 0;
+
+            //DebugUtils.Assert(false, $"Position {pos} not on path {path}.");
+            //return -1;
         }
 
         public override void SetEntity(Entity entity)

@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Server.NetObjects;
+using Shared;
+using Shared.SCData;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,18 +13,29 @@ namespace Server.Tasks
     public class TaskQueue
     {
         private List<Task> queue;
+        private NetObject net;
 
         public int Count => queue.Count;
         public bool Empty => Count == 0;
+        public NetObject TaskQueueNet => net;
 
-        public TaskQueue()
+        public TaskQueue(NetObject parentNetObj)
         {
             queue = new List<Task>();
+            net = parentNetObj.CreateChild(netObjectType: NetObjectType.TASK_QUEUE);
+            net.OnUpdate = () => new TaskQueueUpdate { QueueText = ToString() };
+            net.NetMode = NetMode.IMPORTANT;
+        }
+
+        public void ForceUpdate()
+        {
+            //net.Sync();
         }
 
         public void AddTask(Task task)
         {
             queue.Add(task);
+            task.AddToQueue(this, queue.Count - 1);
         }
 
         public Task Peek()
@@ -34,6 +48,7 @@ namespace Server.Tasks
         {
             DebugUtils.Assert(!Empty, "Can't remove from an empty queue.");
             Task t = queue[0];
+            t.RemoveFromQueue();
             queue.RemoveAt(0);
             return t;
         }

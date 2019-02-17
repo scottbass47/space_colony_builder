@@ -79,26 +79,56 @@ namespace Server.NetObjects
             obj.ID = nextID++;
             obj.Alive = true;
             obj.AddSyncListener(OnObjectSync);
+            obj.NetObjectManager = this;
             return obj;
         }
 
         // @Note: Right now parent-child relationships have to be established BEFORE adding
         // the child to the NetObjectManager so when the packet is sent we can set the ParentID.
-        public void AddNetObject(NetObject obj)
+        public void AddNetObject(NetObject netObj)
         {
-            DebugUtils.Assert(!netObjects.ContainsKey(obj.ID), $"NetObject with ID {obj.ID} already exists!");
-            netObjects.Add(obj.ID, obj);
-            //Debug.Log($"[Server] - Adding {obj.TypeName} net object {obj.ID} has parent {obj.HasParent}");
+            // By using a queue we can traverse the hierarchy in a BFS order. This guarantees that
+            // parents are created before children.
+            var queue = new Queue<NetObject>();
+            queue.Enqueue(netObj);
 
-            DebugUtils.Assert(obj.NetObjectType != NetObjectType.NOTHING || obj.EntityType != EntityType.NOTHING, "Can't have NOTHING for both fields EntityType and NetObjectType");
-            var packet = new NetCreatePacket { NetID = obj.ID, NetObjectType = obj.NetObjectType, EntityType = obj.EntityType, ParentID = obj.HasParent ? obj.ParentID : -1 };
-            if(obj.SendToAllClients)
+            while(queue.Count > 0)
             {
-                server.SendToAllClients(packet);
-            }
-            else
-            {
-                server.SendToSingleClient(packet, obj.ClientID);
+                var obj = queue.Dequeue();
+
+                foreach(var childToAdd in obj.ChildrenToBeAdded)
+                {
+                    queue.Enqueue(childToAdd);
+                }
+                obj.ClearChildrenToBeAdded();
+
+                DebugUtils.Assert(!netObjects.ContainsKey(obj.ID), $"NetObject with ID {obj.ID} already exists!");
+
+                // Order matters when creating net objects. Children can't be added before their parents.
+                DebugUtils.Assert(!obj.HasParent || netObjects.ContainsKey(obj.ParentID), $"NetObject[{obj.ID}]'s parent with id {obj.ParentID} hasn't been added yet! !");
+
+                netObjects.Add(obj.ID, obj);
+                obj.Added = true;
+                //Debug.Log($"[Server] - Adding {obj.TypeName} net object {obj.ID} has parent {obj.HasParent}");
+
+                DebugUtils.Assert(obj.NetObjectType != NetObjectType.NOTHING || obj.EntityType != EntityType.NOTHING, "Can't have NOTHING for both fields EntityType and NetObjectType");
+
+                var packet = new NetCreatePacket {
+                    NetID = obj.ID,
+                    NetObjectType = obj.NetObjectType,
+                    EntityType = obj.EntityType,
+                    ParentID = obj.HasParent ? obj.ParentID : -1,
+                    CreateData = obj.CreateData
+                };
+
+                if(obj.SendToAllClients)
+                {
+                    server.SendToAllClients(packet);
+                }
+                else
+                {
+                    server.SendToSingleClient(packet, obj.ClientID);
+                }
             }
         }
 
@@ -125,7 +155,7 @@ namespace Server.NetObjects
                 Get(obj.ParentID).RemoveChild(obj.ID);
             }
 
-            var packet = new NetDestroyPacket { NetID = obj.ID };
+            var packet = new NetDestroyPacket { NetID = obj.ID, DestroyData = obj.DestroyData };
             if(obj.SendToAllClients)
             {
                 server.SendToAllClients(packet);

@@ -14,28 +14,20 @@ namespace Server
     {
         public TaskQueue Tasks => taskQueue;
         private TaskQueue taskQueue;
-        public Entity Player { get; set; }
-
-        private bool qc;
-        private bool queueChanged
+        private Entity player;
+        public Entity Player
         {
-            get => qc;
+            get => player;
             set
             {
-                qc = value;
-                net.Sync();
+                player = value;
+                net.SetSingleClient(player.GetComponent<ClientComponent>().ID);
             }
-        }
-
-        public TaskQueueComponent()
-        {
-            taskQueue = new TaskQueue();
-        }
+        } 
 
         protected override void OnInit(NetObject netObj)
         {
-            netObj.NetMode = NetMode.IMPORTANT;
-            netObj.OnUpdate = () => new TaskQueueUpdate { QueueText = taskQueue.ToString() };
+            taskQueue = new TaskQueue(netObj);
         }
 
         //public void AddTask(Task task)
@@ -46,7 +38,7 @@ namespace Server
 
         public void ForceUpdate()
         {
-            queueChanged= true;
+            taskQueue.ForceUpdate();
         }
     }
 }

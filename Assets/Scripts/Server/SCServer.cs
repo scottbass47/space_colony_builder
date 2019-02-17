@@ -28,6 +28,10 @@ namespace Server
         private NetPacketProcessor processor;
         private WorldStateManager stateManager;
 
+        // Update Counter
+        private float totalElapsed;
+        private int ups;
+
         void Start()
         {
             writer = new NetDataWriter();
@@ -64,13 +68,22 @@ namespace Server
             }
 
             elapsed += Time.deltaTime;
+            totalElapsed += Time.deltaTime;
 
-            if (elapsed > SCNetworkManager.UPS_INV)
+            while (elapsed > SCNetworkManager.UPS_INV)
             {
-                // @Todo Fix this
-                stateManager.Update(elapsed);
+                stateManager.Update(SCNetworkManager.UPS_INV);
                 elapsed -= SCNetworkManager.UPS_INV;
+                ups++;
             }
+            
+            if(totalElapsed >= 1)
+            {
+                //Debug.Log($"UPS: {ups}");
+                totalElapsed -= 1;
+                ups = 0;
+            }
+
         }
 
         private void OnDestroy()

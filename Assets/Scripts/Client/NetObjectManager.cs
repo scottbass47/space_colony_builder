@@ -15,9 +15,13 @@ namespace Client
         private Dictionary<int, INetObject> netObjects;
         private Dictionary<NetObjectType, Func<GameObject>> netObjectCreateDict;
 
+        public GameObject taskQueuePrefab;
+
         private void Awake()
         {
             netObjectCreateDict = new Dictionary<NetObjectType, Func<GameObject>>();
+
+            RegisterNetObjectCreator(NetObjectType.TASK_QUEUE, () => Instantiate(taskQueuePrefab));
         }
 
         public void RegisterNetObjectCreator(NetObjectType type, Func<GameObject> creator)
@@ -48,7 +52,7 @@ namespace Client
         {
             Debug.Log($"[Client] - NetObject {obj.TypeName} created with id {obj.NetID} and parent id {obj.ParentID}");
             DebugUtils.Assert(!NetObjectExists(obj.NetID), $"Net object with id {obj.NetID} already exists on the client.");
-            var netObj = new INetObject(this, obj.NetObjectType, obj.EntityType, obj.NetID);
+            var netObj = new INetObject(this, obj.NetObjectType, obj.EntityType, obj.NetID, obj.CreateData);
 
             netObjects.Add(obj.NetID, netObj);
 
@@ -132,20 +136,22 @@ namespace Client
         private GameObject CreateGameObject(INetObject obj)
         {
             GameObject go = null;
-            if(obj.IsGameObject)
+            if(netObjectCreateDict.ContainsKey(obj.NetObjectType))
             {
-                go = Game.Instance.EntityObjectFactory.CreateEntityObject(obj.EntityType);
-                DebugUtils.Assert(go.GetComponent<NetObject>() != null, 
-                    $"Game object of type {obj.EntityType} missing NetObject component. Did you forget to register a child?");
+                go = netObjectCreateDict[obj.NetObjectType]();
             }
             else
             {
-                DebugUtils.Assert(netObjectCreateDict.ContainsKey(obj.NetObjectType), $"No registered creator for net object of type {obj.NetObjectType}.");
-                go = netObjectCreateDict[obj.NetObjectType]();
-
-                DebugUtils.Assert(go.GetComponent<NetObject>() != null, 
-                    $"Game object of type {obj.NetObjectType} missing NetObject component. Did you forget to register a child?");
+                // This basically says "if the obj doesn't have a creator registered and also doesn't have an assigned
+                // entity type, then that's no good"
+                if(obj.EntityType == EntityType.NOTHING)
+                {
+                    DebugUtils.Assert(false, $"No registered creator for net object of type {obj.NetObjectType}.");
+                }
+                go = Game.Instance.EntityObjectFactory.CreateEntityObject(obj.EntityType);
             }
+            DebugUtils.Assert(go.GetComponent<NetObject>() != null, 
+                $"Game object of type {obj.NetObjectType} missing NetObject component. Did you forget to register a child?");
 
             go.GetComponent<NetObject>().SetNetObject(obj);
 
@@ -174,6 +180,7 @@ namespace Client
             DebugUtils.Assert(NetObjectExists(obj.NetID), $"Net object with id {obj.NetID} doesn't exist on the client.");
 
             var netObj = netObjects[obj.NetID];
+            netObj.DestroyData = obj.DestroyData;
             // We need to recursively destroy objects and clean up references
             RecursivelyDestroyNetObject(netObj);
         }
