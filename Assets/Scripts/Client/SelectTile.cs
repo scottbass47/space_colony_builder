@@ -17,10 +17,13 @@ namespace Client
 
         private ArrayList selectedItems;
         private ArrayList selectedTilesPos;
+        private Color selectedItemColor;
 
         private Vector3Int startPoint;
         private Vector3Int endPoint;
-        private bool dragging;
+        private bool posSelected;
+
+
 
         public GameObject window;
 
@@ -28,6 +31,7 @@ namespace Client
         {
             selectedItems = new ArrayList();
             selectedTilesPos = new ArrayList();
+            selectedItemColor = new Color(0, .50f, 1);
 
             popUpWindow = Instantiate(popUpWindowPrefab).gameObject;
             popUpWindow.SetActive(false);
@@ -64,6 +68,11 @@ namespace Client
                     Selectable selectable = null;
                     if (obj != null) selectable = obj.GetComponent<Selectable>();
 
+                    //Set tile color
+                    //Vector3Int pos = new Vector3Int(mousePos.x, mousePos.y, 0);
+                    //selectedTilesPos.Add(pos);
+                    //tilemap.SetColor(pos, selectedItemColor);
+
                     //Ctrl click multiple object selection
                     if (Input.GetKey(KeyCode.LeftControl) && obj != null && !hit && selectedItems.Count >= 1 && selectable != null)
                     {
@@ -95,7 +104,9 @@ namespace Client
                             selectable.enabled = true;
                             selectedItems.Add(obj);
                             obj.transform.GetChild(0).gameObject.SetActive(true);
+                            
                         }
+                        
                     }
                     //Clicking to cancel current selection
                     else if (!hit && !Input.GetKey(KeyCode.LeftControl))
@@ -115,11 +126,11 @@ namespace Client
 
                     startPoint = tilePos;
                     endPoint = tilePos;
-                    dragging = true;
+                    posSelected = true;
                 }
 
                 //Rect drag multiple object selection
-                else if (Input.GetMouseButton(0) && dragging)
+                else if (Input.GetMouseButton(0) && posSelected)
                 {
                     var old = Camera.main.transform.position;
                     Camera.main.transform.position = old + new Vector3(0, 0, 11);
@@ -151,7 +162,7 @@ namespace Client
                                 pos.x += startPoint.x;
                                 pos.y += startPoint.y;
                                 GameObject obj = Game.Instance.World.GetMapObject(pos);
-                                tilemap.SetColor(pos, new Color(0, .50f, 1));
+                                tilemap.SetColor(pos, selectedItemColor);
                                 Selectable selectable = null;
                                 
                                 if (obj != null) selectable = obj.GetComponent<Selectable>();
@@ -172,9 +183,8 @@ namespace Client
                 }
                 else
                 {
-                    dragging = false;
+                    posSelected = false;
                     foreach (Vector3Int oldPos in selectedTilesPos) tilemap.SetColor(oldPos, new Color(1, 1, 1));
-
                 }
             }
         }
