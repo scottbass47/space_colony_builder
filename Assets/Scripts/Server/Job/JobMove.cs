@@ -112,7 +112,7 @@ namespace Server.Job
 
             dir.Normalize();
 
-            var vel = dir * speed * delta;
+            var vel = dir * speed;
             pos.Vel = vel;
             pos.Pos += vel;
             //Debug.Log($"Moving colonist. New pos: {pos.Pos}");
