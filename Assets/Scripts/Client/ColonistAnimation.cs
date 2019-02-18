@@ -13,6 +13,7 @@ public class ColonistAnimation : MonoBehaviour
 
     [HideInInspector]
     public Vector2[] Path;
+    private int nodeNum;
 
     [HideInInspector]
     public int State;
@@ -37,6 +38,7 @@ public class ColonistAnimation : MonoBehaviour
         eo.AddUpdateListener<PathUpdate>((path) =>
         {
             Path = path.Path;
+            nodeNum = 0;
         });
         eo.AddUpdateListener<StateUpdate>((state) =>
         {
@@ -48,6 +50,7 @@ public class ColonistAnimation : MonoBehaviour
     {
         if (tilemap == null) tilemap = FindObjectOfType<Tilemap>();
         Vector3 actualPos = isoPos.IsoConversion();
+
 
         if (State == (int)EntityState.WALKING)
         {
@@ -87,5 +90,40 @@ public class ColonistAnimation : MonoBehaviour
                 FacingRight = false;
             }
         }
+        
+
+        Vector3 dir = Vector3.zero;
+         
+         if (nodeNum == 0)
+         {
+             transform.position = actualPos;
+             nodeNum++;
+         }
+         else if(nodeNum == Path.Length - 1)
+         {
+            if ((actualPos - transform.position).magnitude > .25f)
+                dir = actualPos - transform.position;
+            else
+                transform.position = actualPos;
+         }
+         else
+         {       
+             Debug.Log("Node " + nodeNum + ": " + Path[nodeNum]);
+             var curNode = transform.position;
+             var nextNode = isoPos.PathIsoConversion(Path[nodeNum]);
+             Debug.Log("Current: " + curNode + " | Next: " + nextNode + " | Actual: " + actualPos);
+
+
+             dir = new Vector3(nextNode.x - curNode.x, nextNode.y - curNode.y, 1);
+             if (tilemap.WorldToCell(actualPos) == new Vector3Int((int)Path[nodeNum].x, (int)Path[nodeNum].y, 1))
+             {
+                 nodeNum++;
+             }
+         }
+
+        transform.Translate(dir * (Constants.COLONIST_SPEED)* Time.deltaTime);
+
+
+
     }
 }

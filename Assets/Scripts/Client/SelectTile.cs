@@ -132,54 +132,59 @@ namespace Client
                 //Rect drag multiple object selection
                 else if (Input.GetMouseButton(0) && posSelected)
                 {
-                    var old = Camera.main.transform.position;
-                    Camera.main.transform.position = old + new Vector3(0, 0, 11);
+                    //Test for ui hit
+                    bool hit = UIRaycastCheck.CheckUIHit();
 
-                    Vector3Int mousePos = tilemap.WorldToCell((Camera.main.ScreenToWorldPoint(Input.mousePosition)));
-                    Vector3Int tilePos = new Vector3Int(mousePos.x, mousePos.y, 1);
-
-                    Camera.main.transform.position = old;
-
-                    if (endPoint != tilePos)
+                    if (!hit)
                     {
-                        //Reset selection to adjust for new selected rectangle
-                        foreach (GameObject item in selectedItems)
-                            if (item != null)
-                            {
-                                item.GetComponent<Selectable>().enabled = false;
-                                item.transform.GetChild(0).gameObject.SetActive(false);                              
-                            }
-                        selectedItems.Clear();
-                        foreach (Vector3Int oldPos in selectedTilesPos) tilemap.SetColor(oldPos, new Color(1, 1, 1));
+                        var old = Camera.main.transform.position;
+                        Camera.main.transform.position = old + new Vector3(0, 0, 11);
 
-                        //Iterate through each selected tile and color the tile/select any objects in rectangle
-                        endPoint = tilePos;
-                        endPoint = endPoint - startPoint;
-                        for(int x = 0; x <= Math.Abs(endPoint.x); x++)                      
-                            for (int y = 0; y <= Math.Abs(endPoint.y); y++)
-                            {
-                                var pos = new Vector3Int(x*Math.Sign(endPoint.x), y*Math.Sign(endPoint.y), 0);
-                                pos.x += startPoint.x;
-                                pos.y += startPoint.y;
-                                GameObject obj = Game.Instance.World.GetMapObject(pos);
-                                tilemap.SetColor(pos, selectedItemColor);
-                                Selectable selectable = null;
-                                
-                                if (obj != null) selectable = obj.GetComponent<Selectable>();
-                                if (obj != null && selectable != null)
+                        Vector3Int mousePos = tilemap.WorldToCell((Camera.main.ScreenToWorldPoint(Input.mousePosition)));
+                        Vector3Int tilePos = new Vector3Int(mousePos.x, mousePos.y, 1);
+
+                        Camera.main.transform.position = old;
+
+                        if (endPoint != tilePos)
+                        {
+                            //Reset selection to adjust for new selected rectangle
+                            foreach (GameObject item in selectedItems)
+                                if (item != null)
                                 {
-                                    if (!selectedItems.Contains(obj))
-                                    {
-                                        selectable.enabled = true;
-                                        selectedItems.Add(obj);
-                                        obj.transform.GetChild(0).gameObject.SetActive(true);
-                                    }
+                                    item.GetComponent<Selectable>().enabled = false;
+                                    item.transform.GetChild(0).gameObject.SetActive(false);
                                 }
-                                selectedTilesPos.Add(pos);
-                            }
-                        if(selectedItems.Count >= 1) Selectable.DisplayWindow(window, selectedItems); 
-                    }
+                            selectedItems.Clear();
+                            foreach (Vector3Int oldPos in selectedTilesPos) tilemap.SetColor(oldPos, new Color(1, 1, 1));
 
+                            //Iterate through each selected tile and color the tile/select any objects in rectangle
+                            endPoint = tilePos;
+                            endPoint = endPoint - startPoint;
+                            for (int x = 0; x <= Math.Abs(endPoint.x); x++)
+                                for (int y = 0; y <= Math.Abs(endPoint.y); y++)
+                                {
+                                    var pos = new Vector3Int(x * Math.Sign(endPoint.x), y * Math.Sign(endPoint.y), 0);
+                                    pos.x += startPoint.x;
+                                    pos.y += startPoint.y;
+                                    GameObject obj = Game.Instance.World.GetMapObject(pos);
+                                    tilemap.SetColor(pos, selectedItemColor);
+                                    Selectable selectable = null;
+
+                                    if (obj != null) selectable = obj.GetComponent<Selectable>();
+                                    if (obj != null && selectable != null)
+                                    {
+                                        if (!selectedItems.Contains(obj))
+                                        {
+                                            selectable.enabled = true;
+                                            selectedItems.Add(obj);
+                                            obj.transform.GetChild(0).gameObject.SetActive(true);
+                                        }
+                                    }
+                                    selectedTilesPos.Add(pos);
+                                }
+                            if (selectedItems.Count >= 1) Selectable.DisplayWindow(window, selectedItems);
+                        }
+                    }
                 }
                 else
                 {

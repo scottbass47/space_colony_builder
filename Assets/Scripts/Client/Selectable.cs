@@ -25,26 +25,16 @@ public class Selectable : MonoBehaviour
     public Transform outlinePrefab;
     [HideInInspector]
     public GameObject outline;
-    private bool outlineSetup;
 
     private void Awake()
     {
         outline = Instantiate(outlinePrefab, transform).gameObject;
         outline.SetActive(false);
-        outlineSetup = false;
     }
 
     private void Update()
     {
         if (tilemap == null) tilemap = FindObjectOfType<Tilemap>();
-        if (!outlineSetup && tilemap != null)
-        {
-            outlineSetup = true;      
-            var to = GetComponent<TilemapObject>();
-            var outlinePos = tilemap.CellToWorld(new Vector3Int(to.Pos.x, to.Pos.y, 1));
-            outlinePos.y += .25f;
-            outline.transform.SetPositionAndRotation(outlinePos, Quaternion.identity);
-        }
     }
 
     public void DisplayPopUpWindow(GameObject window)

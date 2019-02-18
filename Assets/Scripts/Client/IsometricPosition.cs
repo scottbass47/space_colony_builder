@@ -17,6 +17,8 @@ namespace Client
         [HideInInspector]
         public Vector3 Position;
 
+        private Tilemap tilemap;
+
         private void Start()
         {
             var eo = GetComponent<EntityObject>();
@@ -29,9 +31,9 @@ namespace Client
 
         private void Update()
         {
-            
-            Vector3 actual = IsoConversion();
-            transform.position = actual;
+            if (tilemap == null) tilemap = FindObjectOfType<Tilemap>();
+           // Vector3 actual = IsoConversion();
+           // transform.position = actual;
              
             /*
             if (actual != IsoConversion())
@@ -51,6 +53,13 @@ namespace Client
             actual.y = (Position.x + Position.y) * 0.25f + Position.z * 0.5f;
             actual.z = Position.z;
             return actual;
+        }
+
+        public Vector3 PathIsoConversion(Vector2 pos)
+        {
+            Vector3 worldPos = tilemap.CellToWorld(new Vector3Int((int)pos.x, (int)pos.y, 1));
+
+            return worldPos;
         }
     }
 }
