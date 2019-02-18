@@ -16,7 +16,7 @@ namespace Shared
             public static readonly int MAX_WORKERS_PER_PLAYER = 16;
             public static readonly int WORLD_SIZE = 15;
             public static readonly int ORE_SPAWN_CHANCE = 10;
-            public static readonly int NUM_INITIAL_COLONISTS = 5;
+            public static readonly int NUM_INITIAL_COLONISTS = 1;
         }
 
         // @Cleanup TileAssets and their corresponding IDs need a stronger connection
