@@ -25,10 +25,22 @@ namespace Server
             }
         }
 
+        private Vector3 vel; 
+        public Vector3 Vel
+        {
+            get => vel;
+            set
+            {
+                vel = value;
+                net.Sync();
+            }
+        }
+
         protected override void OnInit(NetObject netObj)
         {
             Pos = Vector3.zero;
-            netObj.OnUpdate = () => new PositionUpdate { Pos = pos };
+            Vel = Vector3.zero;
+            netObj.OnUpdate = () => new PositionUpdate { Pos = pos, Vel = vel };
         }
     }
 }
