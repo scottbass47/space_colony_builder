@@ -61,6 +61,8 @@ namespace Shared
     {
         [ProtoMember(1)]
         public Vector3 Pos { get; set; }
+        [ProtoMember(2)]
+        public Vector3 Vel { get; set; }
     }
 
     [ProtoContract]

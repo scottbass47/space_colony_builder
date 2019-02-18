@@ -109,7 +109,12 @@ namespace Server.Job
         {
             var speed = entity.GetComponent<StatsComponent>().WalkSpeed;
             var pos = entity.GetComponent<PositionComponent>();
-            pos.Pos += dir * speed * delta;
+
+            dir.Normalize();
+
+            var vel = dir * speed * delta;
+            pos.Vel = vel;
+            pos.Pos += vel;
             //Debug.Log($"Moving colonist. New pos: {pos.Pos}");
         }
 
