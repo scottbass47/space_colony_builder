@@ -14,52 +14,47 @@ namespace Client
     [RequireComponent(typeof(EntityObject))]
     public class IsometricPosition : MonoBehaviour
     {
-        [HideInInspector]
-        public Vector3 Position;
+        private Vector3 position;
+        public Vector3 Position => position; 
 
         private Tilemap tilemap;
 
-        private void Start()
-        {
-            var eo = GetComponent<EntityObject>();
-            eo.AddUpdateListener<PositionUpdate>((position) =>
-            {
-                Position = position.Pos;
-                Position.z = 1;
-            });
-        }
+        private readonly float TILE_WIDTH_HALF = 0.5f;
+        private readonly float TILE_HEIGHT_HALF = 0.25f;
 
         private void Update()
         {
             if (tilemap == null) tilemap = FindObjectOfType<Tilemap>();
-           // Vector3 actual = IsoConversion();
-           // transform.position = actual;
-             
-            /*
-            if (actual != IsoConversion())
-            {
-                actual = IsoConversion();
-                direction = new Vector3(actual.x - transform.position.x, actual.y - transform.position.y, 1);
-            }
 
-            if (direction.magnitude > .5) 
-                transform.Translate(direction * Time.deltaTime * .1f);*/
+            transform.position = IsoToWorld(Position);
         }
 
-        public Vector3 IsoConversion()
+        public void Translate(Vector3 offset)
         {
-            Vector3 actual = new Vector3();
-            actual.x = (Position.x - Position.y) * 0.5f;
-            actual.y = (Position.x + Position.y) * 0.25f + Position.z * 0.5f;
-            actual.z = Position.z;
-            return actual;
+            position += offset;
         }
 
-        public Vector3 PathIsoConversion(Vector2 pos)
+        public void SetPosition(Vector3 position)
         {
-            Vector3 worldPos = tilemap.CellToWorld(new Vector3Int((int)pos.x, (int)pos.y, 1));
+            this.position = position;
+        }
 
-            return worldPos;
+        public Vector3 IsoToWorld(Vector3 iso)
+        {
+            Vector3 world = new Vector3();
+            world.x = (iso.x - iso.y) * TILE_WIDTH_HALF;
+            world.y = (iso.x + iso.y) * TILE_HEIGHT_HALF + iso.z * 0.5f;
+            world.z = iso.z;
+            return world;
+        }
+
+        public Vector3 WorldToIso(Vector3 world)
+        {
+            Vector3 iso = new Vector3();
+            iso.x = (world.x / TILE_WIDTH_HALF + world.y / TILE_HEIGHT_HALF) / 2;
+            iso.y = (world.y / TILE_HEIGHT_HALF - (world.x / TILE_WIDTH_HALF)) / 2;
+            iso.z = world.z;
+            return iso;
         }
     }
 }

@@ -12,17 +12,21 @@ namespace Server
     public class PathComponent : NetComponent
     {
         private List<PathNode> path;
+        private Vector3 dest;
         public List<PathNode> Path
         {
             get
             {
                 return path;
             }
-            set
-            {
-                path = value;
-                net.Sync();
-            }
+           
+        }
+        
+        public void SetPath(List<PathNode> path, Vector3 dest)
+        {
+            this.path = path;
+            this.dest = dest;
+            net.Sync();
         }
 
         protected override void OnInit(NetObject netObj)
@@ -36,7 +40,7 @@ namespace Server
                     var node = Path[i];
                     p[i] = new Vector2 { x = node.x, y = node.y };
                 }
-                return new PathUpdate { Path = p };
+                return new PathUpdate { Path = p, Dest = dest };
             };
         }
     }

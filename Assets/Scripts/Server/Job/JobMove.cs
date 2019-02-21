@@ -45,7 +45,7 @@ namespace Server.Job
 
             if(entity.HasComponent<PathComponent>())
             {
-                entity.GetComponent<PathComponent>().Path = path;
+                entity.GetComponent<PathComponent>().SetPath(path, dest);
             }
 
 
@@ -71,6 +71,7 @@ namespace Server.Job
                 var state = entity.GetComponent<StateComponent>();
                 state.State = (int)EntityState.IDLE;
             }
+            entity.GetComponent<PositionComponent>().Vel = Vector3.zero;
         }
 
         public override void OnUpdate(float delta)
@@ -113,7 +114,7 @@ namespace Server.Job
             dir.Normalize();
 
             var vel = dir * speed;
-            Debug.Log($"Vel: {vel}");
+            //  Debug.Log($"Vel: {vel}");
             pos.Vel = vel;
             pos.Pos += vel * delta;
             //Debug.Log($"Moving colonist. New pos: {pos.Pos}");

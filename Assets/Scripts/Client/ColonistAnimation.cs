@@ -9,10 +9,13 @@ using UnityEngine.Tilemaps;
 public class ColonistAnimation : MonoBehaviour
 {
     [HideInInspector]
-    public Vector3 Position;
+    public Vector3 position;
+    [HideInInspector]
+    public Vector3 velocity;
 
     [HideInInspector]
     public Vector2[] Path;
+    private Vector2 dest;
     private int nodeNum;
 
     [HideInInspector]
@@ -24,6 +27,9 @@ public class ColonistAnimation : MonoBehaviour
 
     private Tilemap tilemap;
 
+    private bool setPos = true;
+    private bool done = true;
+
     void Start()
     {
         anim = GetComponent<Animator>();
@@ -32,12 +38,20 @@ public class ColonistAnimation : MonoBehaviour
         var eo = GetComponent<EntityObject>();
         eo.AddUpdateListener<PositionUpdate>((position) =>
         {
-            Position = position.Pos;
-            Position.z = 1;
+            this.position = position.Pos;
+            this.position.z = 1;
+            if (setPos)
+            {
+                isoPos.SetPosition(this.position);
+                setPos = false;
+            }
+            velocity = position.Vel;
         });
         eo.AddUpdateListener<PathUpdate>((path) =>
         {
+            done = false;
             Path = path.Path;
+            dest = path.Dest;
             nodeNum = 0;
         });
         eo.AddUpdateListener<StateUpdate>((state) =>
@@ -49,81 +63,120 @@ public class ColonistAnimation : MonoBehaviour
     void Update()
     {
         if (tilemap == null) tilemap = FindObjectOfType<Tilemap>();
-        Vector3 actualPos = isoPos.IsoConversion();
 
+        Vector3 deltaPos = Vector3.zero;
+        if (!done)
+        {
+            Vector3 p0 = isoPos.Position;
+            int currentNode = getNodeIndex(p0);
+            if (currentNode == -1)
+            {
+                Debug.Log("Not on path!");
+                return;
+            }
 
-        if (State == (int)EntityState.WALKING)
+            var dir = Vector3.zero;
+            var finalStretch = currentNode == Path.Length - 1;
+
+            if (finalStretch)
+            {
+                dir = vec2To3(dest) - p0;
+            } else
+            {
+                dir = vec2To3(Path[currentNode + 1]) - p0;
+            }
+
+            dir.Normalize();
+
+            // Here we can adjust the speed if we're running behind the server
+            var p1 = p0 + dir * Constants.COLONIST_SPEED * Time.deltaTime;
+            isoPos.SetPosition(p1);
+
+            if (finalStretch)
+            {
+                var error = (isoPos.Position - vec2To3(dest)).sqrMagnitude;
+                Debug.Log($"Error: {error}");
+                // We've reached the end of the path, so we should stop trying to move
+                if (error < 0.005f)
+                {
+                    Debug.Log("Pathing complete.");
+                    done = true;
+
+                    // This won't scale for other animations. Maybe the server sends Job info when
+                    // colonist is assigned a new job so the client can predict what animation it
+                    // should play when it's done pathfinding.
+                    SwitchToMining();
+                }
+            }
+            
+            deltaPos = isoPos.IsoToWorld(p1) - isoPos.IsoToWorld(p0);
+        }
+
+        if (!done)
         {
             anim.SetBool("isRunning", true);
             anim.SetBool("isMining", false);
 
-            if (actualPos.x > transform.position.x && !FacingRight)
+            if (deltaPos.x > 0 && !FacingRight)
             {
                 transform.Rotate(Vector3.up, 180);
                 FacingRight = true;
             }
-            if (actualPos.x < transform.position.x && FacingRight)
+            if (deltaPos.x < 0 && FacingRight)
             {
                 transform.Rotate(Vector3.up, 180);
                 FacingRight = false;
             }
-            if (actualPos.y > transform.position.y) anim.SetBool("isFacingFront", false);
-            else if (actualPos.y < transform.position.y) anim.SetBool("isFacingFront", true);  
+            if (deltaPos.y > 0) anim.SetBool("isFacingFront", false);
+            else if (deltaPos.y < 0) anim.SetBool("isFacingFront", true);  
         }
 
-        else if(State == (int)EntityState.MINING)
-        {
-            anim.SetBool("isRunning", false);
-            anim.SetBool("isMining", true);
-
-            Vector3Int cellPos = tilemap.WorldToCell(transform.position);
-            Vector3 worldCellPos = tilemap.CellToWorld(cellPos);
-
-            if (worldCellPos.x < transform.position.x && !FacingRight)
-            {
-                transform.Rotate(Vector3.up, 180);
-                FacingRight = true;
-            }
-            if (worldCellPos.x > transform.position.x && FacingRight)
-            {
-                transform.Rotate(Vector3.up, 180);
-                FacingRight = false;
-            }
-        }
         
+    }
 
-        Vector3 dir = Vector3.zero;
-         
-         if (nodeNum == 0)
-         {
-             transform.position = actualPos;
-             nodeNum++;
-         }
-         else if(nodeNum == Path.Length - 1)
-         {
-            if ((actualPos - transform.position).magnitude > .25f)
-                dir = actualPos - transform.position;
-            else
-                transform.position = actualPos;
-         }
-         else
-         {       
-             Debug.Log("Node " + nodeNum + ": " + Path[nodeNum]);
-             var curNode = transform.position;
-             var nextNode = isoPos.PathIsoConversion(Path[nodeNum]);
-             Debug.Log("Current: " + curNode + " | Next: " + nextNode + " | Actual: " + actualPos);
+    private void SwitchToMining()
+    {
+        anim.SetBool("isRunning", false);
+        anim.SetBool("isMining", true);
 
+        Vector3Int cellPos = tilemap.WorldToCell(transform.position);
+        Vector3 worldCellPos = tilemap.CellToWorld(cellPos);
 
-             dir = new Vector3(nextNode.x - curNode.x, nextNode.y - curNode.y, 1);
-             if (tilemap.WorldToCell(actualPos) == new Vector3Int((int)Path[nodeNum].x, (int)Path[nodeNum].y, 1))
-             {
-                 nodeNum++;
-             }
-         }
+        float animationOffset = -0.05f;
+        if (worldCellPos.x < transform.position.x)
+        {
+            isoPos.Translate(isoPos.WorldToIso(new Vector3(animationOffset, 0f)));
+            if(!FacingRight)
+            {
+                transform.Rotate(Vector3.up, 180);
+                FacingRight = true;
+            }
+        }
+        if (worldCellPos.x > transform.position.x)
+        {
+            isoPos.Translate(isoPos.WorldToIso(new Vector3(-animationOffset, 0f)));
+            if (FacingRight)
+            {
+                transform.Rotate(Vector3.up, 180);
+                FacingRight = false; 
+            }
+        }
+    }
 
-        transform.Translate(dir * (Constants.COLONIST_SPEED)* Time.deltaTime);
+    private Vector3 vec2To3(Vector2 vec)
+    {
+        return new Vector3(vec.x, vec.y, 1);
+    }
 
+    private int getNodeIndex(Vector3 pos)
+    {
+        var gridPos = new Vector2((int)(pos.x + .5f), (int)(pos.y + .5f));
 
-
+        for(int i =0; i < Path.Length; i++)
+            if (Path[i] == gridPos)
+                return i;
+       
+        //Shouldn't happen please
+        return -1;
     }
 }

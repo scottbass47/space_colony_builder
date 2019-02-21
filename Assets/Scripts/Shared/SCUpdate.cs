@@ -70,6 +70,8 @@ namespace Shared
     {
         [ProtoMember(1)]
         public Vector2[] Path { get; set; }
+        [ProtoMember(2)]
+        public Vector2 Dest { get; set; }
     }
 
     [ProtoContract]

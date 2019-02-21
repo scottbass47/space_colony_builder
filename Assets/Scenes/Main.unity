@@ -886,6 +886,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Colonist
       objectReference: {fileID: 0}
+    - target: {fileID: 1008030070994176929, guid: 69237a70b2a83024fb4afa5779e17489,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8716209010054721689, guid: 69237a70b2a83024fb4afa5779e17489,
         type: 3}
       propertyPath: m_LocalPosition.x

@@ -50,7 +50,7 @@ namespace Client
 
         private void OnNetCreate(NetCreatePacket obj)
         {
-            Debug.Log($"[Client] - NetObject {obj.TypeName} created with id {obj.NetID} and parent id {obj.ParentID}");
+            //Debug.Log($"[Client] - NetObject {obj.TypeName} created with id {obj.NetID} and parent id {obj.ParentID}");
             DebugUtils.Assert(!NetObjectExists(obj.NetID), $"Net object with id {obj.NetID} already exists on the client.");
             var netObj = new INetObject(this, obj.NetObjectType, obj.EntityType, obj.NetID, obj.CreateData);
 
