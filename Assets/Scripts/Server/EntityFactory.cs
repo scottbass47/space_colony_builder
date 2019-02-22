@@ -5,6 +5,7 @@ using System.Text;
 using ECS;
 using Server.NetObjects;
 using Server.Tasks;
+using Shared;
 using Shared.SCData;
 using UnityEngine;
 using Utils;
@@ -60,13 +61,13 @@ namespace Server
             return house;
         }
 
-        public static Entity CreateColonist()
+        public static Entity CreateColonist(Vector3 spawn)
         {
             var colonist = new EntityBuilder(World, Engine, Level, EntityType.COLONIST)
                 .Net()
                 .build();
 
-            colonist.AddComponent<PositionComponent>().Pos = Vector3.zero;
+            colonist.AddComponent<PositionComponent>().SetSpawn(spawn);
             colonist.AddComponent<WorkerComponent>();
             colonist.AddComponent<NotOwnedComponent>();
             colonist.AddComponent<PathComponent>();
@@ -89,6 +90,7 @@ namespace Server
         public class EntityBuilder
         {
             private Entity entity;
+            private bool networked;
 
             public EntityBuilder(WorldStateManager world, Engine engine, Level level, EntityType type)
             {
@@ -104,19 +106,24 @@ namespace Server
             {
                 //entity.AddComponent<NetSpawnComponent>();
                 entity.AddComponent<StateUpdateComponent>();
+                networked = true;
 
-                var netEntity = entity as NetEntity;
-                netEntity.NetObject.EntityType = netEntity.GetComponent<EntityTypeComponent>().Type;
-                netEntity.AddToNetObjectManager();
                 return this;
             }
 
+            // Build is still called before any components with EData are added
+            // so no entity data is being sent across. 
             public Entity build()
             {
+                if (networked)
+                {
+                    var netEntity = entity as NetEntity;
+                    netEntity.NetObject.EntityType = netEntity.GetComponent<EntityTypeComponent>().Type;
+                }
                 return entity;
             }
-        }
 
+        }
     }
     
 }

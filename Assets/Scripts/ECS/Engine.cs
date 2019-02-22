@@ -76,6 +76,7 @@ namespace ECS
             return entity;
         }
 
+        // This needs to be overridable
         public void AddEntity(Entity entity)
         {
             if (updating) pendingOps.Enqueue(CreateOperation().Set(OpType.Add, entity));
