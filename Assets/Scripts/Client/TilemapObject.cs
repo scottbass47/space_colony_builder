@@ -27,28 +27,13 @@ namespace Client
             get => pos;
         }
 
-        // Previously, when a TilemapObject is created we add it immediately to the map. However,
-        // this causes problems if the position of the object isn't set initially. So instead,
-        // we can just wait until we get the first position update before adding the map object
-        // to the world.
-        private bool addedToMap;
-
         public event Action<GameObject, Vector3Int, Vector3Int> PosChanged;
 
-        private void Awake()
+        private void Start()
         {
-            addedToMap = false;
-
-            GetComponent<EntityObject>().AddUpdateListener<PositionUpdate>((pos) =>
-            {
-                var p = pos.Pos;
-                Pos = new Vector3Int((int)p.x, (int)p.y, (int)p.z);
-                if (!addedToMap)
-                {
-                    Game.Instance.World.AddMapObject(this.gameObject);
-                    addedToMap = true;
-                }
-            });
+            var p = GetComponent<EntityObject>().GetEData<EPositionData>().Pos;
+            Pos = new Vector3Int((int)p.x, (int)p.y, (int)p.z);
+            Game.Instance.World.AddMapObject(this.gameObject);
         }
 
         //private void Start()

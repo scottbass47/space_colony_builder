@@ -38,7 +38,7 @@ namespace Server
                 .Net()
                 .build();
 
-            ore.AddComponent<MapObjectComponent>().Pos = pos;
+            ore.AddComponent<MapObjectComponent>().SetSpawnLocation(pos);
             ore.AddComponent<HealthComponent>();
             ore.AddComponent<OreComponent>().Amount = Constants.ORE_AMOUNT;
             ore.AddComponent<SlotComponent>()
@@ -55,7 +55,7 @@ namespace Server
                 .Net()
                 .build();
 
-            house.AddComponent<MapObjectComponent>().Pos = pos;
+            house.AddComponent<MapObjectComponent>().SetSpawnLocation(pos);
             house.AddComponent<HealthComponent>().Health = 100;
             house.AddComponent<HouseComponent>().Set(Constants.HOUSE_CAPACITY);
             return house;
@@ -83,14 +83,14 @@ namespace Server
                 .Net()
                 .build();
 
-            house.AddComponent<MapObjectComponent>().Pos = pos;
+            house.AddComponent<MapObjectComponent>().SetSpawnLocation(pos);
             return house;
         }
 
         public class EntityBuilder
         {
             private Entity entity;
-            private bool networked;
+            private bool networked = false;
 
             public EntityBuilder(WorldStateManager world, Engine engine, Level level, EntityType type)
             {
@@ -104,10 +104,7 @@ namespace Server
             // Networked entities
             public EntityBuilder Net()
             {
-                //entity.AddComponent<NetSpawnComponent>();
-                entity.AddComponent<StateUpdateComponent>();
                 networked = true;
-
                 return this;
             }
 
@@ -125,5 +122,4 @@ namespace Server
 
         }
     }
-    
 }

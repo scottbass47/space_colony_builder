@@ -55,7 +55,6 @@ namespace Server
             engine.AddSystem(new WorkerSystem());
             engine.AddSystem(new HousingSystem());
             engine.AddSystem(new DeathSystem());    
-            engine.AddSystem(new StateChangeEmitterSystem());
         }
 
         // Called once after both clients are connected
