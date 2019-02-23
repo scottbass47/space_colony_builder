@@ -103,6 +103,7 @@ namespace Server.NetObjects
             hasParent = false;
             children.Clear();
             Alive = false;
+            Added = false;
             childrenToBeAdded.Clear();
             update = null;
             createData = null;
