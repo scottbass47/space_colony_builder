@@ -28,14 +28,14 @@ public class TQMovement : MonoBehaviour
     {
         if (!poppedUp)
         {
-            transform.position = new Vector3(transform.position.x, transform.position.y + 200 + 50,
+            transform.position = new Vector3(transform.position.x, transform.position.y + scrollRect.rect.height,
                 transform.position.z);
             scrollWindow.SetActive(true);
             poppedUp = true;
         }
         else
         {
-            transform.position = new Vector3(transform.position.x, transform.position.y - 200 - 50,
+            transform.position = new Vector3(transform.position.x, transform.position.y - scrollRect.rect.height,
                 transform.position.z);
             scrollWindow.SetActive(false);
             poppedUp = false;

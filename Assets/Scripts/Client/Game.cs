@@ -39,6 +39,9 @@ namespace Client
         [HideInInspector]
         public NetObjectManager NetObjectManager;
 
+        [HideInInspector]
+        public GameObject ClientPlayer;
+
         private static Game instance;
 
         public static Game Instance => instance;
