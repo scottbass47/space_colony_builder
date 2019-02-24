@@ -55,7 +55,6 @@ namespace Server
             engine.AddSystem(new WorkerSystem());
             engine.AddSystem(new HousingSystem());
             engine.AddSystem(new DeathSystem());    
-            engine.AddSystem(new StateChangeEmitterSystem());
         }
 
         // Called once after both clients are connected
@@ -82,9 +81,8 @@ namespace Server
 
             for (int i = 0; i < Constants.NUM_INITIAL_COLONISTS; i++)
             {
-                var colonist = EntityFactory.CreateColonist();
                 var spawnPoint = new Vector3(Random.Range(0, Size), Random.Range(0, Size));
-                colonist.GetComponent<PositionComponent>().Pos = spawnPoint;
+                var colonist = EntityFactory.CreateColonist(spawnPoint);
                 engine.AddEntity(colonist);
             }
 

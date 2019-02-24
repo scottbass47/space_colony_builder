@@ -8,6 +8,7 @@ using UnityEngine.Tilemaps;
 
 public class ColonistAnimation : MonoBehaviour
 {
+    // Not being used currently. 
     [HideInInspector]
     public Vector3 position;
     [HideInInspector]
@@ -27,7 +28,6 @@ public class ColonistAnimation : MonoBehaviour
 
     private Tilemap tilemap;
 
-    private bool setPos = true;
     private bool done = true;
 
     void Start()
@@ -36,15 +36,17 @@ public class ColonistAnimation : MonoBehaviour
         isoPos = GetComponent<IsometricPosition>();
 
         var eo = GetComponent<EntityObject>();
+
+        // Set the initial position
+        var pos = eo.GetEData<EPositionData>().Pos;
+        this.position = pos;
+        this.position.z = 1;
+        isoPos.SetPosition(this.position);
+
         eo.AddUpdateListener<PositionUpdate>((position) =>
         {
             this.position = position.Pos;
             this.position.z = 1;
-            if (setPos)
-            {
-                isoPos.SetPosition(this.position);
-                setPos = false;
-            }
             velocity = position.Vel;
         });
         eo.AddUpdateListener<PathUpdate>((path) =>
@@ -71,7 +73,7 @@ public class ColonistAnimation : MonoBehaviour
             int currentNode = getNodeIndex(p0);
             if (currentNode == -1)
             {
-                Debug.Log("Not on path!");
+                //Debug.Log("Not on path!");
                 return;
             }
 
@@ -95,11 +97,11 @@ public class ColonistAnimation : MonoBehaviour
             if (finalStretch)
             {
                 var error = (isoPos.Position - vec2To3(dest)).sqrMagnitude;
-                Debug.Log($"Error: {error}");
+
                 // We've reached the end of the path, so we should stop trying to move
                 if (error < 0.005f)
                 {
-                    Debug.Log("Pathing complete.");
+                    //Debug.Log("Pathing complete.");
                     done = true;
 
                     // This won't scale for other animations. Maybe the server sends Job info when

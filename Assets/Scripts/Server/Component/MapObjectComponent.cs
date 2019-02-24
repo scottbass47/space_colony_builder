@@ -21,6 +21,12 @@ namespace Server
             }
         }
 
+        public void SetSpawnLocation(Vector3Int pos)
+        {
+            this.pos = pos;
+            EntityData = new EPositionData { Pos = pos };
+        }
+
         protected override void OnInit(NetObject netObj)
         {
             pos = Vector3Int.zero;

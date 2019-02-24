@@ -5,6 +5,7 @@ using System.Text;
 using ECS;
 using Server.NetObjects;
 using Server.Tasks;
+using Shared;
 using Shared.SCData;
 using UnityEngine;
 using Utils;
@@ -37,7 +38,7 @@ namespace Server
                 .Net()
                 .build();
 
-            ore.AddComponent<MapObjectComponent>().Pos = pos;
+            ore.AddComponent<MapObjectComponent>().SetSpawnLocation(pos);
             ore.AddComponent<HealthComponent>();
             ore.AddComponent<OreComponent>().Amount = Constants.ORE_AMOUNT;
             ore.AddComponent<SlotComponent>()
@@ -54,19 +55,19 @@ namespace Server
                 .Net()
                 .build();
 
-            house.AddComponent<MapObjectComponent>().Pos = pos;
+            house.AddComponent<MapObjectComponent>().SetSpawnLocation(pos);
             house.AddComponent<HealthComponent>().Health = 100;
             house.AddComponent<HouseComponent>().Set(Constants.HOUSE_CAPACITY);
             return house;
         }
 
-        public static Entity CreateColonist()
+        public static Entity CreateColonist(Vector3 spawn)
         {
             var colonist = new EntityBuilder(World, Engine, Level, EntityType.COLONIST)
                 .Net()
                 .build();
 
-            colonist.AddComponent<PositionComponent>().Pos = Vector3.zero;
+            colonist.AddComponent<PositionComponent>().SetSpawn(spawn);
             colonist.AddComponent<WorkerComponent>();
             colonist.AddComponent<NotOwnedComponent>();
             colonist.AddComponent<PathComponent>();
@@ -82,13 +83,14 @@ namespace Server
                 .Net()
                 .build();
 
-            house.AddComponent<MapObjectComponent>().Pos = pos;
+            house.AddComponent<MapObjectComponent>().SetSpawnLocation(pos);
             return house;
         }
 
         public class EntityBuilder
         {
             private Entity entity;
+            private bool networked = false;
 
             public EntityBuilder(WorldStateManager world, Engine engine, Level level, EntityType type)
             {
@@ -102,21 +104,22 @@ namespace Server
             // Networked entities
             public EntityBuilder Net()
             {
-                //entity.AddComponent<NetSpawnComponent>();
-                entity.AddComponent<StateUpdateComponent>();
-
-                var netEntity = entity as NetEntity;
-                netEntity.NetObject.EntityType = netEntity.GetComponent<EntityTypeComponent>().Type;
-                netEntity.AddToNetObjectManager();
+                networked = true;
                 return this;
             }
 
+            // Build is still called before any components with EData are added
+            // so no entity data is being sent across. 
             public Entity build()
             {
+                if (networked)
+                {
+                    var netEntity = entity as NetEntity;
+                    netEntity.NetObject.EntityType = netEntity.GetComponent<EntityTypeComponent>().Type;
+                }
                 return entity;
             }
-        }
 
+        }
     }
-    
 }

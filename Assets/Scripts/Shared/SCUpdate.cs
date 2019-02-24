@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ProtoBuf;
+using Shared.SCData;
 using UnityEngine;
 
 namespace Shared
@@ -12,8 +13,46 @@ namespace Shared
     // Base class for sending data in the NetCreatePacket
     [ProtoContract]
     [ProtoInclude(10, typeof(TaskCreateData))]
+    [ProtoInclude(11, typeof(EntityCreateData))]
     public class CreateData
     {
+    }
+    
+    [ProtoContract]
+    public class EntityCreateData : CreateData
+    {
+        [ProtoMember(1)] 
+        public EData[] Data { get; set; }
+
+        // Looks in the list of all data objects and finds the one with
+        // the matching type, and returns it. Returns null if no data of
+        // that type can be found.
+        // 
+        // Ex: var positionData = GetData<EPositionData>(); 
+        public T GetData<T>() where T : EData
+        {
+            foreach (var data in Data)
+            {
+                if(data.GetType() == typeof(T))
+                {
+                    return (T) data;
+                }
+            }
+            return null;
+        }
+    }
+
+    [ProtoContract]
+    [ProtoInclude(10, typeof(EPositionData))]
+    public class EData
+    {
+    }
+
+    [ProtoContract]
+    public class EPositionData : EData
+    {
+        [ProtoMember(1)] 
+        public Vector3 Pos { get; set; }
     }
 
     [ProtoContract]

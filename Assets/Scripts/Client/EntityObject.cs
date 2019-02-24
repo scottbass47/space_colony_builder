@@ -37,6 +37,12 @@ namespace Client
         {
         }
 
+        public T GetEData<T>() where T : EData
+        {
+            var netObj = GetComponent<NetObject>().NetObj;
+            return (netObj.CreateData as EntityCreateData).GetData<T>();
+        }
+
         //// This should be called ASAP (once the ID has been assigned, but not before)
         //public void OnCreate()
         //{

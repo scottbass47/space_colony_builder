@@ -176,7 +176,7 @@ namespace Client
 
         private void OnNetDestroy(NetDestroyPacket obj)
         {
-            Debug.Log($"[Client] - NetObject destroyed with id {obj.NetID}");
+            //Debug.Log($"[Client] - NetObject destroyed with id {obj.NetID}");
             DebugUtils.Assert(NetObjectExists(obj.NetID), $"Net object with id {obj.NetID} doesn't exist on the client.");
 
             var netObj = netObjects[obj.NetID];
