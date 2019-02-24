@@ -20,7 +20,7 @@ namespace Shared
     public class TaskCreateData : CreateData
     {
         [ProtoMember(1)] 
-        public int Order { get; set; }
+        public string Title { get; set; }
     }
 
     [ProtoContract]
@@ -106,8 +106,6 @@ namespace Shared
     public class TaskUpdate : NetUpdate
     {
         [ProtoMember(1)]
-        public string Text { get; set; }
-        [ProtoMember(2)]
-        public int Order { get; set; }
+        public string Status { get; set; }
     }
 }

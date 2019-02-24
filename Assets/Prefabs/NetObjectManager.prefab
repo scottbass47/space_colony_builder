@@ -43,5 +43,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d81ea59bf9c05e42a2046e3f41e80f2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  taskQueuePrefab: {fileID: 967423525921974870, guid: 48b0b84d12aa03c489387fcf0040bd8a,
+  taskQueuePrefab: {fileID: 804117277109146016, guid: 40f144295877aa243b5432548d345db6,
     type: 3}

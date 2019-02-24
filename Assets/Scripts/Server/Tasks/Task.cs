@@ -17,6 +17,7 @@ namespace Server.Tasks
         private List<JobPool> jobs;
         private string desc;
         private NetObject net;
+        private bool taskStarted = false;
 
         public Task(string desc)
         {
@@ -27,15 +28,30 @@ namespace Server.Tasks
         public void AddJob(JobPool jobPool)
         {
             jobs.Add(jobPool);
-            jobPool.OnComplete += () => jobs.Remove(jobPool);
+            jobPool.OnComplete += () =>
+            {
+                jobs.Remove(jobPool);
+            };
+            jobPool.OnInProgress += () =>
+            {
+                if (!taskStarted)
+                {
+                    taskStarted = true;
+                    net.Sync();
+                }
+            };
         }
 
         public void AddToQueue(TaskQueue queue, int index)
         {
             var parentNetObj = queue.TaskQueueNet;
-            net = parentNetObj.CreateChild(NetObjectType.TASK, data: new TaskCreateData { Order = index });
+            net = parentNetObj.CreateChild(NetObjectType.TASK, data: new TaskCreateData { Title = desc });
             net.NetMode = NetMode.IMPORTANT;
-            net.OnUpdate = () => new TaskUpdate { Text = ToString(), Order = index };
+            net.OnUpdate = () =>
+            {
+                var status = !taskStarted ? "Incomplete" : "In Progress";
+                return new TaskUpdate { Status = status };
+            };
             net.Sync();
         }
 

@@ -16,8 +16,10 @@ namespace Server.Job
         //public int MaxWorkers => maxWorkers;
         public int NumWorkers => workers.Count;
         private bool complete = false;
+        private bool started = false;
 
         public event Action OnComplete;
+        public event Action OnInProgress;
 
         public JobPool()
         {
@@ -26,15 +28,24 @@ namespace Server.Job
 
         public void HireWorker(Entity worker)
         {
+            // Job in progress
             var job = GetJob(worker);
             worker.GetComponent<WorkerComponent>().AssignJob(job, worker, OnJobComplete);
-            workers.Add(worker, job); 
+            workers.Add(worker, job);
+
+            // Alert listeners that the job is now In Progress
+            if (!started && OnInProgress != null)
+            {
+                started = true;
+                OnInProgress();
+            }
         }
 
         private void OnJobComplete(Entity worker)
         {
             if(!complete)
             {
+                // Job completed now
                 workers.Clear();
                 complete = true;
                 if (OnComplete != null) OnComplete();
